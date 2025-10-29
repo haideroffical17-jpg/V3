@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veo-like 100 Prompts Video Generator (MOCK)</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; color: #333; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
+        h1 { color: #4285F4; text-align: center; margin-bottom: 25px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; }
+        textarea { width: 100%; height: 180px; padding: 15px; margin-bottom: 20px; border: 2px solid #ddd; border-radius: 8px; resize: vertical; box-sizing: border-box; font-size: 14px; }
+        button { padding: 12px 25px; background-color: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: background-color 0.3s; }
+        button:hover:not(:disabled) { background-color: #45a049; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
+        .status-box { margin-top: 25px; padding: 20px; border-radius: 8px; background-color: #e8f0fe; border-left: 5px solid #4285F4; }
+        .clip-list { max-height: 300px; overflow-y: auto; margin-top: 15px; padding-right: 10px; }
+        .clip { padding: 10px 0; border-bottom: 1px dashed #ccc; display: flex; justify-content: space-between; align-items: center; }
+        .clip-status-text { font-size: 14px; font-weight: bold; }
+        .pending { color: orange; }
+        .generating { color: #4285F4; }
+        .complete { color: #4CAF50; }
+        .download-link { margin-left: 10px; text-decoration: none; color: #1a73e8; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Veo 3.1 Video Composer (Mock-up)</h1>
+
+    <label for="prompts">Enter 100 Prompts (Har line ek 8 Second Clip)</label>
+    <textarea id="prompts" placeholder="Example Prompts:
+1. A lone wolf howling on a snowy mountain peak at midnight.
+2. Cinematic drone shot of a bustling city street at rush hour.
+3. Macro shot of a single dewdrop reflecting the sunrise.
+4. A futuristic car racing on a glowing highway.
+... (Total 100 Prompts)">1. A lone wolf howling on a snowy mountain peak at midnight.
+2. Cinematic drone shot of a bustling city street at rush hour.
+3. Macro shot of a single dewdrop reflecting the sunrise.
+4. A futuristic car racing on a glowing highway.
+5. Abstract art in motion, vibrant colors swirling.
+6. Underwater scene with a massive whale swimming peacefully.
+7. A medieval knight riding through a misty forest.
+8. Time-lapse of a flower blooming.
+... (Imagine 92 more unique prompts here)</textarea>
+
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <button id="generateBtn" onclick="startGeneration()">Generate Video (Simulated)</button>
+        <div id="videoDuration" style="font-size: 18px; font-weight: bold; color: #333;">Total Video Duration: <span style="color: #4285F4;">0 seconds</span></div>
+    </div>
+
+    <div class="status-box">
+        <h2>Generation Status</h2>
+        <p>Estimated Time: <span id="estimatedTime">--</span></p>
+        <p>Current Status: <span id="currentStatus" class="pending">Waiting for prompts...</span></p>
+
+        <div class="clip-list" id="clipStatusList">
+            </div>
+    </div>
+</div>
+
+<script>
+    const CLIP_DURATION = 8; // seconds per clip, as requested
+    const TIME_PER_CLIP_SIMULATED = 5; // seconds (Mock simulation time)
+
+    function getPrompts() {
+        // Read prompts, filter out empty lines, and cap at 100
+        let allPrompts = document.getElementById('prompts').value.trim().split('\n').filter(p => p.trim() !== '');
+        return allPrompts.slice(0, 100);
+    }
+
+    function updateDuration(numPrompts) {
+        let totalDuration = numPrompts * CLIP_DURATION;
+        document.getElementById('videoDuration').innerHTML = `Total Video Duration: <span style="color: #4285F4;">${totalDuration} seconds</span>`;
+    }
+
+    function startGeneration() {
+        const prompts = getPrompts();
+        const numPrompts = prompts.length;
+
+        if (numPrompts === 0) {
+            alert("Please enter at least one prompt!");
+            return;
+        }
+
+        document.getElementById('generateBtn').disabled = true;
+        document.getElementById('currentStatus').textContent = `Processing ${numPrompts} prompts...`;
+        document.getElementById('currentStatus').className = 'generating';
+        
+        updateDuration(numPrompts);
+
+        // --- Simulated Time Calculations ---
+        const totalSimulatedTime = numPrompts * TIME_PER_CLIP_SIMULATED; // Example: 100 clips * 5s = 500s (8 min 20 sec)
+        const minutes = Math.floor(totalSimulatedTime / 60);
+        const seconds = totalSimulatedTime % 60;
+        document.getElementById('estimatedTime').textContent = `${minutes} min ${seconds} sec (Mock)`;
+
+        // --- Start Simulation ---
+        simulateGeneration(prompts);
+    }
+
+    function simulateGeneration(prompts) {
+        const listContainer = document.getElementById('clipStatusList');
+        listContainer.innerHTML = ''; // Clear previous status
+
+        prompts.forEach((prompt, index) => {
+            // Create list item for each prompt
+            const clipDiv = document.createElement('div');
+            clipDiv.className = 'clip';
+            clipDiv.id = `clip-${index}`;
+            clipDiv.innerHTML = `
+                <div>${index + 1}. ${prompt.substring(0, 70)}... (Duration: ${CLIP_DURATION}s)</div>
+                <div id="status-${index}" class="clip-status-text pending">PENDING</div>
+            `;
+            listContainer.appendChild(clipDiv);
+
+            // Simulate the generation time for each clip
+            setTimeout(() => {
+                const statusElement = document.getElementById(`status-${index}`);
+                statusElement.textContent = 'GENERATING';
+                statusElement.className = 'clip-status-text generating';
+
+                // Simulate completion of the clip
+                setTimeout(() => {
+                    statusElement.textContent = 'COMPLETE ✅';
+                    statusElement.className = 'clip-status-text complete';
+
+                    // Add watch/download links (MOCK URLs)
+                    const actionsDiv = document.createElement('div');
+                    actionsDiv.style.marginLeft = '10px';
+                    actionsDiv.innerHTML = `
+                        <a href="#" class="download-link" onclick="alert('Watching Clip ${index + 1}...')">WATCH</a>
+                        <a href="https://example.com/mock-video-${index + 1}.mp4" class="download-link" download>DOWNLOAD</a>
+                    `;
+                    clipDiv.appendChild(actionsDiv);
+
+                    // Check if all clips are done
+                    if (index === prompts.length - 1) {
+                        finalizeVideo(prompts.length * CLIP_DURATION);
+                    }
+                }, TIME_PER_CLIP_SIMULATED * 1000); // Wait 5 seconds to "generate"
+
+            }, index * TIME_PER_CLIP_SIMULATED * 1000); // Stagger the start of generation
+        });
+    }
+
+    function finalizeVideo(totalDuration) {
+        document.getElementById('currentStatus').textContent = `Video Assembly Complete! Total Duration: ${totalDuration} seconds`;
+        document.getElementById('currentStatus').className = 'complete';
+        document.getElementById('generateBtn').disabled = false;
+        document.getElementById('estimatedTime').textContent = `0 min 0 sec (Finished!)`;
+        alert("Your 100-Clip Video is Ready! Scroll down to download individual clips.");
+    }
+
+    // Set initial duration on load
+    document.addEventListener('DOMContentLoaded', () => {
+        updateDuration(getPrompts().length);
+    });
+</script>
+
+</body>
+</html>
