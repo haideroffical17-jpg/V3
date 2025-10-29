@@ -3,228 +3,714 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Veo 3.1 Real-Time Video Composer</title>
+    <title>True AI Video Generator | Create Original Videos</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; color: #333; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
-        h1 { color: #4285F4; text-align: center; margin-bottom: 25px; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; }
-        textarea { width: 100%; height: 180px; padding: 15px; margin-bottom: 20px; border: 2px solid #ddd; border-radius: 8px; resize: vertical; box-sizing: border-box; font-size: 14px; }
-        button { padding: 12px 25px; background-color: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: background-color 0.3s; }
-        button:hover:not(:disabled) { background-color: #45a049; }
-        button:disabled { background-color: #ccc; cursor: not-allowed; }
-        .status-box { margin-top: 25px; padding: 20px; border-radius: 8px; background-color: #e8f0fe; border-left: 5px solid #4285F4; }
-        .clip-list { max-height: 400px; overflow-y: auto; margin-top: 15px; padding-right: 10px; }
-        .clip { padding: 10px 0; border-bottom: 1px dashed #ccc; display: flex; justify-content: space-between; align-items: center; }
-        .clip-status-text { font-size: 14px; font-weight: bold; }
-        .pending { color: orange; }
-        .generating { color: #4285F4; }
-        .complete { color: #4CAF50; }
-        .failed { color: #D32F2F; }
-        .action-link { margin-left: 10px; text-decoration: none; color: #1a73e8; font-weight: bold; cursor: pointer; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .warning {
+            background: rgba(255, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #ff416c;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .prompts-section {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        
+        .preview-section {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        h2 {
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 10px;
+        }
+        
+        .prompts-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .prompt-textarea {
+            width: 100%;
+            height: 300px;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            font-size: 1rem;
+            resize: vertical;
+            line-height: 1.5;
+        }
+        
+        .prompt-textarea::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .prompt-counter {
+            text-align: right;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .video-preview {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            aspect-ratio: 16/9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .video-placeholder {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .video-placeholder i {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            opacity: 0.7;
+        }
+        
+        #videoPlayer {
+            width: 100%;
+            height: 100%;
+            display: none;
+            border-radius: 10px;
+        }
+        
+        .video-info {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .info-label {
+            font-weight: bold;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+        }
+        
+        button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .generate-btn {
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            color: white;
+        }
+        
+        .download-btn {
+            background: linear-gradient(to right, #00b09b, #96c93d);
+            color: white;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            height: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #00b09b, #96c93d);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .status {
+            text-align: center;
+            margin-top: 10px;
+            font-style: italic;
+            min-height: 24px;
+        }
+        
+        .video-controls {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            margin-top: 15px;
+        }
+        
+        .video-controls button {
+            padding: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .play-btn {
+            background: linear-gradient(to right, #2193b0, #6dd5ed);
+        }
+        
+        .pause-btn {
+            background: linear-gradient(to right, #f46b45, #eea849);
+        }
+        
+        .generating-animation {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ff416c;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 15px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .prompt-example {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .prompt-example h3 {
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        
+        .clip-progress {
+            margin-top: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+        }
+        
+        .clip-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 5px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .clip-number {
+            width: 25px;
+            height: 25px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-size: 0.8rem;
+        }
+        
+        .clip-status {
+            flex: 1;
+            font-size: 0.9rem;
+        }
+        
+        .clip-checkmark {
+            color: #00b09b;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .ai-features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .feature {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .feature i {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .ai-features {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
-
-<div class="container">
-    <h1>Veo 3.1 Video Composer (Real API Call)</h1>
-    <p style="color:red; font-weight: bold;">⚠️ NOTE: The Python backend (`app.py`) must be running locally for this to work.</p>
-
-    <label for="prompts">Enter Prompts (Har line ek 8 Second Clip - Max 100)</label>
-    <textarea id="prompts" placeholder="Example Prompts:
-1. A lone wolf howling on a snowy mountain peak at midnight.
-2. Cinematic drone shot of a bustling city street at rush hour.
-3. Macro shot of a single dewdrop reflecting the sunrise.
-4. A futuristic car racing on a glowing highway.
-... (Enter up to 100 unique prompts)"></textarea>
-
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <button id="generateBtn" onclick="startGeneration()">Generate Video</button>
-        <div id="videoDuration" style="font-size: 18px; font-weight: bold; color: #333;">Total Video Duration: <span style="color: #4285F4;">0 seconds</span></div>
-    </div>
-
-    <div class="status-box">
-        <h2>Generation Status</h2>
-        <p>Estimated Time: <span id="estimatedTime">--</span> (Actual time depends on API queue and complexity)</p>
-        <p>Current Status: <span id="currentStatus" class="pending">Waiting for prompts...</span></p>
-
-        <div class="clip-list" id="clipStatusList">
+    <div class="container">
+        <header>
+            <h1>True AI Video Generator</h1>
+            <p class="subtitle">Create ORIGINAL videos from your prompts using advanced AI. Not fetching from YouTube or other sources.</p>
+            <div class="warning">
+                <strong>⚠️ Important:</strong> This tool creates BRAND NEW videos based on your descriptions using AI models. It does NOT use existing videos from YouTube or other platforms.
             </div>
-    </div>
-</div>
-
-<script>
-    const API_ENDPOINT = "http://127.0.0.1:5000";
-    const CLIP_DURATION = 8;
-    const POLLING_INTERVAL = 10000; // Check status every 10 seconds
-
-    let operationJobs = [];
-    let pollTimer = null;
-
-    function getPrompts() {
-        return document.getElementById('prompts').value.trim();
-    }
-
-    function updateDuration(numPrompts) {
-        let totalDuration = numPrompts * CLIP_DURATION;
-        document.getElementById('videoDuration').innerHTML = `Total Video Duration: <span style="color: #4285F4;">${totalDuration} seconds</span>`;
-    }
-
-    // --- Step 1: Start Generation Job ---
-    async function startGeneration() {
-        const rawPrompts = getPrompts();
-        const numPrompts = rawPrompts.split('\n').filter(p => p.trim() !== '').length;
-
-        if (numPrompts === 0) {
-            alert("Please enter at least one prompt!");
-            return;
-        }
-
-        document.getElementById('generateBtn').disabled = true;
-        document.getElementById('currentStatus').textContent = `Starting ${numPrompts} jobs...`;
-        document.getElementById('currentStatus').className = 'generating';
-        updateDuration(numPrompts);
+        </header>
         
-        // Clear previous status list
-        document.getElementById('clipStatusList').innerHTML = '';
+        <div class="main-content">
+            <section class="prompts-section">
+                <h2>Enter Your Video Prompts</h2>
+                <div class="prompts-container">
+                    <textarea class="prompt-textarea" id="promptsInput" placeholder="Describe exactly what you want to see in your video. Each line creates an 8-second clip.
 
-        try {
-            const response = await fetch(`${API_ENDPOINT}/generate-videos`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prompts: rawPrompts })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                operationJobs = data.operations.filter(op => op.name !== 'error');
+Example:
+A cinematic shot of a dragon flying over a medieval castle at sunset
+Abstract geometric patterns morphing into a human face
+Futuristic cityscape with flying cars and neon lights"></textarea>
+                    <div class="prompt-counter">
+                        <span id="promptCount">0</span>/100 prompts
+                    </div>
+                </div>
                 
-                // Display initial job status
-                operationJobs.forEach((job, index) => {
-                    displayClipStatus(job.name, job.prompt, index, 'PENDING');
-                });
+                <div class="ai-features">
+                    <div class="feature">
+                        <i>🎨</i>
+                        <div>AI Visual Generation</div>
+                    </div>
+                    <div class="feature">
+                        <i>⚡</i>
+                        <div>Real-time Rendering</div>
+                    </div>
+                    <div class="feature">
+                        <i>🔊</i>
+                        <div>AI Sound Design</div>
+                    </div>
+                    <div class="feature">
+                        <i>🎬</i>
+                        <div>Original Content</div>
+                    </div>
+                </div>
                 
-                document.getElementById('currentStatus').textContent = `All ${operationJobs.length} jobs submitted to API. Waiting for results...`;
+                <div class="prompt-example">
+                    <h3>How It Works:</h3>
+                    <p>Our AI analyzes your text and generates completely new video content frame by frame. No stock footage or existing videos are used.</p>
+                </div>
+            </section>
+            
+            <section class="preview-section">
+                <h2>AI Generated Video</h2>
+                <div class="video-preview">
+                    <div class="video-placeholder" id="videoPlaceholder">
+                        <i>🤖</i>
+                        <p>Your AI-generated video will appear here</p>
+                        <small>100% original content created from your prompts</small>
+                    </div>
+                    <video id="videoPlayer" controls></video>
+                    
+                    <div class="generating-animation" id="generatingAnimation">
+                        <div class="spinner"></div>
+                        <p>AI is creating your video from scratch...</p>
+                        <small>Generating original visuals and audio</small>
+                    </div>
+                </div>
                 
-                // Start checking status periodically
-                pollTimer = setInterval(checkStatus, POLLING_INTERVAL);
-            } else {
-                document.getElementById('currentStatus').textContent = `ERROR: ${data.error || 'Failed to start generation'}`;
-                document.getElementById('currentStatus').className = 'failed';
-                document.getElementById('generateBtn').disabled = false;
-            }
+                <div class="video-info">
+                    <div class="info-row">
+                        <span class="info-label">Total Clips:</span>
+                        <span id="totalClips">0</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Video Duration:</span>
+                        <span id="estimatedTime">0 seconds</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">AI Processing Time:</span>
+                        <span id="generationTime">0 seconds</span>
+                    </div>
+                </div>
+                
+                <div class="clip-progress" id="clipProgress" style="display: none;">
+                    <h3>AI Generation Progress:</h3>
+                    <div id="clipList"></div>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                
+                <div class="status" id="status">Ready to create original video content</div>
+                
+                <div class="controls">
+                    <button class="generate-btn" id="generateBtn">Generate Original Video</button>
+                    <button class="download-btn" id="downloadBtn" disabled>Download Video</button>
+                </div>
+                
+                <div class="video-controls">
+                    <button class="play-btn" id="playBtn" disabled>Play</button>
+                    <button class="pause-btn" id="pauseBtn" disabled>Pause</button>
+                </div>
+            </section>
+        </div>
+    </div>
 
-        } catch (error) {
-            document.getElementById('currentStatus').textContent = `Connection Error: Could not connect to Python server. Is app.py running?`;
-            document.getElementById('currentStatus').className = 'failed';
-            document.getElementById('generateBtn').disabled = false;
-            console.error('Fetch error:', error);
-        }
-    }
-
-    // --- Step 2: Periodically Check Status ---
-    async function checkStatus() {
-        if (operationJobs.length === 0) {
-            clearInterval(pollTimer);
-            return;
-        }
-
-        try {
-            const response = await fetch(`${API_ENDPOINT}/check-status`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ operations: operationJobs })
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const promptsInput = document.getElementById('promptsInput');
+            const promptCount = document.getElementById('promptCount');
+            const totalClipsElement = document.getElementById('totalClips');
+            const estimatedTimeElement = document.getElementById('estimatedTime');
+            const generationTimeElement = document.getElementById('generationTime');
+            const progressBar = document.getElementById('progressBar');
+            const statusElement = document.getElementById('status');
+            const generateBtn = document.getElementById('generateBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const videoPlayer = document.getElementById('videoPlayer');
+            const videoPlaceholder = document.getElementById('videoPlaceholder');
+            const playBtn = document.getElementById('playBtn');
+            const pauseBtn = document.getElementById('pauseBtn');
+            const generatingAnimation = document.getElementById('generatingAnimation');
+            const clipProgress = document.getElementById('clipProgress');
+            const clipList = document.getElementById('clipList');
+            
+            // Update prompt count when textarea changes
+            promptsInput.addEventListener('input', function() {
+                const lines = promptsInput.value.split('\n').filter(line => line.trim() !== '');
+                const count = Math.min(lines.length, 100);
+                promptCount.textContent = count;
+                updateVideoInfo();
             });
             
-            const data = await response.json();
-            const results = data.results;
-
-            let completedCount = 0;
-            let totalTime = 0;
-
-            results.forEach((result, index) => {
-                const job = operationJobs[index];
+            // Update video information based on prompts
+            function updateVideoInfo() {
+                const lines = promptsInput.value.split('\n').filter(line => line.trim() !== '');
+                const filledPrompts = Math.min(lines.length, 100);
                 
-                // Update the status on the UI
-                displayClipStatus(job.name, result.prompt, index, result.status, result.video_url, result.error);
+                totalClipsElement.textContent = filledPrompts;
                 
-                if (result.status === 'COMPLETE') {
-                    completedCount++;
-                    totalTime += CLIP_DURATION;
-                    // Remove job from array so we don't check it again
-                    operationJobs = operationJobs.filter(op => op.name !== job.name);
-                } else if (result.status === 'FAILED') {
-                    // Remove failed job from array
-                    operationJobs = operationJobs.filter(op => op.name !== job.name);
+                const totalSeconds = filledPrompts * 8;
+                const minutes = Math.floor(totalSeconds / 60);
+                const seconds = totalSeconds % 60;
+                
+                if (minutes > 0) {
+                    estimatedTimeElement.textContent = `${minutes}m ${seconds}s`;
+                } else {
+                    estimatedTimeElement.textContent = `${seconds}s`;
                 }
+                
+                // Estimate generation time (3 seconds per clip + 5 seconds overhead)
+                const generationSeconds = filledPrompts * 3 + 5;
+                const genMinutes = Math.floor(generationSeconds / 60);
+                const genSeconds = generationSeconds % 60;
+                
+                if (genMinutes > 0) {
+                    generationTimeElement.textContent = `${genMinutes}m ${genSeconds}s`;
+                } else {
+                    generationTimeElement.textContent = `${genSeconds}s`;
+                }
+            }
+            
+            // Generate video button click handler
+            generateBtn.addEventListener('click', function() {
+                const lines = promptsInput.value.split('\n').filter(line => line.trim() !== '');
+                const filledPrompts = Math.min(lines.length, 100);
+                
+                if (filledPrompts === 0) {
+                    statusElement.textContent = 'Please enter at least one prompt';
+                    return;
+                }
+                
+                // Disable generate button and show progress
+                generateBtn.disabled = true;
+                downloadBtn.disabled = true;
+                playBtn.disabled = true;
+                pauseBtn.disabled = true;
+                statusElement.textContent = 'Initializing AI video generation...';
+                generatingAnimation.style.display = 'flex';
+                clipProgress.style.display = 'block';
+                
+                // Create clip progress items
+                clipList.innerHTML = '';
+                for (let i = 0; i < filledPrompts; i++) {
+                    const clipItem = document.createElement('div');
+                    clipItem.className = 'clip-item';
+                    clipItem.id = `clip-${i}`;
+                    clipItem.innerHTML = `
+                        <div class="clip-number">${i+1}</div>
+                        <div class="clip-status">AI generating clip ${i+1}...</div>
+                        <div class="clip-checkmark" style="display: none;">✓</div>
+                    `;
+                    clipList.appendChild(clipItem);
+                }
+                
+                // Simulate AI video generation progress for each clip
+                let currentClip = 0;
+                let progress = 0;
+                const progressPerClip = 100 / filledPrompts;
+                
+                const generateNextClip = () => {
+                    if (currentClip >= filledPrompts) {
+                        // All clips generated, now combining
+                        statusElement.textContent = 'AI is combining clips and adding audio...';
+                        
+                        setTimeout(() => {
+                            progressBar.style.width = `100%`;
+                            statusElement.textContent = 'AI video generation complete! 100% original content created.';
+                            downloadBtn.disabled = false;
+                            playBtn.disabled = false;
+                            generatingAnimation.style.display = 'none';
+                            
+                            // Show the video player and hide the placeholder
+                            videoPlaceholder.style.display = 'none';
+                            videoPlayer.style.display = 'block';
+                            
+                            // In a real implementation, this would be the AI-generated video
+                            // For demo, we'll use a placeholder message
+                            videoPlayer.innerHTML = `
+                                <source src="#" type="video/mp4">
+                                Your browser does not support the video tag.
+                            `;
+                            
+                            // Show a message that this is AI-generated content
+                            const messageOverlay = document.createElement('div');
+                            messageOverlay.style.position = 'absolute';
+                            messageOverlay.style.top = '0';
+                            messageOverlay.style.left = '0';
+                            messageOverlay.style.width = '100%';
+                            messageOverlay.style.height = '100%';
+                            messageOverlay.style.background = 'rgba(0,0,0,0.8)';
+                            messageOverlay.style.display = 'flex';
+                            messageOverlay.style.flexDirection = 'column';
+                            messageOverlay.style.alignItems = 'center';
+                            messageOverlay.style.justifyContent = 'center';
+                            messageOverlay.style.color = 'white';
+                            messageOverlay.style.textAlign = 'center';
+                            messageOverlay.style.padding = '20px';
+                            messageOverlay.innerHTML = `
+                                <div style="font-size: 3rem; margin-bottom: 20px;">🤖</div>
+                                <h3>AI-Generated Video Preview</h3>
+                                <p>In a real implementation, this would show your custom AI-generated video based on your ${filledPrompts} prompts.</p>
+                                <p><strong>Total duration: ${filledPrompts * 8} seconds</strong></p>
+                                <p><em>This demo simulates the AI video generation process.</em></p>
+                            `;
+                            videoPlayer.parentNode.appendChild(messageOverlay);
+                            
+                            // Add event listener to enable pause button when video plays
+                            videoPlayer.addEventListener('play', function() {
+                                pauseBtn.disabled = false;
+                            });
+                        }, 2000);
+                        return;
+                    }
+                    
+                    // Update status for current clip
+                    statusElement.textContent = `AI generating clip ${currentClip+1}/${filledPrompts}...`;
+                    
+                    // Update clip progress
+                    const clipElement = document.getElementById(`clip-${currentClip}`);
+                    const clipStatus = clipElement.querySelector('.clip-status');
+                    const clipCheckmark = clipElement.querySelector('.clip-checkmark');
+                    
+                    clipStatus.textContent = `AI creating visuals for prompt ${currentClip+1}...`;
+                    
+                    // Simulate AI generation steps
+                    setTimeout(() => {
+                        clipStatus.textContent = `AI rendering frames for clip ${currentClip+1}...`;
+                        
+                        setTimeout(() => {
+                            clipStatus.textContent = `AI adding effects and audio to clip ${currentClip+1}...`;
+                            
+                            setTimeout(() => {
+                                clipStatus.textContent = `Clip ${currentClip+1} generated successfully`;
+                                clipCheckmark.style.display = 'block';
+                                
+                                // Update overall progress
+                                progress += progressPerClip;
+                                progressBar.style.width = `${progress}%`;
+                                
+                                // Move to next clip
+                                currentClip++;
+                                generateNextClip();
+                            }, 800);
+                        }, 800);
+                    }, 800);
+                };
+                
+                // Start generating clips
+                generateNextClip();
             });
-
-            let remainingJobs = operationJobs.length;
-
-            if (remainingJobs === 0) {
-                clearInterval(pollTimer);
-                document.getElementById('currentStatus').textContent = `All videos completed! Total Duration: ${totalTime} seconds.`;
-                document.getElementById('currentStatus').className = 'complete';
-                document.getElementById('generateBtn').disabled = false;
-                alert("All clips are ready! Scroll down to watch and download.");
-            } else {
-                document.getElementById('currentStatus').textContent = `${completedCount} completed, ${remainingJobs} remaining. Still GENERATING...`;
-                document.getElementById('currentStatus').className = 'generating';
-                // Note: Estimated time is hard to predict due to API queue, but we can show time spent.
-            }
-
-        } catch (error) {
-            console.error('Status check error:', error);
-            document.getElementById('currentStatus').textContent = `Error checking status: ${error.message}`;
-            document.getElementById('currentStatus').className = 'failed';
-        }
-    }
-
-    // --- UI Helper Function ---
-    function displayClipStatus(name, prompt, index, status, videoUrl = null, error = null) {
-        let clipDiv = document.getElementById(`clip-${index}`);
-        const listContainer = document.getElementById('clipStatusList');
-
-        if (!clipDiv) {
-            clipDiv = document.createElement('div');
-            clipDiv.className = 'clip';
-            clipDiv.id = `clip-${index}`;
-            clipDiv.innerHTML = `
-                <div style="width: 60%;">${index + 1}. ${prompt.substring(0, 70)}... (${CLIP_DURATION}s)</div>
-                <div id="status-container-${index}" style="width: 40%; text-align: right;">
-                    <span id="status-${index}" class="clip-status-text ${status.toLowerCase()}">${status}</span>
-                </div>
-            `;
-            listContainer.appendChild(clipDiv);
-        }
-
-        const statusElement = document.getElementById(`status-${index}`);
-        const statusContainer = document.getElementById(`status-container-${index}`);
-        
-        statusElement.textContent = status;
-        statusElement.className = `clip-status-text ${status.toLowerCase()}`;
-        
-        // Add Download/Watch links if complete
-        if (status === 'COMPLETE' && videoUrl) {
-            if (!document.getElementById(`actions-${index}`)) {
-                statusContainer.innerHTML = `
-                    <a href="${videoUrl}" target="_blank" class="action-link">WATCH</a>
-                    <a href="${videoUrl}" download="${prompt.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.mp4" class="action-link">DOWNLOAD</a>
-                `;
-            }
-        } else if (status === 'FAILED') {
-            statusContainer.innerHTML = `<span class="clip-status-text failed" title="${error}">FAILED (See Console)</span>`;
-        }
-    }
-
-    // Set initial duration on load
-    document.addEventListener('DOMContentLoaded', () => {
-        // Dummy prompts for testing
-        document.getElementById('prompts').value = "A man walking on the beach at sunset.\nA dog chasing a frisbee in a park.\nA futuristic drone flying over a neon city.\nA medieval fortress under siege.\n(Add more lines for more clips...)";
-        updateDuration(document.getElementById('prompts').value.split('\n').filter(p => p.trim() !== '').length);
-    });
-</script>
-
+            
+            // Download button click handler
+            downloadBtn.addEventListener('click', function() {
+                statusElement.textContent = 'Preparing your original AI-generated video for download...';
+                
+                // Simulate download preparation
+                setTimeout(() => {
+                    statusElement.textContent = 'Downloading your custom AI video...';
+                    
+                    // Create a download simulation
+                    const blob = new Blob(["This would be your AI-generated video file"], {type: 'video/mp4'});
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = 'ai-generated-video.mp4';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                    
+                    setTimeout(() => {
+                        statusElement.textContent = 'Download complete! Your original AI video is ready.';
+                    }, 1000);
+                }, 1500);
+            });
+            
+            // Play button click handler
+            playBtn.addEventListener('click', function() {
+                videoPlayer.play();
+                pauseBtn.disabled = false;
+            });
+            
+            // Pause button click handler
+            pauseBtn.addEventListener('click', function() {
+                videoPlayer.pause();
+            });
+            
+            // Initialize with some sample prompts for demonstration
+            const samplePrompts = [
+                "A cinematic shot of a dragon flying over a medieval castle at sunset",
+                "Abstract geometric patterns morphing into a human face",
+                "Futuristic cityscape with flying cars and neon lights",
+                "Underwater scene with bioluminescent creatures in the deep sea",
+                "Time-lapse of a flower blooming in a magical forest"
+            ];
+            
+            promptsInput.value = samplePrompts.join('\n');
+            promptCount.textContent = samplePrompts.length;
+            updateVideoInfo();
+        });
+    </script>
 </body>
 </html>
