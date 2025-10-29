@@ -3,714 +3,518 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>True AI Video Generator | Create Original Videos</title>
+    <title>AI Video Generator - Veo 3 Style</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
+
         body {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
-            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
-        
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
         }
-        
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-        }
-        
+
         h1 {
-            font-size: 2.5rem;
+            text-align: center;
+            color: #667eea;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-size: 2.5em;
         }
-        
+
         .subtitle {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            max-width: 800px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-        
-        .warning {
-            background: rgba(255, 0, 0, 0.2);
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            border-left: 4px solid #ff416c;
-        }
-        
-        .main-content {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-        }
-        
-        .prompts-section {
-            flex: 1;
-            min-width: 300px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-        }
-        
-        .preview-section {
-            flex: 1;
-            min-width: 300px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        h2 {
-            margin-bottom: 20px;
-            font-size: 1.8rem;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
-            padding-bottom: 10px;
-        }
-        
-        .prompts-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        
-        .prompt-textarea {
-            width: 100%;
-            height: 300px;
-            padding: 15px;
-            border: none;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
-            font-size: 1rem;
-            resize: vertical;
-            line-height: 1.5;
-        }
-        
-        .prompt-textarea::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-        }
-        
-        .prompt-counter {
-            text-align: right;
-            margin-top: 10px;
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-        
-        .video-preview {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            aspect-ratio: 16/9;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .video-placeholder {
             text-align: center;
-            padding: 20px;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
         }
-        
-        .video-placeholder i {
-            font-size: 4rem;
-            margin-bottom: 15px;
-            opacity: 0.7;
+
+        .input-section {
+            margin-bottom: 30px;
         }
-        
-        #videoPlayer {
-            width: 100%;
-            height: 100%;
-            display: none;
-            border-radius: 10px;
-        }
-        
-        .video-info {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-        
-        .info-label {
-            font-weight: bold;
-        }
-        
-        .controls {
-            display: flex;
-            gap: 15px;
-            width: 100%;
-        }
-        
-        button {
-            flex: 1;
-            padding: 15px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .generate-btn {
-            background: linear-gradient(to right, #ff416c, #ff4b2b);
-            color: white;
-        }
-        
-        .download-btn {
-            background: linear-gradient(to right, #00b09b, #96c93d);
-            color: white;
-        }
-        
-        button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-        
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        
-        .progress-container {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            height: 10px;
-            margin: 20px 0;
-            overflow: hidden;
-        }
-        
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(to right, #00b09b, #96c93d);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-        
-        .status {
-            text-align: center;
-            margin-top: 10px;
-            font-style: italic;
-            min-height: 24px;
-        }
-        
-        .video-controls {
+
+        .prompt-input-area {
             display: flex;
             gap: 10px;
-            width: 100%;
-            margin-top: 15px;
+            margin-bottom: 20px;
         }
-        
-        .video-controls button {
-            padding: 10px;
-            font-size: 0.9rem;
-        }
-        
-        .play-btn {
-            background: linear-gradient(to right, #2193b0, #6dd5ed);
-        }
-        
-        .pause-btn {
-            background: linear-gradient(to right, #f46b45, #eea849);
-        }
-        
-        .generating-animation {
-            display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+
+        textarea {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
             border-radius: 10px;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
+            font-size: 16px;
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
         }
-        
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: #ff416c;
-            animation: spin 1s ease-in-out infinite;
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .prompts-list {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .prompt-item {
+            background: white;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .prompt-text {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .remove-btn {
+            background: #ff4757;
+            padding: 5px 15px;
+            font-size: 14px;
+            border-radius: 5px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .generate-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .generate-btn {
+            font-size: 20px;
+            padding: 20px 50px;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .progress-section {
+            display: none;
+            margin-bottom: 30px;
+        }
+
+        .progress-bar-container {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 30px;
+            overflow: hidden;
             margin-bottom: 15px;
         }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        .prompt-example {
-            margin-top: 15px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-        
-        .prompt-example h3 {
-            margin-bottom: 10px;
-            font-size: 1rem;
-        }
-        
-        .clip-progress {
-            margin-top: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 15px;
-        }
-        
-        .clip-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-            padding: 8px;
-            border-radius: 5px;
-            background: rgba(0, 0, 0, 0.2);
-        }
-        
-        .clip-number {
-            width: 25px;
-            height: 25px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 10px;
-            font-size: 0.8rem;
-        }
-        
-        .clip-status {
-            flex: 1;
-            font-size: 0.9rem;
-        }
-        
-        .clip-checkmark {
-            color: #00b09b;
+            color: white;
             font-weight: bold;
-            margin-left: 10px;
         }
-        
-        .ai-features {
+
+        .progress-info {
+            text-align: center;
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .videos-section {
+            display: none;
+        }
+
+        .video-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
             margin-top: 20px;
         }
-        
-        .feature {
-            background: rgba(255, 255, 255, 0.1);
+
+        .video-card {
+            background: #f8f9fa;
+            border-radius: 10px;
             padding: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .video-card video {
+            width: 100%;
             border-radius: 8px;
+            margin-bottom: 10px;
+            background: #000;
+        }
+
+        .video-info {
+            margin-bottom: 10px;
+        }
+
+        .video-prompt {
+            color: #333;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .video-duration {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .download-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
             text-align: center;
         }
-        
-        .feature i {
-            font-size: 1.5rem;
-            margin-bottom: 8px;
-            display: block;
+
+        .alert-error {
+            background: #ffe0e0;
+            color: #d32f2f;
+            border: 1px solid #d32f2f;
         }
-        
-        @media (max-width: 768px) {
-            .main-content {
-                flex-direction: column;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .ai-features {
-                grid-template-columns: 1fr;
-            }
+
+        .alert-info {
+            background: #e3f2fd;
+            color: #1976d2;
+            border: 1px solid #1976d2;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>True AI Video Generator</h1>
-            <p class="subtitle">Create ORIGINAL videos from your prompts using advanced AI. Not fetching from YouTube or other sources.</p>
-            <div class="warning">
-                <strong>⚠️ Important:</strong> This tool creates BRAND NEW videos based on your descriptions using AI models. It does NOT use existing videos from YouTube or other platforms.
-            </div>
-        </header>
-        
-        <div class="main-content">
-            <section class="prompts-section">
-                <h2>Enter Your Video Prompts</h2>
-                <div class="prompts-container">
-                    <textarea class="prompt-textarea" id="promptsInput" placeholder="Describe exactly what you want to see in your video. Each line creates an 8-second clip.
+        <h1>🎬 AI Video Generator</h1>
+        <p class="subtitle">Veo 3 Style - 8 Second Clips</p>
 
-Example:
-A cinematic shot of a dragon flying over a medieval castle at sunset
-Abstract geometric patterns morphing into a human face
-Futuristic cityscape with flying cars and neon lights"></textarea>
-                    <div class="prompt-counter">
-                        <span id="promptCount">0</span>/100 prompts
-                    </div>
-                </div>
-                
-                <div class="ai-features">
-                    <div class="feature">
-                        <i>🎨</i>
-                        <div>AI Visual Generation</div>
-                    </div>
-                    <div class="feature">
-                        <i>⚡</i>
-                        <div>Real-time Rendering</div>
-                    </div>
-                    <div class="feature">
-                        <i>🔊</i>
-                        <div>AI Sound Design</div>
-                    </div>
-                    <div class="feature">
-                        <i>🎬</i>
-                        <div>Original Content</div>
-                    </div>
-                </div>
-                
-                <div class="prompt-example">
-                    <h3>How It Works:</h3>
-                    <p>Our AI analyzes your text and generates completely new video content frame by frame. No stock footage or existing videos are used.</p>
-                </div>
-            </section>
-            
-            <section class="preview-section">
-                <h2>AI Generated Video</h2>
-                <div class="video-preview">
-                    <div class="video-placeholder" id="videoPlaceholder">
-                        <i>🤖</i>
-                        <p>Your AI-generated video will appear here</p>
-                        <small>100% original content created from your prompts</small>
-                    </div>
-                    <video id="videoPlayer" controls></video>
-                    
-                    <div class="generating-animation" id="generatingAnimation">
-                        <div class="spinner"></div>
-                        <p>AI is creating your video from scratch...</p>
-                        <small>Generating original visuals and audio</small>
-                    </div>
-                </div>
-                
-                <div class="video-info">
-                    <div class="info-row">
-                        <span class="info-label">Total Clips:</span>
-                        <span id="totalClips">0</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Video Duration:</span>
-                        <span id="estimatedTime">0 seconds</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">AI Processing Time:</span>
-                        <span id="generationTime">0 seconds</span>
-                    </div>
-                </div>
-                
-                <div class="clip-progress" id="clipProgress" style="display: none;">
-                    <h3>AI Generation Progress:</h3>
-                    <div id="clipList"></div>
-                </div>
-                
-                <div class="progress-container">
-                    <div class="progress-bar" id="progressBar"></div>
-                </div>
-                
-                <div class="status" id="status">Ready to create original video content</div>
-                
-                <div class="controls">
-                    <button class="generate-btn" id="generateBtn">Generate Original Video</button>
-                    <button class="download-btn" id="downloadBtn" disabled>Download Video</button>
-                </div>
-                
-                <div class="video-controls">
-                    <button class="play-btn" id="playBtn" disabled>Play</button>
-                    <button class="pause-btn" id="pauseBtn" disabled>Pause</button>
-                </div>
-            </section>
+        <!-- Input Section -->
+        <div class="input-section">
+            <div class="prompt-input-area">
+                <textarea id="promptInput" placeholder="Enter your video prompt here... (e.g., 'A beautiful sunset over the ocean with waves crashing')"></textarea>
+                <button onclick="addPrompt()">Add Prompt</button>
+            </div>
+
+            <div class="prompts-list" id="promptsList">
+                <p style="text-align: center; color: #999;">No prompts added yet. Add up to 100 prompts!</p>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="promptCount">0</div>
+                <div class="stat-label">Prompts Added</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalDuration">0s</div>
+                <div class="stat-label">Total Duration</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="estimatedTime">0m</div>
+                <div class="stat-label">Estimated Time</div>
+            </div>
+        </div>
+
+        <!-- Generate Section -->
+        <div class="generate-section">
+            <button class="generate-btn" id="generateBtn" onclick="generateVideos()" disabled>
+                🎥 Generate Videos
+            </button>
+        </div>
+
+        <!-- Progress Section -->
+        <div class="progress-section" id="progressSection">
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar">0%</div>
+            </div>
+            <div class="progress-info" id="progressInfo">
+                Generating video 0 of 0...
+            </div>
+        </div>
+
+        <!-- Videos Section -->
+        <div class="videos-section" id="videosSection">
+            <h2 style="margin-bottom: 20px; color: #667eea;">📹 Generated Videos</h2>
+            <div class="video-grid" id="videoGrid"></div>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const promptsInput = document.getElementById('promptsInput');
+        let prompts = [];
+        const CLIP_DURATION = 8; // seconds
+        const MAX_PROMPTS = 100;
+        const GENERATION_TIME_PER_VIDEO = 2; // minutes (estimated)
+
+        function addPrompt() {
+            const input = document.getElementById('promptInput');
+            const prompt = input.value.trim();
+
+            if (!prompt) {
+                alert('Please enter a prompt!');
+                return;
+            }
+
+            if (prompts.length >= MAX_PROMPTS) {
+                alert(`Maximum ${MAX_PROMPTS} prompts allowed!`);
+                return;
+            }
+
+            prompts.push(prompt);
+            input.value = '';
+            updateUI();
+        }
+
+        function removePrompt(index) {
+            prompts.splice(index, 1);
+            updateUI();
+        }
+
+        function updateUI() {
+            const promptsList = document.getElementById('promptsList');
             const promptCount = document.getElementById('promptCount');
-            const totalClipsElement = document.getElementById('totalClips');
-            const estimatedTimeElement = document.getElementById('estimatedTime');
-            const generationTimeElement = document.getElementById('generationTime');
-            const progressBar = document.getElementById('progressBar');
-            const statusElement = document.getElementById('status');
+            const totalDuration = document.getElementById('totalDuration');
+            const estimatedTime = document.getElementById('estimatedTime');
             const generateBtn = document.getElementById('generateBtn');
-            const downloadBtn = document.getElementById('downloadBtn');
-            const videoPlayer = document.getElementById('videoPlayer');
-            const videoPlaceholder = document.getElementById('videoPlaceholder');
-            const playBtn = document.getElementById('playBtn');
-            const pauseBtn = document.getElementById('pauseBtn');
-            const generatingAnimation = document.getElementById('generatingAnimation');
-            const clipProgress = document.getElementById('clipProgress');
-            const clipList = document.getElementById('clipList');
+
+            // Update prompts list
+            if (prompts.length === 0) {
+                promptsList.innerHTML = '<p style="text-align: center; color: #999;">No prompts added yet. Add up to 100 prompts!</p>';
+            } else {
+                promptsList.innerHTML = prompts.map((prompt, index) => `
+                    <div class="prompt-item">
+                        <div class="prompt-text">${index + 1}. ${prompt}</div>
+                        <button class="remove-btn" onclick="removePrompt(${index})">Remove</button>
+                    </div>
+                `).join('');
+            }
+
+            // Update stats
+            promptCount.textContent = prompts.length;
+            totalDuration.textContent = `${prompts.length * CLIP_DURATION}s`;
+            estimatedTime.textContent = `${Math.ceil(prompts.length * GENERATION_TIME_PER_VIDEO)}m`;
+
+            // Enable/disable generate button
+            generateBtn.disabled = prompts.length === 0;
+        }
+
+        async function generateVideos() {
+            if (prompts.length === 0) return;
+
+            const generateBtn = document.getElementById('generateBtn');
+            const progressSection = document.getElementById('progressSection');
+            const videosSection = document.getElementById('videosSection');
+            const videoGrid = document.getElementById('videoGrid');
+
+            // Reset and show progress
+            generateBtn.disabled = true;
+            progressSection.style.display = 'block';
+            videosSection.style.display = 'block';
+            videoGrid.innerHTML = '';
+
+            // Generate videos
+            for (let i = 0; i < prompts.length; i++) {
+                const prompt = prompts[i];
+                const progress = Math.round(((i + 1) / prompts.length) * 100);
+
+                // Update progress
+                document.getElementById('progressBar').style.width = progress + '%';
+                document.getElementById('progressBar').textContent = progress + '%';
+                document.getElementById('progressInfo').textContent = 
+                    `Generating video ${i + 1} of ${prompts.length}... "${prompt.substring(0, 50)}${prompt.length > 50 ? '...' : ''}"`;
+
+                // Simulate video generation (in real implementation, call your API here)
+                const videoData = await generateSingleVideo(prompt, i + 1);
+
+                // Add video to grid
+                addVideoToGrid(videoData);
+            }
+
+            // Complete
+            document.getElementById('progressInfo').textContent = 
+                `✅ All ${prompts.length} videos generated successfully!`;
+            generateBtn.disabled = false;
+        }
+
+        async function generateSingleVideo(prompt, index) {
+            // Simulate API call delay
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            // In real implementation, replace this with actual API call
+            // For demo, we'll create a placeholder video
+            return {
+                index: index,
+                prompt: prompt,
+                duration: CLIP_DURATION,
+                videoUrl: createPlaceholderVideo(prompt, index),
+                downloadUrl: '#' // Would be actual download URL from API
+            };
+        }
+
+        function createPlaceholderVideo(prompt, index) {
+            // Create a simple canvas-based video placeholder
+            const canvas = document.createElement('canvas');
+            canvas.width = 640;
+            canvas.height = 360;
+            const ctx = canvas.getContext('2d');
+
+            // Create gradient background
+            const gradient = ctx.createLinearGradient(0, 0, 640, 360);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(1, '#764ba2');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 640, 360);
+
+            // Add text
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 24px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(`Video ${index}`, 320, 160);
             
-            // Update prompt count when textarea changes
-            promptsInput.addEventListener('input', function() {
-                const lines = promptsInput.value.split('\n').filter(line => line.trim() !== '');
-                const count = Math.min(lines.length, 100);
-                promptCount.textContent = count;
-                updateVideoInfo();
-            });
-            
-            // Update video information based on prompts
-            function updateVideoInfo() {
-                const lines = promptsInput.value.split('\n').filter(line => line.trim() !== '');
-                const filledPrompts = Math.min(lines.length, 100);
-                
-                totalClipsElement.textContent = filledPrompts;
-                
-                const totalSeconds = filledPrompts * 8;
-                const minutes = Math.floor(totalSeconds / 60);
-                const seconds = totalSeconds % 60;
-                
-                if (minutes > 0) {
-                    estimatedTimeElement.textContent = `${minutes}m ${seconds}s`;
+            ctx.font = '16px Arial';
+            const words = prompt.split(' ');
+            let line = '';
+            let y = 200;
+            for (let i = 0; i < words.length; i++) {
+                const testLine = line + words[i] + ' ';
+                if (ctx.measureText(testLine).width > 500) {
+                    ctx.fillText(line, 320, y);
+                    line = words[i] + ' ';
+                    y += 25;
                 } else {
-                    estimatedTimeElement.textContent = `${seconds}s`;
-                }
-                
-                // Estimate generation time (3 seconds per clip + 5 seconds overhead)
-                const generationSeconds = filledPrompts * 3 + 5;
-                const genMinutes = Math.floor(generationSeconds / 60);
-                const genSeconds = generationSeconds % 60;
-                
-                if (genMinutes > 0) {
-                    generationTimeElement.textContent = `${genMinutes}m ${genSeconds}s`;
-                } else {
-                    generationTimeElement.textContent = `${genSeconds}s`;
+                    line = testLine;
                 }
             }
+            ctx.fillText(line, 320, y);
+
+            ctx.font = 'bold 20px Arial';
+            ctx.fillText('8 Seconds', 320, 320);
+
+            return canvas.toDataURL();
+        }
+
+        function addVideoToGrid(videoData) {
+            const videoGrid = document.getElementById('videoGrid');
             
-            // Generate video button click handler
-            generateBtn.addEventListener('click', function() {
-                const lines = promptsInput.value.split('\n').filter(line => line.trim() !== '');
-                const filledPrompts = Math.min(lines.length, 100);
-                
-                if (filledPrompts === 0) {
-                    statusElement.textContent = 'Please enter at least one prompt';
-                    return;
-                }
-                
-                // Disable generate button and show progress
-                generateBtn.disabled = true;
-                downloadBtn.disabled = true;
-                playBtn.disabled = true;
-                pauseBtn.disabled = true;
-                statusElement.textContent = 'Initializing AI video generation...';
-                generatingAnimation.style.display = 'flex';
-                clipProgress.style.display = 'block';
-                
-                // Create clip progress items
-                clipList.innerHTML = '';
-                for (let i = 0; i < filledPrompts; i++) {
-                    const clipItem = document.createElement('div');
-                    clipItem.className = 'clip-item';
-                    clipItem.id = `clip-${i}`;
-                    clipItem.innerHTML = `
-                        <div class="clip-number">${i+1}</div>
-                        <div class="clip-status">AI generating clip ${i+1}...</div>
-                        <div class="clip-checkmark" style="display: none;">✓</div>
-                    `;
-                    clipList.appendChild(clipItem);
-                }
-                
-                // Simulate AI video generation progress for each clip
-                let currentClip = 0;
-                let progress = 0;
-                const progressPerClip = 100 / filledPrompts;
-                
-                const generateNextClip = () => {
-                    if (currentClip >= filledPrompts) {
-                        // All clips generated, now combining
-                        statusElement.textContent = 'AI is combining clips and adding audio...';
-                        
-                        setTimeout(() => {
-                            progressBar.style.width = `100%`;
-                            statusElement.textContent = 'AI video generation complete! 100% original content created.';
-                            downloadBtn.disabled = false;
-                            playBtn.disabled = false;
-                            generatingAnimation.style.display = 'none';
-                            
-                            // Show the video player and hide the placeholder
-                            videoPlaceholder.style.display = 'none';
-                            videoPlayer.style.display = 'block';
-                            
-                            // In a real implementation, this would be the AI-generated video
-                            // For demo, we'll use a placeholder message
-                            videoPlayer.innerHTML = `
-                                <source src="#" type="video/mp4">
-                                Your browser does not support the video tag.
-                            `;
-                            
-                            // Show a message that this is AI-generated content
-                            const messageOverlay = document.createElement('div');
-                            messageOverlay.style.position = 'absolute';
-                            messageOverlay.style.top = '0';
-                            messageOverlay.style.left = '0';
-                            messageOverlay.style.width = '100%';
-                            messageOverlay.style.height = '100%';
-                            messageOverlay.style.background = 'rgba(0,0,0,0.8)';
-                            messageOverlay.style.display = 'flex';
-                            messageOverlay.style.flexDirection = 'column';
-                            messageOverlay.style.alignItems = 'center';
-                            messageOverlay.style.justifyContent = 'center';
-                            messageOverlay.style.color = 'white';
-                            messageOverlay.style.textAlign = 'center';
-                            messageOverlay.style.padding = '20px';
-                            messageOverlay.innerHTML = `
-                                <div style="font-size: 3rem; margin-bottom: 20px;">🤖</div>
-                                <h3>AI-Generated Video Preview</h3>
-                                <p>In a real implementation, this would show your custom AI-generated video based on your ${filledPrompts} prompts.</p>
-                                <p><strong>Total duration: ${filledPrompts * 8} seconds</strong></p>
-                                <p><em>This demo simulates the AI video generation process.</em></p>
-                            `;
-                            videoPlayer.parentNode.appendChild(messageOverlay);
-                            
-                            // Add event listener to enable pause button when video plays
-                            videoPlayer.addEventListener('play', function() {
-                                pauseBtn.disabled = false;
-                            });
-                        }, 2000);
-                        return;
-                    }
-                    
-                    // Update status for current clip
-                    statusElement.textContent = `AI generating clip ${currentClip+1}/${filledPrompts}...`;
-                    
-                    // Update clip progress
-                    const clipElement = document.getElementById(`clip-${currentClip}`);
-                    const clipStatus = clipElement.querySelector('.clip-status');
-                    const clipCheckmark = clipElement.querySelector('.clip-checkmark');
-                    
-                    clipStatus.textContent = `AI creating visuals for prompt ${currentClip+1}...`;
-                    
-                    // Simulate AI generation steps
-                    setTimeout(() => {
-                        clipStatus.textContent = `AI rendering frames for clip ${currentClip+1}...`;
-                        
-                        setTimeout(() => {
-                            clipStatus.textContent = `AI adding effects and audio to clip ${currentClip+1}...`;
-                            
-                            setTimeout(() => {
-                                clipStatus.textContent = `Clip ${currentClip+1} generated successfully`;
-                                clipCheckmark.style.display = 'block';
-                                
-                                // Update overall progress
-                                progress += progressPerClip;
-                                progressBar.style.width = `${progress}%`;
-                                
-                                // Move to next clip
-                                currentClip++;
-                                generateNextClip();
-                            }, 800);
-                        }, 800);
-                    }, 800);
-                };
-                
-                // Start generating clips
-                generateNextClip();
-            });
+            const videoCard = document.createElement('div');
+            videoCard.className = 'video-card';
+            videoCard.innerHTML = `
+                <img src="${videoData.videoUrl}" alt="Video ${videoData.index}" style="width: 100%; border-radius: 8px; margin-bottom: 10px;">
+                <div class="video-info">
+                    <div class="video-prompt"><strong>Prompt ${videoData.index}:</strong> ${videoData.prompt}</div>
+                    <div class="video-duration">⏱️ Duration: ${videoData.duration} seconds</div>
+                </div>
+                <button class="download-btn" onclick="downloadVideo(${videoData.index})">
+                    ⬇️ Download Video
+                </button>
+            `;
             
-            // Download button click handler
-            downloadBtn.addEventListener('click', function() {
-                statusElement.textContent = 'Preparing your original AI-generated video for download...';
-                
-                // Simulate download preparation
-                setTimeout(() => {
-                    statusElement.textContent = 'Downloading your custom AI video...';
-                    
-                    // Create a download simulation
-                    const blob = new Blob(["This would be your AI-generated video file"], {type: 'video/mp4'});
-                    const url = URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.download = 'ai-generated-video.mp4';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    URL.revokeObjectURL(url);
-                    
-                    setTimeout(() => {
-                        statusElement.textContent = 'Download complete! Your original AI video is ready.';
-                    }, 1000);
-                }, 1500);
-            });
-            
-            // Play button click handler
-            playBtn.addEventListener('click', function() {
-                videoPlayer.play();
-                pauseBtn.disabled = false;
-            });
-            
-            // Pause button click handler
-            pauseBtn.addEventListener('click', function() {
-                videoPlayer.pause();
-            });
-            
-            // Initialize with some sample prompts for demonstration
-            const samplePrompts = [
-                "A cinematic shot of a dragon flying over a medieval castle at sunset",
-                "Abstract geometric patterns morphing into a human face",
-                "Futuristic cityscape with flying cars and neon lights",
-                "Underwater scene with bioluminescent creatures in the deep sea",
-                "Time-lapse of a flower blooming in a magical forest"
+            videoGrid.appendChild(videoCard);
+        }
+
+        function downloadVideo(index) {
+            alert(`Video ${index} download started! (In real implementation, this would download the actual video file)`);
+            // In real implementation:
+            // const link = document.createElement('a');
+            // link.href = videoUrl;
+            // link.download = `video_${index}.mp4`;
+            // link.click();
+        }
+
+        // Add sample prompts for testing
+        function loadSamplePrompts() {
+            const samples = [
+                "A beautiful sunset over the ocean with waves crashing on the beach",
+                "A futuristic city with flying cars and neon lights at night",
+                "A cat playing with a ball of yarn in slow motion",
+                "Time-lapse of a flower blooming in a garden",
+                "A person walking through a forest with sunlight filtering through trees"
             ];
             
-            promptsInput.value = samplePrompts.join('\n');
-            promptCount.textContent = samplePrompts.length;
-            updateVideoInfo();
-        });
+            samples.forEach(prompt => prompts.push(prompt));
+            updateUI();
+        }
+
+        // Optional: Load sample prompts on page load
+        // loadSamplePrompts();
     </script>
 </body>
 </html>
