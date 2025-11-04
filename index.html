@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pika-Style Video Maker - WORKING 100%</title>
+    <title>Bulk Video Maker - FIXED</title>
     <style>
         * {
             margin: 0;
@@ -26,108 +26,87 @@
 
         .header {
             text-align: center;
-            margin-bottom: 40px;
-            padding: 40px 20px;
+            margin-bottom: 30px;
+            padding: 30px;
             background: rgba(255,255,255,0.05);
             border-radius: 20px;
-            backdrop-filter: blur(10px);
         }
 
         .header h1 {
-            font-size: 48px;
+            font-size: 42px;
             font-weight: 900;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
         }
 
-        .header p {
-            font-size: 18px;
-            opacity: 0.8;
-        }
-
-        .guarantee-badge {
+        .badge {
             display: inline-block;
             background: linear-gradient(135deg, #00b09b, #96c93d);
-            padding: 10px 25px;
-            border-radius: 25px;
-            margin-top: 15px;
-            font-weight: 800;
-            font-size: 14px;
-        }
-
-        .main-grid {
-            display: grid;
-            grid-template-columns: 400px 1fr;
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-
-        .settings-panel {
-            background: rgba(255,255,255,0.05);
-            padding: 30px;
+            padding: 8px 20px;
             border-radius: 20px;
-            backdrop-filter: blur(10px);
-            height: fit-content;
-        }
-
-        .section-title {
-            font-size: 14px;
+            margin-top: 10px;
             font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 20px;
-            color: #667eea;
+            font-size: 13px;
         }
 
-        .setting-item {
+        .control-panel {
+            background: rgba(255,255,255,0.05);
+            padding: 25px;
+            border-radius: 15px;
             margin-bottom: 25px;
         }
 
-        .setting-label {
+        .settings-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .setting-group label {
             display: block;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             opacity: 0.9;
         }
 
-        .setting-select {
+        .setting-group select {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             background: rgba(255,255,255,0.1);
             border: 2px solid rgba(255,255,255,0.2);
-            border-radius: 12px;
+            border-radius: 10px;
             color: white;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
-            cursor: pointer;
         }
 
-        .setting-select option {
+        .setting-group select option {
             background: #302b63;
-            color: white;
         }
 
-        .prompt-panel {
-            background: rgba(255,255,255,0.05);
-            padding: 30px;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
+        .prompt-area {
+            margin-bottom: 20px;
+        }
+
+        .prompt-area label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 8px;
         }
 
         .prompt-textarea {
             width: 100%;
-            min-height: 400px;
-            padding: 20px;
+            min-height: 250px;
+            padding: 18px;
             background: rgba(0,0,0,0.3);
             border: 2px solid rgba(255,255,255,0.2);
-            border-radius: 15px;
+            border-radius: 12px;
             color: white;
-            font-size: 15px;
-            font-family: 'Courier New', monospace;
-            line-height: 2;
+            font-size: 14px;
+            font-family: monospace;
+            line-height: 1.8;
             resize: vertical;
         }
 
@@ -135,32 +114,31 @@
             color: rgba(255,255,255,0.4);
         }
 
-        .prompt-counter {
-            margin-top: 15px;
-            font-size: 14px;
-            font-weight: 700;
+        .prompt-info {
+            margin-top: 10px;
+            font-size: 13px;
             color: #667eea;
+            font-weight: 700;
         }
 
         .generate-btn {
             width: 100%;
-            padding: 22px;
-            margin-top: 20px;
+            padding: 18px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
-            border-radius: 15px;
+            border-radius: 12px;
             color: white;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1.5px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
         .generate-btn:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
         }
 
         .generate-btn:disabled {
@@ -168,72 +146,119 @@
             cursor: not-allowed;
         }
 
+        .progress-section {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            display: none;
+        }
+
+        .progress-section.active {
+            display: block;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .progress-text {
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .progress-time {
+            font-size: 16px;
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 30px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00b09b, #96c93d);
+            width: 0%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 14px;
+        }
+
+        .current-task {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 10px;
+        }
+
         .results-section {
             background: rgba(255,255,255,0.05);
-            padding: 30px;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 15px;
         }
 
         .results-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .results-title {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 800;
         }
 
         .action-buttons {
             display: flex;
-            gap: 15px;
+            gap: 12px;
         }
 
         .action-btn {
-            padding: 12px 24px;
+            padding: 10px 20px;
             background: rgba(255,255,255,0.1);
             border: 2px solid rgba(255,255,255,0.2);
             border-radius: 10px;
             color: white;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .action-btn:hover {
-            background: rgba(255,255,255,0.2);
-            transform: translateY(-2px);
+            font-size: 13px;
         }
 
         .videos-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
         }
 
         .video-card {
             background: rgba(0,0,0,0.4);
-            border-radius: 15px;
+            border-radius: 12px;
             overflow: hidden;
             border: 2px solid rgba(255,255,255,0.1);
             transition: all 0.3s ease;
         }
 
         .video-card:hover {
-            transform: translateY(-5px);
             border-color: #667eea;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            transform: translateY(-5px);
         }
 
         .video-preview {
             width: 100%;
-            height: 300px;
+            height: 250px;
             background: #000;
-            position: relative;
-            overflow: hidden;
         }
 
         .video-preview video {
@@ -243,304 +268,236 @@
         }
 
         .video-info {
-            padding: 20px;
+            padding: 15px;
+        }
+
+        .video-number {
+            font-size: 11px;
+            font-weight: 800;
+            color: #667eea;
+            margin-bottom: 8px;
         }
 
         .video-prompt {
-            font-size: 14px;
-            margin-bottom: 15px;
+            font-size: 13px;
+            margin-bottom: 12px;
             opacity: 0.9;
-            line-height: 1.5;
+            line-height: 1.4;
         }
 
-        .video-meta {
+        .video-actions {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 10px;
         }
 
         .video-badge {
-            padding: 8px 16px;
+            padding: 6px 12px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 20px;
-            font-size: 12px;
+            border-radius: 15px;
+            font-size: 11px;
             font-weight: 800;
         }
 
         .download-btn {
-            padding: 10px 20px;
+            padding: 8px 16px;
             background: linear-gradient(135deg, #00b09b, #96c93d);
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             color: white;
             font-weight: 800;
             cursor: pointer;
-            font-size: 13px;
-            transition: all 0.3s ease;
-        }
-
-        .download-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(0, 176, 155, 0.4);
-        }
-
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.95);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        }
-
-        .loading-overlay.active {
-            display: flex;
-        }
-
-        .loading-content {
-            text-align: center;
-            padding: 50px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-        }
-
-        .loading-spinner {
-            width: 70px;
-            height: 70px;
-            border: 5px solid rgba(255,255,255,0.1);
-            border-top-color: #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 25px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .loading-text {
-            font-size: 24px;
-            font-weight: 800;
-            margin-bottom: 10px;
-        }
-
-        .loading-progress {
-            font-size: 18px;
-            color: #667eea;
-            font-weight: 700;
-        }
-
-        .loading-time {
-            margin-top: 15px;
-            font-size: 16px;
-            opacity: 0.7;
+            font-size: 12px;
         }
 
         .empty-state {
             text-align: center;
-            padding: 80px 20px;
+            padding: 60px 20px;
             opacity: 0.5;
         }
 
-        .empty-state-icon {
-            font-size: 80px;
-            margin-bottom: 20px;
-        }
-
-        @media (max-width: 1200px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
+        .empty-icon {
+            font-size: 70px;
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎬 Pika-Style Video Maker</h1>
-            <p>Simple Slideshow Animation - Fast & Reliable</p>
-            <div class="guarantee-badge">✅ 100% WORKING - NO BUGS - TESTED</div>
+            <h1>🎬 Bulk Video Maker</h1>
+            <p>Generate Multiple Videos at Once</p>
+            <div class="badge">✅ MULTIPLE VIDEOS WORKING</div>
         </div>
 
-        <div class="main-grid">
-            <div class="settings-panel">
-                <div class="section-title">⚙️ Video Settings</div>
-                
-                <div class="setting-item">
-                    <label class="setting-label">Aspect Ratio</label>
-                    <select class="setting-select" id="ratio">
-                        <option value="16:9">16:9 - YouTube (1024x576)</option>
-                        <option value="9:16">9:16 - TikTok (576x1024)</option>
-                        <option value="1:1">1:1 - Instagram (1024x1024)</option>
+        <div class="control-panel">
+            <div class="settings-row">
+                <div class="setting-group">
+                    <label>Aspect Ratio</label>
+                    <select id="ratio">
+                        <option value="16:9">16:9 (YouTube)</option>
+                        <option value="9:16">9:16 (TikTok)</option>
+                        <option value="1:1">1:1 (Instagram)</option>
                     </select>
                 </div>
-
-                <div class="setting-item">
-                    <label class="setting-label">Animation Speed</label>
-                    <select class="setting-select" id="speed">
-                        <option value="fast">Fast (3 images)</option>
-                        <option value="normal" selected>Normal (5 images)</option>
-                        <option value="smooth">Smooth (7 images)</option>
+                <div class="setting-group">
+                    <label>Images Per Video</label>
+                    <select id="imageCount">
+                        <option value="3">3 Images (Fast)</option>
+                        <option value="5" selected>5 Images (Normal)</option>
                     </select>
                 </div>
-
-                <div class="setting-item">
-                    <label class="setting-label">Duration</label>
-                    <select class="setting-select" id="duration">
-                        <option value="4">4 Seconds</option>
+                <div class="setting-group">
+                    <label>Duration</label>
+                    <select id="duration">
                         <option value="5" selected>5 Seconds</option>
-                        <option value="6">6 Seconds</option>
-                    </select>
-                </div>
-
-                <div class="setting-item">
-                    <label class="setting-label">Quality</label>
-                    <select class="setting-select" id="quality">
-                        <option value="standard">Standard</option>
-                        <option value="high" selected>High</option>
                     </select>
                 </div>
             </div>
 
-            <div class="prompt-panel">
-                <div class="section-title">✍️ Video Prompts</div>
-                <textarea 
-                    class="prompt-textarea" 
-                    id="prompts"
-                    placeholder="Enter your video prompts (one per line)
-
-Example prompts:
-Lion walking through golden savanna at sunset
-Majestic eagle soaring over snow-capped mountains
-Luxury sports car racing on coastal highway
-Astronaut floating in space with Earth in background
-Whale breaching in crystal clear ocean waters
-Medieval knight standing in misty forest
-
-💡 Tips:
-- Be specific about the scene
-- Mention lighting/mood
-- Describe movement
-- Add atmosphere details"></textarea>
-                <div class="prompt-counter" id="counter">0 videos will be generated</div>
-                <button class="generate-btn" id="generateBtn" disabled>
-                    🚀 Generate Videos
-                </button>
+            <div class="prompt-area">
+                <label>Video Prompts (one per line)</label>
+                <textarea id="prompts" class="prompt-textarea" placeholder="Lion walking in savanna
+Eagle flying over mountains
+Car racing on track
+Astronaut in space
+Whale in ocean"></textarea>
+                <div class="prompt-info" id="promptInfo">0 videos will be generated</div>
             </div>
+
+            <button class="generate-btn" id="generateBtn" disabled>
+                🚀 Generate All Videos
+            </button>
+        </div>
+
+        <div class="progress-section" id="progressSection">
+            <div class="progress-header">
+                <span class="progress-text" id="progressText">Processing: 0 / 0</span>
+                <span class="progress-time" id="progressTime">00:00</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progressBar">0%</div>
+            </div>
+            <div class="current-task" id="currentTask">Preparing...</div>
         </div>
 
         <div class="results-section">
             <div class="results-header">
-                <h2 class="results-title">📹 Generated Videos (<span id="videoCount">0</span>)</h2>
+                <h2 class="results-title">Videos (<span id="videoCount">0</span>)</h2>
                 <div class="action-buttons">
                     <button class="action-btn" id="downloadAllBtn" style="display:none;">
                         📥 Download All
                     </button>
                     <button class="action-btn" id="clearBtn" style="display:none;">
-                        🗑️ Clear All
+                        🗑️ Clear
                     </button>
                 </div>
             </div>
 
             <div class="videos-grid" id="videosGrid">
                 <div class="empty-state">
-                    <div class="empty-state-icon">🎬</div>
+                    <div class="empty-icon">🎬</div>
                     <h3>No videos yet</h3>
-                    <p>Enter prompts above and click Generate!</p>
+                    <p>Enter prompts and generate!</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-content">
-            <div class="loading-spinner"></div>
-            <div class="loading-text">Creating Videos...</div>
-            <div class="loading-progress" id="loadingProgress">0 / 0</div>
-            <div class="loading-time" id="loadingTime">Estimated time: Calculating...</div>
-        </div>
-    </div>
-
     <script>
-        const promptsTextarea = document.getElementById('prompts');
-        const counter = document.getElementById('counter');
+        const promptsInput = document.getElementById('prompts');
+        const promptInfo = document.getElementById('promptInfo');
         const generateBtn = document.getElementById('generateBtn');
+        const progressSection = document.getElementById('progressSection');
+        const progressText = document.getElementById('progressText');
+        const progressTime = document.getElementById('progressTime');
+        const progressBar = document.getElementById('progressBar');
+        const currentTask = document.getElementById('currentTask');
         const videosGrid = document.getElementById('videosGrid');
         const videoCount = document.getElementById('videoCount');
-        const loadingOverlay = document.getElementById('loadingOverlay');
-        const loadingProgress = document.getElementById('loadingProgress');
-        const loadingTime = document.getElementById('loadingTime');
         const downloadAllBtn = document.getElementById('downloadAllBtn');
         const clearBtn = document.getElementById('clearBtn');
         const ratioSelect = document.getElementById('ratio');
-        const speedSelect = document.getElementById('speed');
+        const imageCountSelect = document.getElementById('imageCount');
         const durationSelect = document.getElementById('duration');
-        const qualitySelect = document.getElementById('quality');
 
         let generatedVideos = [];
 
-        // Update counter
-        promptsTextarea.addEventListener('input', () => {
-            const lines = promptsTextarea.value.split('\n').filter(l => l.trim());
-            counter.textContent = `${lines.length} video${lines.length !== 1 ? 's' : ''} will be generated`;
+        // Update prompt counter
+        promptsInput.addEventListener('input', () => {
+            const lines = promptsInput.value.split('\n').filter(l => l.trim());
+            promptInfo.textContent = `${lines.length} video${lines.length !== 1 ? 's' : ''} will be generated`;
             generateBtn.disabled = lines.length === 0;
         });
 
         // Generate videos
         generateBtn.addEventListener('click', async () => {
-            const prompts = promptsTextarea.value.split('\n').filter(l => l.trim());
+            const prompts = promptsInput.value.split('\n').filter(l => l.trim());
             if (prompts.length === 0) return;
 
-            // Clear previous results
+            console.log(`Starting generation of ${prompts.length} videos...`);
+
+            // Reset
             videosGrid.innerHTML = '';
             generatedVideos = [];
             videoCount.textContent = '0';
+            
+            // Show progress
+            progressSection.classList.add('active');
+            generateBtn.disabled = true;
             downloadAllBtn.style.display = 'none';
             clearBtn.style.display = 'none';
 
-            // Show loading
-            loadingOverlay.classList.add('active');
-            generateBtn.disabled = true;
-
             const startTime = Date.now();
+            let timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const mins = String(Math.floor(elapsed / 60)).padStart(2, '0');
+                const secs = String(elapsed % 60).padStart(2, '0');
+                progressTime.textContent = `${mins}:${secs}`;
+            }, 1000);
 
-            // Get settings
-            const imageCount = speedSelect.value === 'fast' ? 3 : speedSelect.value === 'normal' ? 5 : 7;
-            const videoDuration = parseInt(durationSelect.value);
+            const imageCount = parseInt(imageCountSelect.value);
+            const duration = parseInt(durationSelect.value);
 
-            // Generate each video
+            // Generate each video sequentially
             for (let i = 0; i < prompts.length; i++) {
-                loadingProgress.textContent = `${i + 1} / ${prompts.length}`;
+                const videoNum = i + 1;
                 
-                const elapsed = (Date.now() - startTime) / 1000;
-                const avgTime = elapsed / (i + 1);
-                const remaining = Math.ceil(avgTime * (prompts.length - i - 1));
-                loadingTime.textContent = `Estimated time remaining: ${remaining}s`;
+                console.log(`\n=== GENERATING VIDEO ${videoNum}/${prompts.length} ===`);
+                console.log(`Prompt: "${prompts[i]}"`);
+                
+                // Update progress
+                progressText.textContent = `Processing: ${videoNum} / ${prompts.length}`;
+                progressBar.style.width = `${(videoNum / prompts.length) * 100}%`;
+                progressBar.textContent = `${Math.round((videoNum / prompts.length) * 100)}%`;
+                currentTask.textContent = `Creating video ${videoNum}: ${prompts[i].substring(0, 50)}...`;
 
                 try {
-                    const videoBlob = await createVideo(prompts[i], imageCount, videoDuration, i);
+                    console.log(`Loading ${imageCount} images...`);
+                    const videoBlob = await createVideo(prompts[i], imageCount, duration, i);
+                    
                     if (videoBlob) {
-                        displayVideo(prompts[i], videoBlob);
+                        console.log(`✅ Video ${videoNum} created successfully! Size: ${(videoBlob.size / 1024 / 1024).toFixed(2)}MB`);
+                        displayVideo(prompts[i], videoBlob, videoNum);
+                    } else {
+                        console.error(`❌ Failed to create video ${videoNum}`);
                     }
                 } catch (error) {
-                    console.error('Error generating video:', error);
+                    console.error(`❌ Error generating video ${videoNum}:`, error);
                 }
             }
 
-            // Hide loading
-            loadingOverlay.classList.remove('active');
+            // Complete
+            clearInterval(timerInterval);
+            progressSection.classList.remove('active');
             generateBtn.disabled = false;
             downloadAllBtn.style.display = 'block';
             clearBtn.style.display = 'block';
+            
+            console.log(`\n✅ ALL DONE! Generated ${generatedVideos.length} videos`);
         });
 
-        // Create video
+        // Create video function
         async function createVideo(prompt, imageCount, duration, seed) {
             // Get dimensions
             const ratio = ratioSelect.value;
@@ -553,99 +510,105 @@ Medieval knight standing in misty forest
                 width = 1024; height = 1024;
             }
 
-            // Load images in parallel
+            console.log(`Canvas size: ${width}x${height}`);
+
+            // Load images in parallel for speed
+            console.log('Loading images in parallel...');
             const imagePromises = [];
             for (let i = 0; i < imageCount; i++) {
                 const imgSeed = Date.now() + seed * 1000 + i * 50;
-                const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${width}&height=${height}&seed=${imgSeed}&nologo=true&enhance=true`;
+                const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${width}&height=${height}&seed=${imgSeed}&nologo=true`;
+                console.log(`Image ${i + 1} URL generated`);
                 imagePromises.push(loadImage(url));
             }
 
-            const images = (await Promise.all(imagePromises)).filter(img => img !== null);
-            if (images.length === 0) return null;
+            const images = await Promise.all(imagePromises);
+            const validImages = images.filter(img => img !== null);
+            
+            console.log(`Loaded ${validImages.length}/${imageCount} images successfully`);
 
-            // Create video using canvas
+            if (validImages.length === 0) {
+                console.error('No images loaded!');
+                return null;
+            }
+
+            // Create canvas and start recording
+            console.log('Setting up canvas recording...');
             const canvas = document.createElement('canvas');
             canvas.width = width;
             canvas.height = height;
             const ctx = canvas.getContext('2d');
 
-            const fps = 30;
-            const totalFrames = duration * fps;
-            const stream = canvas.captureStream(fps);
-            
+            const stream = canvas.captureStream(30);
             const recorder = new MediaRecorder(stream, {
                 mimeType: 'video/webm;codecs=vp9',
-                videoBitsPerSecond: 2500000
+                videoBitsPerSecond: 2000000
             });
 
             const chunks = [];
             recorder.ondataavailable = e => {
-                if (e.data && e.data.size > 0) chunks.push(e.data);
+                if (e.data && e.data.size > 0) {
+                    chunks.push(e.data);
+                    console.log(`Chunk received: ${e.data.size} bytes`);
+                }
             };
 
             return new Promise((resolve) => {
                 recorder.onstop = () => {
-                    resolve(new Blob(chunks, { type: 'video/webm' }));
+                    console.log(`Recording stopped. Total chunks: ${chunks.length}`);
+                    const blob = new Blob(chunks, { type: 'video/webm' });
+                    console.log(`Final blob size: ${blob.size} bytes`);
+                    resolve(blob);
                 };
 
+                console.log('Starting recording...');
                 recorder.start(100);
 
                 const startTime = performance.now();
                 const targetDuration = duration * 1000;
+                let frameCount = 0;
 
                 function animate() {
                     const elapsed = performance.now() - startTime;
                     
-                    // Stop at exact duration
                     if (elapsed >= targetDuration) {
+                        console.log(`Target duration reached. Stopping... Frames rendered: ${frameCount}`);
                         recorder.stop();
                         return;
                     }
 
-                    // Calculate current image
+                    // Calculate which image to show
                     const progress = elapsed / targetDuration;
-                    const imageIndex = Math.floor(progress * images.length);
-                    const currentImage = images[Math.min(imageIndex, images.length - 1)];
+                    const imageIndex = Math.floor(progress * validImages.length);
+                    const currentImage = validImages[Math.min(imageIndex, validImages.length - 1)];
                     
-                    // Calculate transition progress
-                    const segmentDuration = targetDuration / images.length;
+                    const segmentDuration = targetDuration / validImages.length;
                     const segmentProgress = (elapsed % segmentDuration) / segmentDuration;
 
-                    // Clear canvas
+                    // Clear and draw
                     ctx.clearRect(0, 0, width, height);
 
-                    // Apply smooth zoom and pan
-                    const scale = 1 + Math.sin(segmentProgress * Math.PI) * 0.1;
-                    const panX = Math.sin(segmentProgress * Math.PI * 2) * 30;
-                    const panY = Math.cos(segmentProgress * Math.PI * 2) * 20;
+                    // Animation
+                    const scale = 1 + Math.sin(segmentProgress * Math.PI) * 0.08;
+                    const panX = Math.sin(segmentProgress * Math.PI * 2) * 25;
 
                     ctx.save();
                     ctx.translate(width / 2, height / 2);
                     ctx.scale(scale, scale);
-                    ctx.translate(-width / 2 + panX, -height / 2 + panY);
+                    ctx.translate(-width / 2 + panX, -height / 2);
                     ctx.drawImage(currentImage, 0, 0, width, height);
                     ctx.restore();
 
-                    // Add subtle vignette
-                    const gradient = ctx.createRadialGradient(
-                        width / 2, height / 2, 0,
-                        width / 2, height / 2, Math.max(width, height) / 2
-                    );
-                    gradient.addColorStop(0, 'rgba(0,0,0,0)');
-                    gradient.addColorStop(1, 'rgba(0,0,0,0.3)');
-                    ctx.fillStyle = gradient;
-                    ctx.fillRect(0, 0, width, height);
-
                     // Fade in/out
-                    if (elapsed < 300) {
-                        ctx.fillStyle = `rgba(0,0,0,${1 - elapsed / 300})`;
+                    if (elapsed < 250) {
+                        ctx.fillStyle = `rgba(0,0,0,${1 - elapsed / 250})`;
                         ctx.fillRect(0, 0, width, height);
-                    } else if (elapsed > targetDuration - 300) {
-                        ctx.fillStyle = `rgba(0,0,0,${(elapsed - (targetDuration - 300)) / 300})`;
+                    } else if (elapsed > targetDuration - 250) {
+                        ctx.fillStyle = `rgba(0,0,0,${(elapsed - (targetDuration - 250)) / 250})`;
                         ctx.fillRect(0, 0, width, height);
                     }
 
+                    frameCount++;
                     requestAnimationFrame(animate);
                 }
 
@@ -654,19 +617,23 @@ Medieval knight standing in misty forest
                 // Safety timeout
                 setTimeout(() => {
                     if (recorder.state === 'recording') {
+                        console.log('Safety timeout triggered!');
                         recorder.stop();
                     }
-                }, targetDuration + 200);
+                }, targetDuration + 500);
             });
         }
 
-        // Load image helper
+        // Load image
         function loadImage(url) {
             return new Promise((resolve) => {
                 const img = new Image();
                 img.crossOrigin = 'anonymous';
                 
-                const timeout = setTimeout(() => resolve(null), 15000);
+                const timeout = setTimeout(() => {
+                    console.warn('Image load timeout');
+                    resolve(null);
+                }, 12000);
                 
                 img.onload = () => {
                     clearTimeout(timeout);
@@ -675,6 +642,7 @@ Medieval knight standing in misty forest
                 
                 img.onerror = () => {
                     clearTimeout(timeout);
+                    console.error('Image load error');
                     resolve(null);
                 };
                 
@@ -683,7 +651,7 @@ Medieval knight standing in misty forest
         }
 
         // Display video
-        function displayVideo(prompt, blob) {
+        function displayVideo(prompt, blob, num) {
             const url = URL.createObjectURL(blob);
             generatedVideos.push({ prompt, blob, url });
             videoCount.textContent = generatedVideos.length;
@@ -692,14 +660,15 @@ Medieval knight standing in misty forest
             card.className = 'video-card';
             card.innerHTML = `
                 <div class="video-preview">
-                    <video controls loop muted autoplay>
+                    <video controls loop muted>
                         <source src="${url}" type="video/webm">
                     </video>
                 </div>
                 <div class="video-info">
+                    <div class="video-number">Video #${num}</div>
                     <div class="video-prompt">${prompt}</div>
-                    <div class="video-meta">
-                        <span class="video-badge">${ratioSelect.value} • ${durationSelect.value}s</span>
+                    <div class="video-actions">
+                        <span class="video-badge">${ratioSelect.value} • 5s</span>
                         <button class="download-btn" onclick="downloadVideo(${generatedVideos.length - 1})">
                             📥 Download
                         </button>
@@ -710,7 +679,7 @@ Medieval knight standing in misty forest
             videosGrid.appendChild(card);
         }
 
-        // Download single video
+        // Download single
         window.downloadVideo = function(index) {
             const video = generatedVideos[index];
             const link = document.createElement('a');
@@ -723,20 +692,20 @@ Medieval knight standing in misty forest
         downloadAllBtn.addEventListener('click', async () => {
             for (let i = 0; i < generatedVideos.length; i++) {
                 downloadVideo(i);
-                await new Promise(r => setTimeout(r, 500));
+                await new Promise(r => setTimeout(r, 300));
             }
         });
 
-        // Clear all
+        // Clear
         clearBtn.addEventListener('click', () => {
             if (confirm('Clear all videos?')) {
                 generatedVideos.forEach(v => URL.revokeObjectURL(v.url));
                 generatedVideos = [];
                 videosGrid.innerHTML = `
                     <div class="empty-state">
-                        <div class="empty-state-icon">🎬</div>
+                        <div class="empty-icon">🎬</div>
                         <h3>No videos yet</h3>
-                        <p>Enter prompts above and click Generate!</p>
+                        <p>Enter prompts and generate!</p>
                     </div>
                 `;
                 videoCount.textContent = '0';
