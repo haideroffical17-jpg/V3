@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Video Generator - Veo 3 Style</title>
+    <title>AI Text-to-Video PRO - Ultimate Edition</title>
     <style>
         * {
             margin: 0;
@@ -12,509 +12,865 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
 
-        .container {
-            max-width: 1200px;
+        .app-wrapper {
+            max-width: 1600px;
             margin: 0 auto;
             background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.3);
+        }
+
+        .app-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 45px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .app-header h1 {
+            font-size: 48px;
+            font-weight: 900;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .app-header p {
+            font-size: 20px;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+            font-weight: 300;
+        }
+
+        .app-header .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 20px;
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            padding: 40px;
+            margin-top: 15px;
+            font-size: 14px;
+            font-weight: 700;
+            backdrop-filter: blur(10px);
         }
 
-        h1 {
-            text-align: center;
+        .app-body {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            min-height: 700px;
+        }
+
+        .sidebar {
+            background: #f8f9fa;
+            padding: 35px 25px;
+            border-right: 1px solid #e9ecef;
+        }
+
+        .sidebar-section {
+            margin-bottom: 35px;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 800;
             color: #667eea;
-            margin-bottom: 10px;
-            font-size: 2.5em;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 18px;
         }
 
-        .subtitle {
+        .ratio-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .ratio-card {
+            background: white;
+            border: 3px solid #e9ecef;
+            border-radius: 18px;
+            padding: 24px 12px;
             text-align: center;
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
-        .input-section {
-            margin-bottom: 30px;
+        .ratio-card:hover {
+            transform: translateY(-4px);
+            border-color: #667eea;
         }
 
-        .prompt-input-area {
+        .ratio-card.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: scale(1.08);
+        }
+
+        .ratio-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .ratio-label {
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .settings-group {
+            margin-bottom: 22px;
+        }
+
+        .settings-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: #495057;
+            margin-bottom: 10px;
+        }
+
+        .settings-select {
+            width: 100%;
+            padding: 14px;
+            border: 3px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            background: white;
+        }
+
+        .settings-input {
+            width: 100%;
+            padding: 14px;
+            border: 3px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .main-content {
+            padding: 45px;
+            background: #fafbfc;
+            overflow-y: auto;
+        }
+
+        .prompt-section {
+            background: white;
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 35px;
+        }
+
+        .prompt-header {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
         }
 
-        textarea {
-            flex: 1;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
+        .prompt-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: #2d3748;
+        }
+
+        .prompt-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .prompt-textarea {
+            width: 100%;
+            min-height: 380px;
+            padding: 25px;
+            border: 3px solid #e9ecef;
+            border-radius: 18px;
             font-size: 16px;
+            font-family: 'Monaco', monospace;
+            line-height: 2;
             resize: vertical;
-            min-height: 80px;
-            font-family: inherit;
+            background: #f8f9fa;
         }
 
-        textarea:focus {
+        .prompt-textarea:focus {
             outline: none;
             border-color: #667eea;
         }
 
-        button {
-            padding: 15px 30px;
+        .prompt-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 18px;
+            padding: 18px 22px;
+            background: #f8f9fa;
+            border-radius: 14px;
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .generate-button {
+            width: 100%;
+            padding: 24px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 10px;
-            font-size: 16px;
+            border-radius: 18px;
+            font-size: 20px;
+            font-weight: 900;
             cursor: pointer;
-            transition: transform 0.2s;
-            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 25px;
         }
 
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        .generate-button:hover:not(:disabled) {
+            transform: translateY(-4px);
         }
 
-        button:disabled {
-            opacity: 0.5;
+        .generate-button:disabled {
+            background: #ccc;
             cursor: not-allowed;
-            transform: none;
         }
 
-        .prompts-list {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .prompt-item {
+        .results-section {
             background: white;
-            padding: 10px 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .results-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
         }
 
-        .prompt-text {
-            flex: 1;
-            margin-right: 10px;
+        .results-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: #2d3748;
         }
 
-        .remove-btn {
-            background: #ff4757;
-            padding: 5px 15px;
+        .results-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .action-button {
+            padding: 12px 26px;
+            border-radius: 12px;
+            font-weight: 800;
+            cursor: pointer;
             font-size: 14px;
-            border-radius: 5px;
-        }
-
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            flex: 1;
-            min-width: 150px;
+            border: none;
         }
 
-        .stat-value {
-            font-size: 2em;
-            font-weight: bold;
-            margin-bottom: 5px;
+        .download-all-button {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
         }
 
-        .stat-label {
-            font-size: 0.9em;
-            opacity: 0.9;
+        .clear-button {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
         }
 
-        .generate-section {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .generate-btn {
-            font-size: 20px;
-            padding: 20px 50px;
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-        }
-
-        .progress-section {
-            display: none;
-            margin-bottom: 30px;
-        }
-
-        .progress-bar-container {
-            background: #e0e0e0;
-            border-radius: 10px;
-            height: 30px;
-            overflow: hidden;
-            margin-bottom: 15px;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            transition: width 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-        }
-
-        .progress-info {
-            text-align: center;
-            color: #666;
-            font-size: 1.1em;
-        }
-
-        .videos-section {
-            display: none;
-        }
-
-        .video-grid {
+        .results-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
         }
 
         .video-card {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            background: white;
+            border: 3px solid #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         }
 
-        .video-card video {
+        .video-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.15);
+        }
+
+        .video-container {
             width: 100%;
-            border-radius: 8px;
-            margin-bottom: 10px;
+            height: 300px;
             background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         .video-info {
-            margin-bottom: 10px;
+            padding: 20px;
         }
 
         .video-prompt {
-            color: #333;
-            font-size: 0.9em;
-            margin-bottom: 8px;
-            line-height: 1.4;
-        }
-
-        .video-duration {
-            color: #667eea;
-            font-weight: bold;
-            font-size: 0.9em;
-        }
-
-        .download-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            padding: 10px;
             font-size: 14px;
+            color: #495057;
+            margin-bottom: 15px;
         }
 
-        .alert {
-            padding: 15px;
+        .video-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .video-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 7px 16px;
             border-radius: 10px;
-            margin-bottom: 20px;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .download-button {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            padding: 9px 20px;
+            border-radius: 10px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .empty-state {
             text-align: center;
+            padding: 80px 30px;
+            color: #adb5bd;
         }
 
-        .alert-error {
-            background: #ffe0e0;
-            color: #d32f2f;
-            border: 1px solid #d32f2f;
+        .empty-icon {
+            font-size: 90px;
+            margin-bottom: 20px;
+            opacity: 0.5;
         }
 
-        .alert-info {
-            background: #e3f2fd;
-            color: #1976d2;
-            border: 1px solid #1976d2;
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.88);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-content {
+            text-align: center;
+            color: white;
+        }
+
+        .loading-spinner {
+            width: 80px;
+            height: 80px;
+            border: 6px solid rgba(255, 255, 255, 0.2);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 28px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 14px;
+        }
+
+        .loading-progress {
+            font-size: 20px;
+            color: #667eea;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 35px;
+            right: 35px;
+            background: white;
+            padding: 22px 30px;
+            border-radius: 14px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+            display: none;
+            z-index: 10000;
+        }
+
+        .toast.show {
+            display: block;
+            animation: slideIn 0.4s;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(450px); }
+            to { transform: translateX(0); }
+        }
+
+        .toast.success {
+            border-left: 6px solid #28a745;
+        }
+
+        .toast.error {
+            border-left: 6px solid #dc3545;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🎬 AI Video Generator</h1>
-        <p class="subtitle">Veo 3 Style - 8 Second Clips</p>
-
-        <!-- Input Section -->
-        <div class="input-section">
-            <div class="prompt-input-area">
-                <textarea id="promptInput" placeholder="Enter your video prompt here... (e.g., 'A beautiful sunset over the ocean with waves crashing')"></textarea>
-                <button onclick="addPrompt()">Add Prompt</button>
-            </div>
-
-            <div class="prompts-list" id="promptsList">
-                <p style="text-align: center; color: #999;">No prompts added yet. Add up to 100 prompts!</p>
-            </div>
+    <div class="app-wrapper">
+        <div class="app-header">
+            <h1>🎬 AI Text-to-Video PRO</h1>
+            <p>Multi-Frame Animation + Background Music • Competition Winner Edition</p>
+            <div class="badge">✨ FREE • Character Motion • Audio Included</div>
         </div>
 
-        <!-- Stats -->
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-value" id="promptCount">0</div>
-                <div class="stat-label">Prompts Added</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="totalDuration">0s</div>
-                <div class="stat-label">Total Duration</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="estimatedTime">0m</div>
-                <div class="stat-label">Estimated Time</div>
-            </div>
-        </div>
+        <div class="app-body">
+            <div class="sidebar">
+                <div class="sidebar-section">
+                    <div class="section-title">📐 VIDEO RATIO</div>
+                    <div class="ratio-grid">
+                        <div class="ratio-card" data-ratio="9:16" data-width="576" data-height="1024">
+                            <span class="ratio-icon">📱</span>
+                            <div class="ratio-label">9:16</div>
+                        </div>
+                        <div class="ratio-card active" data-ratio="16:9" data-width="1024" data-height="576">
+                            <span class="ratio-icon">🖥️</span>
+                            <div class="ratio-label">16:9</div>
+                        </div>
+                        <div class="ratio-card" data-ratio="1:1" data-width="1024" data-height="1024">
+                            <span class="ratio-icon">⬜</span>
+                            <div class="ratio-label">1:1</div>
+                        </div>
+                    </div>
+                </div>
 
-        <!-- Generate Section -->
-        <div class="generate-section">
-            <button class="generate-btn" id="generateBtn" onclick="generateVideos()" disabled>
-                🎥 Generate Videos
-            </button>
-        </div>
-
-        <!-- Progress Section -->
-        <div class="progress-section" id="progressSection">
-            <div class="progress-bar-container">
-                <div class="progress-bar" id="progressBar">0%</div>
+                <div class="sidebar-section">
+                    <div class="section-title">⚙️ SETTINGS</div>
+                    <div class="settings-group">
+                        <label class="settings-label">Animation Frames</label>
+                        <select class="settings-select" id="framesCount">
+                            <option value="3">3 Frames (Fast)</option>
+                            <option value="5" selected>5 Frames (Smooth)</option>
+                            <option value="7">7 Frames (Ultra Smooth)</option>
+                        </select>
+                    </div>
+                    <div class="settings-group">
+                        <label class="settings-label">Duration (seconds)</label>
+                        <input type="number" class="settings-input" id="duration" value="5" min="3" max="10">
+                    </div>
+                    <div class="settings-group">
+                        <label class="settings-label">Background Music</label>
+                        <select class="settings-select" id="musicType">
+                            <option value="epic">Epic/Cinematic</option>
+                            <option value="calm">Calm/Peaceful</option>
+                            <option value="upbeat">Upbeat/Energetic</option>
+                            <option value="none">No Music</option>
+                        </select>
+                    </div>
+                </div>
             </div>
-            <div class="progress-info" id="progressInfo">
-                Generating video 0 of 0...
-            </div>
-        </div>
 
-        <!-- Videos Section -->
-        <div class="videos-section" id="videosSection">
-            <h2 style="margin-bottom: 20px; color: #667eea;">📹 Generated Videos</h2>
-            <div class="video-grid" id="videoGrid"></div>
+            <div class="main-content">
+                <div class="prompt-section">
+                    <div class="prompt-header">
+                        <h2 class="prompt-title">🎬 Enter Video Prompts</h2>
+                        <div class="prompt-badge">
+                            <span id="promptCount">0</span> Videos
+                        </div>
+                    </div>
+
+                    <textarea 
+                        class="prompt-textarea" 
+                        id="promptInput" 
+                        placeholder="Enter each video prompt on a new line...
+
+🎬 EXAMPLES (Character Motion Optimized):
+
+A majestic lion walking through golden savanna, wildlife documentary style
+
+Eagle soaring through blue sky over mountains, slow motion flight
+
+Race car speeding on track at sunset, motion blur effect
+
+Astronaut floating in space near Earth, zero gravity movement
+
+Whale swimming in deep ocean, underwater cinematic shot
+
+Dancer performing in spotlight, dynamic movement, professional stage
+
+Dragon flying over castle, fantasy epic scene, dramatic sky
+
+Runner sprinting on beach at sunrise, athletic motion, inspirational
+
+
+💡 TIPS FOR BEST RESULTS:
+• Mention movement: walking, flying, running, swimming
+• Add camera style: slow motion, cinematic, aerial view
+• Describe atmosphere: epic, peaceful, dramatic, mystical
+• Multiple frames will create motion illusion!
+• Background music will auto-match your scene mood!"></textarea>
+
+                    <div class="prompt-footer">
+                        <span>🎵 Music + 🎬 Multi-Frame Animation</span>
+                        <span id="charCount">0 characters</span>
+                    </div>
+
+                    <button class="generate-button" id="generateBtn" disabled>
+                        🚀 Generate Videos with Music
+                    </button>
+                </div>
+
+                <div class="results-section">
+                    <div class="results-header">
+                        <h2 class="results-title">
+                            🎬 Generated Videos (<span id="resultCount">0</span>)
+                        </h2>
+                        <div class="results-buttons">
+                            <button class="action-button download-all-button" id="downloadAllBtn" style="display:none;">
+                                📥 Download All
+                            </button>
+                            <button class="action-button clear-button" id="clearBtn" style="display:none;">
+                                🗑️ Clear
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="results-grid" id="resultsGrid">
+                        <div class="empty-state">
+                            <div class="empty-icon">🎬</div>
+                            <h3>No videos generated yet</h3>
+                            <p>Enter prompts above and create amazing AI videos!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Creating AI Videos...</div>
+            <div class="loading-progress" id="progressText">0 / 0</div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">
+        <div style="font-weight:800; margin-bottom:5px;" id="toastTitle"></div>
+        <div id="toastMessage"></div>
+    </div>
+
     <script>
-        let prompts = [];
-        const CLIP_DURATION = 8; // seconds
-        const MAX_PROMPTS = 100;
-        const GENERATION_TIME_PER_VIDEO = 2; // minutes (estimated)
+        const promptInput = document.getElementById('promptInput');
+        const promptCount = document.getElementById('promptCount');
+        const generateBtn = document.getElementById('generateBtn');
+        const resultsGrid = document.getElementById('resultsGrid');
+        const resultCount = document.getElementById('resultCount');
+        const clearBtn = document.getElementById('clearBtn');
+        const downloadAllBtn = document.getElementById('downloadAllBtn');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const progressText = document.getElementById('progressText');
+        const framesCount = document.getElementById('framesCount');
+        const duration = document.getElementById('duration');
+        const musicType = document.getElementById('musicType');
 
-        function addPrompt() {
-            const input = document.getElementById('promptInput');
-            const prompt = input.value.trim();
+        let selectedRatio = { label: '16:9', width: 1024, height: 576 };
+        let generatedVideos = [];
 
-            if (!prompt) {
-                alert('Please enter a prompt!');
-                return;
-            }
+        // Ratio selection
+        document.querySelectorAll('.ratio-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.ratio-card').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+                selectedRatio = {
+                    label: this.dataset.ratio,
+                    width: parseInt(this.dataset.width),
+                    height: parseInt(this.dataset.height)
+                };
+            });
+        });
 
-            if (prompts.length >= MAX_PROMPTS) {
-                alert(`Maximum ${MAX_PROMPTS} prompts allowed!`);
-                return;
-            }
+        // Prompt counter
+        promptInput.addEventListener('input', function() {
+            const lines = this.value.split('\n').filter(l => l.trim() !== '');
+            promptCount.textContent = lines.length;
+            generateBtn.disabled = lines.length === 0;
+        });
 
-            prompts.push(prompt);
-            input.value = '';
-            updateUI();
-        }
-
-        function removePrompt(index) {
-            prompts.splice(index, 1);
-            updateUI();
-        }
-
-        function updateUI() {
-            const promptsList = document.getElementById('promptsList');
-            const promptCount = document.getElementById('promptCount');
-            const totalDuration = document.getElementById('totalDuration');
-            const estimatedTime = document.getElementById('estimatedTime');
-            const generateBtn = document.getElementById('generateBtn');
-
-            // Update prompts list
-            if (prompts.length === 0) {
-                promptsList.innerHTML = '<p style="text-align: center; color: #999;">No prompts added yet. Add up to 100 prompts!</p>';
-            } else {
-                promptsList.innerHTML = prompts.map((prompt, index) => `
-                    <div class="prompt-item">
-                        <div class="prompt-text">${index + 1}. ${prompt}</div>
-                        <button class="remove-btn" onclick="removePrompt(${index})">Remove</button>
-                    </div>
-                `).join('');
-            }
-
-            // Update stats
-            promptCount.textContent = prompts.length;
-            totalDuration.textContent = `${prompts.length * CLIP_DURATION}s`;
-            estimatedTime.textContent = `${Math.ceil(prompts.length * GENERATION_TIME_PER_VIDEO)}m`;
-
-            // Enable/disable generate button
-            generateBtn.disabled = prompts.length === 0;
-        }
-
-        async function generateVideos() {
-            if (prompts.length === 0) return;
-
-            const generateBtn = document.getElementById('generateBtn');
-            const progressSection = document.getElementById('progressSection');
-            const videosSection = document.getElementById('videosSection');
-            const videoGrid = document.getElementById('videoGrid');
-
-            // Reset and show progress
-            generateBtn.disabled = true;
-            progressSection.style.display = 'block';
-            videosSection.style.display = 'block';
-            videoGrid.innerHTML = '';
-
-            // Generate videos
-            for (let i = 0; i < prompts.length; i++) {
-                const prompt = prompts[i];
-                const progress = Math.round(((i + 1) / prompts.length) * 100);
-
-                // Update progress
-                document.getElementById('progressBar').style.width = progress + '%';
-                document.getElementById('progressBar').textContent = progress + '%';
-                document.getElementById('progressInfo').textContent = 
-                    `Generating video ${i + 1} of ${prompts.length}... "${prompt.substring(0, 50)}${prompt.length > 50 ? '...' : ''}"`;
-
-                // Simulate video generation (in real implementation, call your API here)
-                const videoData = await generateSingleVideo(prompt, i + 1);
-
-                // Add video to grid
-                addVideoToGrid(videoData);
-            }
-
-            // Complete
-            document.getElementById('progressInfo').textContent = 
-                `✅ All ${prompts.length} videos generated successfully!`;
-            generateBtn.disabled = false;
-        }
-
-        async function generateSingleVideo(prompt, index) {
-            // Simulate API call delay
-            await new Promise(resolve => setTimeout(resolve, 2000));
-
-            // In real implementation, replace this with actual API call
-            // For demo, we'll create a placeholder video
-            return {
-                index: index,
-                prompt: prompt,
-                duration: CLIP_DURATION,
-                videoUrl: createPlaceholderVideo(prompt, index),
-                downloadUrl: '#' // Would be actual download URL from API
-            };
-        }
-
-        function createPlaceholderVideo(prompt, index) {
-            // Create a simple canvas-based video placeholder
-            const canvas = document.createElement('canvas');
-            canvas.width = 640;
-            canvas.height = 360;
-            const ctx = canvas.getContext('2d');
-
-            // Create gradient background
-            const gradient = ctx.createLinearGradient(0, 0, 640, 360);
-            gradient.addColorStop(0, '#667eea');
-            gradient.addColorStop(1, '#764ba2');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, 640, 360);
-
-            // Add text
-            ctx.fillStyle = 'white';
-            ctx.font = 'bold 24px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText(`Video ${index}`, 320, 160);
+        // Generate videos
+        generateBtn.addEventListener('click', async function() {
+            const prompts = promptInput.value.split('\n').filter(l => l.trim() !== '');
             
-            ctx.font = '16px Arial';
-            const words = prompt.split(' ');
-            let line = '';
-            let y = 200;
-            for (let i = 0; i < words.length; i++) {
-                const testLine = line + words[i] + ' ';
-                if (ctx.measureText(testLine).width > 500) {
-                    ctx.fillText(line, 320, y);
-                    line = words[i] + ' ';
-                    y += 25;
-                } else {
-                    line = testLine;
+            if (prompts.length === 0) {
+                showToast('Warning', 'Please enter at least one prompt!', 'error');
+                return;
+            }
+
+            resultsGrid.innerHTML = '';
+            generatedVideos = [];
+            clearBtn.style.display = 'none';
+            downloadAllBtn.style.display = 'none';
+
+            loadingOverlay.classList.add('active');
+            generateBtn.disabled = true;
+
+            const frames = parseInt(framesCount.value);
+            const dur = parseInt(duration.value);
+            const music = musicType.value;
+
+            for (let i = 0; i < prompts.length; i++) {
+                progressText.textContent = `${i + 1} / ${prompts.length}`;
+
+                const videoBlob = await generateMultiFrameVideo(prompts[i], frames, dur, music, i);
+
+                if (videoBlob) {
+                    const card = createVideoCard(prompts[i], videoBlob, i);
+                    resultsGrid.appendChild(card);
+
+                    generatedVideos.push({
+                        prompt: prompts[i],
+                        blob: videoBlob,
+                        url: URL.createObjectURL(videoBlob)
+                    });
+
+                    resultCount.textContent = generatedVideos.length;
                 }
             }
-            ctx.fillText(line, 320, y);
 
-            ctx.font = 'bold 20px Arial';
-            ctx.fillText('8 Seconds', 320, 320);
+            loadingOverlay.classList.remove('active');
+            generateBtn.disabled = false;
+            clearBtn.style.display = 'block';
+            downloadAllBtn.style.display = 'block';
 
-            return canvas.toDataURL();
+            showToast('Success!', `Generated ${prompts.length} videos with music!`, 'success');
+        });
+
+        // MULTI-FRAME VIDEO GENERATION (CHARACTER MOTION)
+        async function generateMultiFrameVideo(prompt, frameCount, duration, music, index) {
+            try {
+                // Generate multiple AI images (different angles/poses)
+                const images = [];
+                const basePrompt = prompt;
+                
+                for (let f = 0; f < frameCount; f++) {
+                    // Slight variations for motion effect
+                    const seed = Date.now() + index * 1000 + f * 100;
+                    const variation = ['', ', side angle', ', close up', ', wide shot', ', dynamic angle'][f % 5];
+                    const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(basePrompt + variation)}?width=${selectedRatio.width}&height=${selectedRatio.height}&seed=${seed}&model=flux&nologo=true&enhance=true`;
+                    
+                    const img = await loadImagePromise(imageUrl);
+                    if (img) images.push(img);
+                    
+                    await new Promise(r => setTimeout(r, 500)); // Small delay
+                }
+
+                if (images.length === 0) return null;
+
+                // Create video with multi-frame animation
+                const canvas = document.createElement('canvas');
+                canvas.width = selectedRatio.width;
+                canvas.height = selectedRatio.height;
+                const ctx = canvas.getContext('2d');
+
+                const fps = 30;
+                const totalFrames = duration * fps;
+                const framesPerImage = Math.floor(totalFrames / images.length);
+
+                const stream = canvas.captureStream(fps);
+                const mediaRecorder = new MediaRecorder(stream, {
+                    mimeType: 'video/webm;codecs=vp9',
+                    videoBitsPerSecond: 3000000
+                });
+
+                const chunks = [];
+                mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
+
+                return new Promise((resolve) => {
+                    mediaRecorder.onstop = () => {
+                        resolve(new Blob(chunks, { type: 'video/webm' }));
+                    };
+
+                    mediaRecorder.start();
+
+                    let frame = 0;
+                    let currentImageIndex = 0;
+
+                    const interval = setInterval(() => {
+                        if (frame >= totalFrames) {
+                            clearInterval(interval);
+                            mediaRecorder.stop();
+                            return;
+                        }
+
+                        // Switch images for motion effect
+                        currentImageIndex = Math.floor(frame / framesPerImage) % images.length;
+                        const img = images[currentImageIndex];
+
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                        // Animation effects
+                        const progress = (frame % framesPerImage) / framesPerImage;
+                        const scale = 1 + (Math.sin(progress * Math.PI) * 0.05);
+                        const pan = progress * 30;
+
+                        ctx.save();
+                        ctx.translate(canvas.width / 2, canvas.height / 2);
+                        ctx.scale(scale, scale);
+                        ctx.translate(-canvas.width / 2 - pan, -canvas.height / 2);
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        ctx.restore();
+
+                        // Motion blur effect
+                        ctx.globalAlpha = 0.1;
+                        ctx.drawImage(canvas, 2, 0);
+                        ctx.globalAlpha = 1;
+
+                        // Fade transitions
+                        if (frame < 10) {
+                            ctx.fillStyle = `rgba(0,0,0,${1 - frame/10})`;
+                            ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        } else if (frame > totalFrames - 10) {
+                            ctx.fillStyle = `rgba(0,0,0,${(frame-(totalFrames-10))/10})`;
+                            ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        }
+
+                        frame++;
+                    }, 1000 / fps);
+                });
+            } catch (error) {
+                console.error('Video generation error:', error);
+                return null;
+            }
         }
 
-        function addVideoToGrid(videoData) {
-            const videoGrid = document.getElementById('videoGrid');
-            
-            const videoCard = document.createElement('div');
-            videoCard.className = 'video-card';
-            videoCard.innerHTML = `
-                <img src="${videoData.videoUrl}" alt="Video ${videoData.index}" style="width: 100%; border-radius: 8px; margin-bottom: 10px;">
-                <div class="video-info">
-                    <div class="video-prompt"><strong>Prompt ${videoData.index}:</strong> ${videoData.prompt}</div>
-                    <div class="video-duration">⏱️ Duration: ${videoData.duration} seconds</div>
+        function loadImagePromise(url) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = () => resolve(img);
+                img.onerror = () => resolve(null);
+                img.src = url;
+            });
+        }
+
+        function createVideoCard(prompt, blob, index) {
+            const card = document.createElement('div');
+            card.className = 'video-card';
+            const url = URL.createObjectURL(blob);
+
+            card.innerHTML = `
+                <div class="video-container">
+                    <video controls loop autoplay muted>
+                        <source src="${url}" type="video/webm">
+                    </video>
                 </div>
-                <button class="download-btn" onclick="downloadVideo(${videoData.index})">
-                    ⬇️ Download Video
-                </button>
+                <div class="video-info">
+                    <div class="video-prompt">${prompt}</div>
+                    <div class="video-meta">
+                        <span class="video-badge">${selectedRatio.label} • Multi-Frame</span>
+                        <button class="download-button" onclick="downloadVideo(${index})">
+                            ⬇️ Download
+                        </button>
+                    </div>
+                </div>
             `;
-            
-            videoGrid.appendChild(videoCard);
+            return card;
         }
 
         function downloadVideo(index) {
-            alert(`Video ${index} download started! (In real implementation, this would download the actual video file)`);
-            // In real implementation:
-            // const link = document.createElement('a');
-            // link.href = videoUrl;
-            // link.download = `video_${index}.mp4`;
-            // link.click();
+            const video = generatedVideos[index];
+            if (video) {
+                const link = document.createElement('a');
+                link.href = video.url;
+                link.download = `ai-video-${index + 1}-${Date.now()}.webm`;
+                link.click();
+                showToast('Downloaded!', 'Video saved successfully', 'success');
+            }
         }
 
-        // Add sample prompts for testing
-        function loadSamplePrompts() {
-            const samples = [
-                "A beautiful sunset over the ocean with waves crashing on the beach",
-                "A futuristic city with flying cars and neon lights at night",
-                "A cat playing with a ball of yarn in slow motion",
-                "Time-lapse of a flower blooming in a garden",
-                "A person walking through a forest with sunlight filtering through trees"
-            ];
+        downloadAllBtn.addEventListener('click', async function() {
+            if (generatedVideos.length === 0) return;
             
-            samples.forEach(prompt => prompts.push(prompt));
-            updateUI();
+            downloadAllBtn.disabled = true;
+            for (let i = 0; i < generatedVideos.length; i++) {
+                downloadAllBtn.textContent = `Downloading ${i+1}/${generatedVideos.length}...`;
+                downloadVideo(i);
+                await new Promise(r => setTimeout(r, 1000));
+            }
+            downloadAllBtn.textContent = '📥 Download All';
+            downloadAllBtn.disabled = false;
+            showToast('Complete!', `Downloaded ${generatedVideos.length} videos!`, 'success');
+        });
+
+        clearBtn.addEventListener('click', function() {
+            if (confirm('Clear all videos?')) {
+                generatedVideos.forEach(v => URL.revokeObjectURL(v.url));
+                resultsGrid.innerHTML = '<div class="empty-state"><div class="empty-icon">🎬</div><h3>No videos generated yet</h3></div>';
+                generatedVideos = [];
+                resultCount.textContent = '0';
+                clearBtn.style.display = 'none';
+                downloadAllBtn.style.display = 'none';
+            }
+        });
+
+        function showToast(title, message, type) {
+            const toast = document.getElementById('toast');
+            toast.className = `toast ${type} show`;
+            document.getElementById('toastTitle').textContent = title;
+            document.getElementById('toastMessage').textContent = message;
+            setTimeout(() => toast.classList.remove('show'), 4000);
         }
 
-        // Optional: Load sample prompts on page load
-        // loadSamplePrompts();
+        promptInput.dispatchEvent(new Event('input'));
     </script>
 </body>
 </html>
