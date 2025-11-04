@@ -172,6 +172,8 @@
             border-radius: 12px;
             font-size: 14px;
             font-weight: 600;
+            background: #e9ecef;
+            pointer-events: none;
         }
 
         .main-content {
@@ -483,7 +485,7 @@
                             <div class="ratio-label">9:16</div>
                         </div>
                         <div class="ratio-card active" data-ratio="16:9" data-width="1024" data-height="576">
-                            <span class="ratio-icon">🖥️</span>
+                            <span class="ratio-icon">🖥</span>
                             <div class="ratio-label">16:9</div>
                         </div>
                         <div class="ratio-card" data-ratio="1:1" data-width="1024" data-height="1024">
@@ -494,7 +496,7 @@
                 </div>
 
                 <div class="sidebar-section">
-                    <div class="section-title">⚙️ SETTINGS</div>
+                    <div class="section-title">⚙ SETTINGS</div>
                     <div class="settings-group">
                         <label class="settings-label">Animation Frames</label>
                         <select class="settings-select" id="framesCount">
@@ -504,8 +506,8 @@
                         </select>
                     </div>
                     <div class="settings-group">
-                        <label class="settings-label">Duration (seconds)</label>
-                        <input type="number" class="settings-input" id="duration" value="5" min="3" max="10">
+                        <label class="settings-label">Duration (FIXED 5 seconds) ⏱</label>
+                        <input type="number" class="settings-input" id="duration" value="5" readonly disabled>
                     </div>
                     <div class="settings-group">
                         <label class="settings-label">Background Music</label>
@@ -557,15 +559,16 @@ Runner sprinting on beach at sunrise, athletic motion, inspirational
 • Add camera style: slow motion, cinematic, aerial view
 • Describe atmosphere: epic, peaceful, dramatic, mystical
 • Multiple frames will create motion illusion!
-• Background music will auto-match your scene mood!"></textarea>
+• Background music will auto-match your scene mood!
+• All videos will be EXACTLY 5 SECONDS! ⏱"></textarea>
 
                     <div class="prompt-footer">
-                        <span>🎵 Music + 🎬 Multi-Frame Animation</span>
+                        <span>🎵 Music + 🎬 Multi-Frame Animation • FIXED 5 SEC</span>
                         <span id="charCount">0 characters</span>
                     </div>
 
                     <button class="generate-button" id="generateBtn" disabled>
-                        🚀 Generate Videos with Music
+                        🚀 Generate Videos with Music (5 SEC EACH)
                     </button>
                 </div>
 
@@ -579,7 +582,7 @@ Runner sprinting on beach at sunrise, athletic motion, inspirational
                                 📥 Download All
                             </button>
                             <button class="action-button clear-button" id="clearBtn" style="display:none;">
-                                🗑️ Clear
+                                🗑 Clear
                             </button>
                         </div>
                     </div>
@@ -620,11 +623,13 @@ Runner sprinting on beach at sunrise, athletic motion, inspirational
         const loadingOverlay = document.getElementById('loadingOverlay');
         const progressText = document.getElementById('progressText');
         const framesCount = document.getElementById('framesCount');
-        const duration = document.getElementById('duration');
         const musicType = document.getElementById('musicType');
 
         let selectedRatio = { label: '16:9', width: 1024, height: 576 };
         let generatedVideos = [];
+
+        // FIXED DURATION - ALWAYS 5 SECONDS!
+        const FIXED_DURATION = 5;
 
         // Ratio selection
         document.querySelectorAll('.ratio-card').forEach(card => {
@@ -664,13 +669,13 @@ Runner sprinting on beach at sunrise, athletic motion, inspirational
             generateBtn.disabled = true;
 
             const frames = parseInt(framesCount.value);
-            const dur = parseInt(duration.value);
             const music = musicType.value;
 
             for (let i = 0; i < prompts.length; i++) {
-                progressText.textContent = `${i + 1} / ${prompts.length}`;
+                progressText.textContent = ${i + 1} / ${prompts.length};
 
-                const videoBlob = await generateMultiFrameVideo(prompts[i], frames, dur, music, i);
+                // ALWAYS USE FIXED 5 SECONDS!
+                const videoBlob = await generateMultiFrameVideo(prompts[i], frames, FIXED_DURATION, music, i);
 
                 if (videoBlob) {
                     const card = createVideoCard(prompts[i], videoBlob, i);
@@ -691,10 +696,10 @@ Runner sprinting on beach at sunrise, athletic motion, inspirational
             clearBtn.style.display = 'block';
             downloadAllBtn.style.display = 'block';
 
-            showToast('Success!', `Generated ${prompts.length} videos with music!`, 'success');
+            showToast('Success!', Generated ${prompts.length} videos (5 sec each)!, 'success');
         });
 
-        // MULTI-FRAME VIDEO GENERATION (CHARACTER MOTION)
+        // MULTI-FRAME VIDEO GENERATION - FIXED 5 SECONDS ONLY!
         async function generateMultiFrameVideo(prompt, frameCount, duration, music, index) {
             try {
                 // Generate multiple AI images (different angles/poses)
@@ -705,7 +710,7 @@ Runner sprinting on beach at sunrise, athletic motion, inspirational
                     // Slight variations for motion effect
                     const seed = Date.now() + index * 1000 + f * 100;
                     const variation = ['', ', side angle', ', close up', ', wide shot', ', dynamic angle'][f % 5];
-                    const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(basePrompt + variation)}?width=${selectedRatio.width}&height=${selectedRatio.height}&seed=${seed}&model=flux&nologo=true&enhance=true`;
+                    const imageUrl = https://image.pollinations.ai/prompt/${encodeURIComponent(basePrompt + variation)}?width=${selectedRatio.width}&height=${selectedRatio.height}&seed=${seed}&model=flux&nologo=true&enhance=true;
                     
                     const img = await loadImagePromise(imageUrl);
                     if (img) images.push(img);
@@ -715,14 +720,14 @@ Runner sprinting on beach at sunrise, athletic motion, inspirational
 
                 if (images.length === 0) return null;
 
-                // Create video with multi-frame animation
+                // Create video with EXACTLY 5 SECONDS duration
                 const canvas = document.createElement('canvas');
                 canvas.width = selectedRatio.width;
                 canvas.height = selectedRatio.height;
                 const ctx = canvas.getContext('2d');
 
                 const fps = 30;
-                const totalFrames = duration * fps;
+                const totalFrames = FIXED_DURATION * fps; // ALWAYS 150 frames (5 seconds x 30 fps)
                 const framesPerImage = Math.floor(totalFrames / images.length);
 
                 const stream = canvas.captureStream(fps);
@@ -745,6 +750,7 @@ Runner sprinting on beach at sunrise, athletic motion, inspirational
                     let currentImageIndex = 0;
 
                     const interval = setInterval(() => {
+                        // STOP EXACTLY AT 5 SECONDS (150 frames)
                         if (frame >= totalFrames) {
                             clearInterval(interval);
                             mediaRecorder.stop();
@@ -776,10 +782,10 @@ Runner sprinting on beach at sunrise, athletic motion, inspirational
 
                         // Fade transitions
                         if (frame < 10) {
-                            ctx.fillStyle = `rgba(0,0,0,${1 - frame/10})`;
+                            ctx.fillStyle = rgba(0,0,0,${1 - frame/10});
                             ctx.fillRect(0, 0, canvas.width, canvas.height);
                         } else if (frame > totalFrames - 10) {
-                            ctx.fillStyle = `rgba(0,0,0,${(frame-(totalFrames-10))/10})`;
+                            ctx.fillStyle = rgba(0,0,0,${(frame-(totalFrames-10))/10});
                             ctx.fillRect(0, 0, canvas.width, canvas.height);
                         }
 
@@ -816,9 +822,9 @@ Runner sprinting on beach at sunrise, athletic motion, inspirational
                 <div class="video-info">
                     <div class="video-prompt">${prompt}</div>
                     <div class="video-meta">
-                        <span class="video-badge">${selectedRatio.label} • Multi-Frame</span>
+                        <span class="video-badge">${selectedRatio.label} • 5 SEC</span>
                         <button class="download-button" onclick="downloadVideo(${index})">
-                            ⬇️ Download
+                            ⬇ Download
                         </button>
                     </div>
                 </div>
@@ -831,7 +837,7 @@ Runner sprinting on beach at sunrise, athletic motion, inspirational
             if (video) {
                 const link = document.createElement('a');
                 link.href = video.url;
-                link.download = `ai-video-${index + 1}-${Date.now()}.webm`;
+                link.download = ai-video-5sec-${index + 1}-${Date.now()}.webm;
                 link.click();
                 showToast('Downloaded!', 'Video saved successfully', 'success');
             }
@@ -842,13 +848,13 @@ Runner sprinting on beach at sunrise, athletic motion, inspirational
             
             downloadAllBtn.disabled = true;
             for (let i = 0; i < generatedVideos.length; i++) {
-                downloadAllBtn.textContent = `Downloading ${i+1}/${generatedVideos.length}...`;
+                downloadAllBtn.textContent = Downloading ${i+1}/${generatedVideos.length}...;
                 downloadVideo(i);
                 await new Promise(r => setTimeout(r, 1000));
             }
             downloadAllBtn.textContent = '📥 Download All';
             downloadAllBtn.disabled = false;
-            showToast('Complete!', `Downloaded ${generatedVideos.length} videos!`, 'success');
+            showToast('Complete!', Downloaded ${generatedVideos.length} videos!, 'success');
         });
 
         clearBtn.addEventListener('click', function() {
@@ -864,7 +870,7 @@ Runner sprinting on beach at sunrise, athletic motion, inspirational
 
         function showToast(title, message, type) {
             const toast = document.getElementById('toast');
-            toast.className = `toast ${type} show`;
+            toast.className = toast ${type} show;
             document.getElementById('toastTitle').textContent = title;
             document.getElementById('toastMessage').textContent = message;
             setTimeout(() => toast.classList.remove('show'), 4000);
