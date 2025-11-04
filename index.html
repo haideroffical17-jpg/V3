@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bulk Video Maker - FIXED</title>
+    <title>Image Animator - 5 Sec Videos</title>
     <style>
         * {
             margin: 0;
@@ -12,11 +12,10 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
-            color: white;
         }
 
         .container {
@@ -25,120 +24,121 @@
         }
 
         .header {
+            background: rgba(255,255,255,0.95);
+            padding: 30px;
+            border-radius: 20px;
             text-align: center;
             margin-bottom: 30px;
-            padding: 30px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
         }
 
         .header h1 {
             font-size: 42px;
             font-weight: 900;
-            margin-bottom: 8px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
         }
 
         .badge {
             display: inline-block;
             background: linear-gradient(135deg, #00b09b, #96c93d);
+            color: white;
             padding: 8px 20px;
             border-radius: 20px;
-            margin-top: 10px;
             font-weight: 800;
-            font-size: 13px;
+            font-size: 14px;
+            margin-top: 10px;
         }
 
-        .control-panel {
-            background: rgba(255,255,255,0.05);
-            padding: 25px;
-            border-radius: 15px;
+        .main-panel {
+            background: rgba(255,255,255,0.95);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .settings {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
             margin-bottom: 25px;
         }
 
-        .settings-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .setting-group label {
+        .setting label {
             display: block;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 700;
+            color: #495057;
             margin-bottom: 8px;
-            opacity: 0.9;
         }
 
-        .setting-group select {
+        .setting select {
             width: 100%;
             padding: 12px;
-            background: rgba(255,255,255,0.1);
-            border: 2px solid rgba(255,255,255,0.2);
+            border: 2px solid #e9ecef;
             border-radius: 10px;
-            color: white;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 600;
+            background: white;
         }
 
-        .setting-group select option {
-            background: #302b63;
+        .prompts-section {
+            margin-bottom: 25px;
         }
 
-        .prompt-area {
-            margin-bottom: 20px;
-        }
-
-        .prompt-area label {
+        .prompts-section label {
             display: block;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 700;
+            color: #495057;
             margin-bottom: 8px;
         }
 
-        .prompt-textarea {
+        .prompts-textarea {
             width: 100%;
-            min-height: 250px;
+            min-height: 300px;
             padding: 18px;
-            background: rgba(0,0,0,0.3);
-            border: 2px solid rgba(255,255,255,0.2);
+            border: 2px solid #e9ecef;
             border-radius: 12px;
-            color: white;
-            font-size: 14px;
-            font-family: monospace;
+            font-size: 15px;
+            font-family: 'Courier New', monospace;
             line-height: 1.8;
             resize: vertical;
         }
 
-        .prompt-textarea::placeholder {
-            color: rgba(255,255,255,0.4);
-        }
-
-        .prompt-info {
+        .prompts-info {
             margin-top: 10px;
-            font-size: 13px;
-            color: #667eea;
-            font-weight: 700;
+            padding: 12px;
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #856404;
+            font-weight: 600;
         }
 
         .generate-btn {
             width: 100%;
-            padding: 18px;
+            padding: 20px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
             border-radius: 12px;
             color: white;
             font-size: 18px;
             font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
             cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
             transition: all 0.3s ease;
         }
 
         .generate-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
         }
 
         .generate-btn:disabled {
@@ -146,45 +146,48 @@
             cursor: not-allowed;
         }
 
-        .progress-section {
-            background: rgba(255,255,255,0.05);
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 25px;
+        .progress-panel {
+            background: rgba(255,255,255,0.95);
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             display: none;
         }
 
-        .progress-section.active {
+        .progress-panel.active {
             display: block;
         }
 
         .progress-header {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             margin-bottom: 15px;
         }
 
-        .progress-text {
+        .progress-title {
             font-size: 18px;
             font-weight: 800;
+            color: #2d3748;
         }
 
-        .progress-time {
-            font-size: 16px;
+        .progress-timer {
+            font-size: 20px;
+            font-weight: 900;
             color: #667eea;
-            font-weight: 700;
         }
 
         .progress-bar-container {
             width: 100%;
-            height: 30px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 15px;
+            height: 35px;
+            background: #e9ecef;
+            border-radius: 18px;
             overflow: hidden;
             margin-bottom: 15px;
         }
 
-        .progress-bar-fill {
+        .progress-bar {
             height: 100%;
             background: linear-gradient(90deg, #00b09b, #96c93d);
             width: 0%;
@@ -192,73 +195,86 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 800;
+            font-weight: 900;
+            color: white;
             font-size: 14px;
         }
 
         .current-task {
             font-size: 14px;
-            opacity: 0.8;
-            margin-top: 10px;
+            color: #6c757d;
+            font-weight: 600;
         }
 
-        .results-section {
-            background: rgba(255,255,255,0.05);
-            padding: 25px;
-            border-radius: 15px;
+        .results-panel {
+            background: rgba(255,255,255,0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
         }
 
         .results-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .results-title {
-            font-size: 22px;
-            font-weight: 800;
+            font-size: 24px;
+            font-weight: 900;
+            color: #2d3748;
         }
 
-        .action-buttons {
+        .results-actions {
             display: flex;
             gap: 12px;
         }
 
         .action-btn {
             padding: 10px 20px;
-            background: rgba(255,255,255,0.1);
-            border: 2px solid rgba(255,255,255,0.2);
+            border: none;
             border-radius: 10px;
-            color: white;
             font-weight: 700;
             cursor: pointer;
             font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .download-all-btn {
+            background: linear-gradient(135deg, #00b09b, #96c93d);
+            color: white;
+        }
+
+        .clear-btn {
+            background: #dc3545;
+            color: white;
         }
 
         .videos-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
         }
 
         .video-card {
-            background: rgba(0,0,0,0.4);
-            border-radius: 12px;
+            background: white;
+            border-radius: 15px;
             overflow: hidden;
-            border: 2px solid rgba(255,255,255,0.1);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
         }
 
         .video-card:hover {
-            border-color: #667eea;
             transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
         .video-preview {
             width: 100%;
-            height: 250px;
+            height: 280px;
             background: #000;
+            position: relative;
         }
 
         .video-preview video {
@@ -268,39 +284,40 @@
         }
 
         .video-info {
-            padding: 15px;
+            padding: 18px;
         }
 
         .video-number {
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 800;
             color: #667eea;
             margin-bottom: 8px;
         }
 
         .video-prompt {
-            font-size: 13px;
-            margin-bottom: 12px;
-            opacity: 0.9;
-            line-height: 1.4;
+            font-size: 14px;
+            color: #495057;
+            margin-bottom: 15px;
+            line-height: 1.5;
         }
 
-        .video-actions {
+        .video-meta {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .video-badge {
-            padding: 6px 12px;
+            padding: 6px 14px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
             border-radius: 15px;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 800;
         }
 
         .download-btn {
-            padding: 8px 16px;
+            padding: 8px 18px;
             background: linear-gradient(135deg, #00b09b, #96c93d);
             border: none;
             border-radius: 8px;
@@ -312,42 +329,45 @@
 
         .empty-state {
             text-align: center;
-            padding: 60px 20px;
-            opacity: 0.5;
+            padding: 80px 20px;
+            color: #adb5bd;
         }
 
         .empty-icon {
-            font-size: 70px;
-            margin-bottom: 15px;
+            font-size: 80px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎬 Bulk Video Maker</h1>
-            <p>Generate Multiple Videos at Once</p>
-            <div class="badge">✅ MULTIPLE VIDEOS WORKING</div>
+            <h1>🎬 Image Animator - 5 Sec Videos</h1>
+            <p style="color: #6c757d; font-size: 16px; margin-top: 8px;">
+                Single Image → Animated Video (Zoom, Pan, Ken Burns Effect)
+            </p>
+            <div class="badge">✅ RELIABLE • NO ENCODING ISSUES • UNLIMITED PROMPTS</div>
         </div>
 
-        <div class="control-panel">
-            <div class="settings-row">
-                <div class="setting-group">
+        <div class="main-panel">
+            <div class="settings">
+                <div class="setting">
                     <label>Aspect Ratio</label>
                     <select id="ratio">
-                        <option value="16:9">16:9 (YouTube)</option>
-                        <option value="9:16">9:16 (TikTok)</option>
-                        <option value="1:1">1:1 (Instagram)</option>
+                        <option value="16:9">16:9 - YouTube (1024x576)</option>
+                        <option value="9:16">9:16 - TikTok (576x1024)</option>
+                        <option value="1:1">1:1 - Instagram (1024x1024)</option>
                     </select>
                 </div>
-                <div class="setting-group">
-                    <label>Images Per Video</label>
-                    <select id="imageCount">
-                        <option value="3">3 Images (Fast)</option>
-                        <option value="5" selected>5 Images (Normal)</option>
+                <div class="setting">
+                    <label>Animation Style</label>
+                    <select id="animation">
+                        <option value="zoom">Zoom In + Pan</option>
+                        <option value="ken">Ken Burns Effect</option>
+                        <option value="slide">Slide + Rotate</option>
                     </select>
                 </div>
-                <div class="setting-group">
+                <div class="setting">
                     <label>Duration</label>
                     <select id="duration">
                         <option value="5" selected>5 Seconds</option>
@@ -355,41 +375,56 @@
                 </div>
             </div>
 
-            <div class="prompt-area">
-                <label>Video Prompts (one per line)</label>
-                <textarea id="prompts" class="prompt-textarea" placeholder="Lion walking in savanna
-Eagle flying over mountains
-Car racing on track
-Astronaut in space
-Whale in ocean"></textarea>
-                <div class="prompt-info" id="promptInfo">0 videos will be generated</div>
+            <div class="prompts-section">
+                <label>🎬 Video Prompts (Unlimited - One Per Line)</label>
+                <textarea id="prompts" class="prompts-textarea" placeholder="Enter unlimited prompts (one per line):
+
+Lion walking through golden savanna at sunset
+Majestic eagle soaring over snow-capped mountains
+Luxury sports car racing on coastal highway
+Astronaut floating in space with Earth in background
+Ancient castle on misty mountain peak
+Cherry blossoms falling in Japanese garden
+Northern lights dancing over frozen lake
+Tropical beach with crystal clear turquoise water
+Medieval knight in shining armor
+Futuristic cityscape with flying cars
+
+💡 Tips:
+- Each line = 1 video (5 seconds)
+- Detailed descriptions work best
+- Mention lighting, mood, atmosphere
+- No limit on number of prompts!"></textarea>
+                <div class="prompts-info" id="promptsInfo">
+                    📊 0 videos will be created
+                </div>
             </div>
 
             <button class="generate-btn" id="generateBtn" disabled>
-                🚀 Generate All Videos
+                🚀 Generate All Videos (5 Sec Each)
             </button>
         </div>
 
-        <div class="progress-section" id="progressSection">
+        <div class="progress-panel" id="progressPanel">
             <div class="progress-header">
-                <span class="progress-text" id="progressText">Processing: 0 / 0</span>
-                <span class="progress-time" id="progressTime">00:00</span>
+                <div class="progress-title" id="progressTitle">Creating videos...</div>
+                <div class="progress-timer" id="progressTimer">00:00</div>
             </div>
             <div class="progress-bar-container">
-                <div class="progress-bar-fill" id="progressBar">0%</div>
+                <div class="progress-bar" id="progressBar">0%</div>
             </div>
             <div class="current-task" id="currentTask">Preparing...</div>
         </div>
 
-        <div class="results-section">
+        <div class="results-panel">
             <div class="results-header">
-                <h2 class="results-title">Videos (<span id="videoCount">0</span>)</h2>
-                <div class="action-buttons">
-                    <button class="action-btn" id="downloadAllBtn" style="display:none;">
+                <h2 class="results-title">📹 Generated Videos (<span id="videoCount">0</span>)</h2>
+                <div class="results-actions">
+                    <button class="action-btn download-all-btn" id="downloadAllBtn" style="display:none;">
                         📥 Download All
                     </button>
-                    <button class="action-btn" id="clearBtn" style="display:none;">
-                        🗑️ Clear
+                    <button class="action-btn clear-btn" id="clearBtn" style="display:none;">
+                        🗑️ Clear All
                     </button>
                 </div>
             </div>
@@ -398,7 +433,7 @@ Whale in ocean"></textarea>
                 <div class="empty-state">
                     <div class="empty-icon">🎬</div>
                     <h3>No videos yet</h3>
-                    <p>Enter prompts and generate!</p>
+                    <p>Enter prompts above and click Generate!</p>
                 </div>
             </div>
         </div>
@@ -406,11 +441,11 @@ Whale in ocean"></textarea>
 
     <script>
         const promptsInput = document.getElementById('prompts');
-        const promptInfo = document.getElementById('promptInfo');
+        const promptsInfo = document.getElementById('promptsInfo');
         const generateBtn = document.getElementById('generateBtn');
-        const progressSection = document.getElementById('progressSection');
-        const progressText = document.getElementById('progressText');
-        const progressTime = document.getElementById('progressTime');
+        const progressPanel = document.getElementById('progressPanel');
+        const progressTitle = document.getElementById('progressTitle');
+        const progressTimer = document.getElementById('progressTimer');
         const progressBar = document.getElementById('progressBar');
         const currentTask = document.getElementById('currentTask');
         const videosGrid = document.getElementById('videosGrid');
@@ -418,15 +453,14 @@ Whale in ocean"></textarea>
         const downloadAllBtn = document.getElementById('downloadAllBtn');
         const clearBtn = document.getElementById('clearBtn');
         const ratioSelect = document.getElementById('ratio');
-        const imageCountSelect = document.getElementById('imageCount');
-        const durationSelect = document.getElementById('duration');
+        const animationSelect = document.getElementById('animation');
 
-        let generatedVideos = [];
+        let videos = [];
 
-        // Update prompt counter
+        // Update prompts counter
         promptsInput.addEventListener('input', () => {
             const lines = promptsInput.value.split('\n').filter(l => l.trim());
-            promptInfo.textContent = `${lines.length} video${lines.length !== 1 ? 's' : ''} will be generated`;
+            promptsInfo.innerHTML = `📊 <strong>${lines.length}</strong> video${lines.length !== 1 ? 's' : ''} will be created (${lines.length * 5} seconds total)`;
             generateBtn.disabled = lines.length === 0;
         });
 
@@ -435,180 +469,181 @@ Whale in ocean"></textarea>
             const prompts = promptsInput.value.split('\n').filter(l => l.trim());
             if (prompts.length === 0) return;
 
-            console.log(`Starting generation of ${prompts.length} videos...`);
+            console.log(`\n🎬 Starting generation of ${prompts.length} videos...`);
 
             // Reset
             videosGrid.innerHTML = '';
-            generatedVideos = [];
+            videos = [];
             videoCount.textContent = '0';
-            
-            // Show progress
-            progressSection.classList.add('active');
-            generateBtn.disabled = true;
             downloadAllBtn.style.display = 'none';
             clearBtn.style.display = 'none';
 
+            // Show progress
+            progressPanel.classList.add('active');
+            generateBtn.disabled = true;
+
             const startTime = Date.now();
-            let timerInterval = setInterval(() => {
+            const timerInterval = setInterval(() => {
                 const elapsed = Math.floor((Date.now() - startTime) / 1000);
                 const mins = String(Math.floor(elapsed / 60)).padStart(2, '0');
                 const secs = String(elapsed % 60).padStart(2, '0');
-                progressTime.textContent = `${mins}:${secs}`;
+                progressTimer.textContent = `${mins}:${secs}`;
             }, 1000);
 
-            const imageCount = parseInt(imageCountSelect.value);
-            const duration = parseInt(durationSelect.value);
-
-            // Generate each video sequentially
+            // Generate each video
             for (let i = 0; i < prompts.length; i++) {
-                const videoNum = i + 1;
-                
-                console.log(`\n=== GENERATING VIDEO ${videoNum}/${prompts.length} ===`);
+                const num = i + 1;
+                const percent = Math.round((num / prompts.length) * 100);
+
+                progressTitle.textContent = `Creating video ${num} of ${prompts.length}`;
+                progressBar.style.width = `${percent}%`;
+                progressBar.textContent = `${percent}%`;
+                currentTask.textContent = `📸 Generating image & animating: ${prompts[i].substring(0, 60)}...`;
+
+                console.log(`\n=== VIDEO ${num}/${prompts.length} ===`);
                 console.log(`Prompt: "${prompts[i]}"`);
-                
-                // Update progress
-                progressText.textContent = `Processing: ${videoNum} / ${prompts.length}`;
-                progressBar.style.width = `${(videoNum / prompts.length) * 100}%`;
-                progressBar.textContent = `${Math.round((videoNum / prompts.length) * 100)}%`;
-                currentTask.textContent = `Creating video ${videoNum}: ${prompts[i].substring(0, 50)}...`;
 
                 try {
-                    console.log(`Loading ${imageCount} images...`);
-                    const videoBlob = await createVideo(prompts[i], imageCount, duration, i);
-                    
-                    if (videoBlob) {
-                        console.log(`✅ Video ${videoNum} created successfully! Size: ${(videoBlob.size / 1024 / 1024).toFixed(2)}MB`);
-                        displayVideo(prompts[i], videoBlob, videoNum);
-                    } else {
-                        console.error(`❌ Failed to create video ${videoNum}`);
+                    const blob = await createAnimatedVideo(prompts[i], i);
+                    if (blob) {
+                        console.log(`✅ SUCCESS! Video ${num} (${(blob.size/1024/1024).toFixed(2)}MB)`);
+                        addVideoCard(prompts[i], blob, num);
                     }
-                } catch (error) {
-                    console.error(`❌ Error generating video ${videoNum}:`, error);
+                } catch (err) {
+                    console.error(`❌ ERROR! Video ${num}:`, err);
                 }
             }
 
             // Complete
             clearInterval(timerInterval);
-            progressSection.classList.remove('active');
+            progressPanel.classList.remove('active');
             generateBtn.disabled = false;
-            downloadAllBtn.style.display = 'block';
-            clearBtn.style.display = 'block';
-            
-            console.log(`\n✅ ALL DONE! Generated ${generatedVideos.length} videos`);
+            downloadAllBtn.style.display = videos.length > 0 ? 'block' : 'none';
+            clearBtn.style.display = videos.length > 0 ? 'block' : 'none';
+
+            console.log(`\n✅ COMPLETE! Created ${videos.length}/${prompts.length} videos`);
         });
 
-        // Create video function
-        async function createVideo(prompt, imageCount, duration, seed) {
+        // Create animated video from single image
+        async function createAnimatedVideo(prompt, seed) {
             // Get dimensions
             const ratio = ratioSelect.value;
-            let width, height;
-            if (ratio === '16:9') {
-                width = 1024; height = 576;
-            } else if (ratio === '9:16') {
-                width = 576; height = 1024;
-            } else {
-                width = 1024; height = 1024;
-            }
+            let w, h;
+            if (ratio === '16:9') { w = 1024; h = 576; }
+            else if (ratio === '9:16') { w = 576; h = 1024; }
+            else { w = 1024; h = 1024; }
 
-            console.log(`Canvas size: ${width}x${height}`);
+            console.log(`Canvas: ${w}x${h}`);
 
-            // Load images in parallel for speed
-            console.log('Loading images in parallel...');
-            const imagePromises = [];
-            for (let i = 0; i < imageCount; i++) {
-                const imgSeed = Date.now() + seed * 1000 + i * 50;
-                const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${width}&height=${height}&seed=${imgSeed}&nologo=true`;
-                console.log(`Image ${i + 1} URL generated`);
-                imagePromises.push(loadImage(url));
-            }
-
-            const images = await Promise.all(imagePromises);
-            const validImages = images.filter(img => img !== null);
+            // Generate single image
+            const imgSeed = Date.now() + seed * 1000;
+            const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${w}&height=${h}&seed=${imgSeed}&nologo=true&enhance=true`;
             
-            console.log(`Loaded ${validImages.length}/${imageCount} images successfully`);
-
-            if (validImages.length === 0) {
-                console.error('No images loaded!');
+            console.log('Loading image...');
+            const img = await loadImage(url);
+            if (!img) {
+                console.error('Image failed to load');
                 return null;
             }
+            console.log('Image loaded ✓');
 
-            // Create canvas and start recording
-            console.log('Setting up canvas recording...');
+            // Create canvas
             const canvas = document.createElement('canvas');
-            canvas.width = width;
-            canvas.height = height;
+            canvas.width = w;
+            canvas.height = h;
             const ctx = canvas.getContext('2d');
 
             const stream = canvas.captureStream(30);
             const recorder = new MediaRecorder(stream, {
                 mimeType: 'video/webm;codecs=vp9',
-                videoBitsPerSecond: 2000000
+                videoBitsPerSecond: 2500000
             });
 
             const chunks = [];
             recorder.ondataavailable = e => {
-                if (e.data && e.data.size > 0) {
-                    chunks.push(e.data);
-                    console.log(`Chunk received: ${e.data.size} bytes`);
-                }
+                if (e.data && e.data.size > 0) chunks.push(e.data);
             };
 
             return new Promise((resolve) => {
                 recorder.onstop = () => {
-                    console.log(`Recording stopped. Total chunks: ${chunks.length}`);
-                    const blob = new Blob(chunks, { type: 'video/webm' });
-                    console.log(`Final blob size: ${blob.size} bytes`);
-                    resolve(blob);
+                    if (chunks.length > 0) {
+                        const blob = new Blob(chunks, { type: 'video/webm' });
+                        resolve(blob);
+                    } else {
+                        resolve(null);
+                    }
                 };
 
-                console.log('Starting recording...');
                 recorder.start(100);
+                console.log('Recording started');
 
-                const startTime = performance.now();
-                const targetDuration = duration * 1000;
-                let frameCount = 0;
+                const animStyle = animationSelect.value;
+                const start = performance.now();
+                const duration = 5000;
 
                 function animate() {
-                    const elapsed = performance.now() - startTime;
-                    
-                    if (elapsed >= targetDuration) {
-                        console.log(`Target duration reached. Stopping... Frames rendered: ${frameCount}`);
+                    const elapsed = performance.now() - start;
+
+                    if (elapsed >= duration) {
+                        console.log('Recording complete');
                         recorder.stop();
                         return;
                     }
 
-                    // Calculate which image to show
-                    const progress = elapsed / targetDuration;
-                    const imageIndex = Math.floor(progress * validImages.length);
-                    const currentImage = validImages[Math.min(imageIndex, validImages.length - 1)];
-                    
-                    const segmentDuration = targetDuration / validImages.length;
-                    const segmentProgress = (elapsed % segmentDuration) / segmentDuration;
+                    const progress = elapsed / duration;
 
-                    // Clear and draw
-                    ctx.clearRect(0, 0, width, height);
+                    ctx.clearRect(0, 0, w, h);
 
-                    // Animation
-                    const scale = 1 + Math.sin(segmentProgress * Math.PI) * 0.08;
-                    const panX = Math.sin(segmentProgress * Math.PI * 2) * 25;
+                    // Apply animation based on style
+                    if (animStyle === 'zoom') {
+                        // Zoom in + pan
+                        const scale = 1 + progress * 0.3; // Zoom from 1x to 1.3x
+                        const panX = Math.sin(progress * Math.PI) * 50;
+                        const panY = Math.cos(progress * Math.PI) * 30;
 
-                    ctx.save();
-                    ctx.translate(width / 2, height / 2);
-                    ctx.scale(scale, scale);
-                    ctx.translate(-width / 2 + panX, -height / 2);
-                    ctx.drawImage(currentImage, 0, 0, width, height);
-                    ctx.restore();
+                        ctx.save();
+                        ctx.translate(w/2, h/2);
+                        ctx.scale(scale, scale);
+                        ctx.translate(-w/2 + panX, -h/2 + panY);
+                        ctx.drawImage(img, 0, 0, w, h);
+                        ctx.restore();
+                    } else if (animStyle === 'ken') {
+                        // Ken Burns effect
+                        const scale = 1 + Math.sin(progress * Math.PI) * 0.2;
+                        const panX = progress * 100 - 50;
+                        const panY = Math.sin(progress * Math.PI * 2) * 30;
 
-                    // Fade in/out
-                    if (elapsed < 250) {
-                        ctx.fillStyle = `rgba(0,0,0,${1 - elapsed / 250})`;
-                        ctx.fillRect(0, 0, width, height);
-                    } else if (elapsed > targetDuration - 250) {
-                        ctx.fillStyle = `rgba(0,0,0,${(elapsed - (targetDuration - 250)) / 250})`;
-                        ctx.fillRect(0, 0, width, height);
+                        ctx.save();
+                        ctx.translate(w/2, h/2);
+                        ctx.scale(scale, scale);
+                        ctx.translate(-w/2 + panX, -h/2 + panY);
+                        ctx.drawImage(img, 0, 0, w, h);
+                        ctx.restore();
+                    } else {
+                        // Slide + rotate
+                        const translateX = Math.sin(progress * Math.PI * 2) * 40;
+                        const translateY = Math.cos(progress * Math.PI * 2) * 40;
+                        const rotate = Math.sin(progress * Math.PI) * 0.05;
+                        const scale = 1 + Math.sin(progress * Math.PI) * 0.15;
+
+                        ctx.save();
+                        ctx.translate(w/2 + translateX, h/2 + translateY);
+                        ctx.rotate(rotate);
+                        ctx.scale(scale, scale);
+                        ctx.translate(-w/2, -h/2);
+                        ctx.drawImage(img, 0, 0, w, h);
+                        ctx.restore();
                     }
 
-                    frameCount++;
+                    // Fade in/out
+                    if (elapsed < 300) {
+                        ctx.fillStyle = `rgba(0,0,0,${1 - elapsed/300})`;
+                        ctx.fillRect(0, 0, w, h);
+                    } else if (elapsed > duration - 300) {
+                        ctx.fillStyle = `rgba(0,0,0,${(elapsed-(duration-300))/300})`;
+                        ctx.fillRect(0, 0, w, h);
+                    }
+
                     requestAnimationFrame(animate);
                 }
 
@@ -617,44 +652,39 @@ Whale in ocean"></textarea>
                 // Safety timeout
                 setTimeout(() => {
                     if (recorder.state === 'recording') {
-                        console.log('Safety timeout triggered!');
                         recorder.stop();
                     }
-                }, targetDuration + 500);
+                }, duration + 500);
             });
         }
 
-        // Load image
+        // Load image helper
         function loadImage(url) {
             return new Promise((resolve) => {
                 const img = new Image();
                 img.crossOrigin = 'anonymous';
-                
-                const timeout = setTimeout(() => {
-                    console.warn('Image load timeout');
-                    resolve(null);
-                }, 12000);
-                
+
+                const timeout = setTimeout(() => resolve(null), 15000);
+
                 img.onload = () => {
                     clearTimeout(timeout);
                     resolve(img);
                 };
-                
+
                 img.onerror = () => {
                     clearTimeout(timeout);
-                    console.error('Image load error');
                     resolve(null);
                 };
-                
+
                 img.src = url;
             });
         }
 
-        // Display video
-        function displayVideo(prompt, blob, num) {
+        // Add video card
+        function addVideoCard(prompt, blob, num) {
             const url = URL.createObjectURL(blob);
-            generatedVideos.push({ prompt, blob, url });
-            videoCount.textContent = generatedVideos.length;
+            videos.push({ prompt, blob, url });
+            videoCount.textContent = videos.length;
 
             const card = document.createElement('div');
             card.className = 'video-card';
@@ -667,9 +697,9 @@ Whale in ocean"></textarea>
                 <div class="video-info">
                     <div class="video-number">Video #${num}</div>
                     <div class="video-prompt">${prompt}</div>
-                    <div class="video-actions">
-                        <span class="video-badge">${ratioSelect.value} • 5s</span>
-                        <button class="download-btn" onclick="downloadVideo(${generatedVideos.length - 1})">
+                    <div class="video-meta">
+                        <span class="video-badge">${ratioSelect.value} • 5s • Animated</span>
+                        <button class="download-btn" onclick="downloadVideo(${videos.length - 1})">
                             📥 Download
                         </button>
                     </div>
@@ -679,33 +709,33 @@ Whale in ocean"></textarea>
             videosGrid.appendChild(card);
         }
 
-        // Download single
+        // Download single video
         window.downloadVideo = function(index) {
-            const video = generatedVideos[index];
+            const video = videos[index];
             const link = document.createElement('a');
             link.href = video.url;
-            link.download = `video-${index + 1}.webm`;
+            link.download = `animated-video-${index + 1}.webm`;
             link.click();
         };
 
         // Download all
         downloadAllBtn.addEventListener('click', async () => {
-            for (let i = 0; i < generatedVideos.length; i++) {
+            for (let i = 0; i < videos.length; i++) {
                 downloadVideo(i);
-                await new Promise(r => setTimeout(r, 300));
+                await new Promise(r => setTimeout(r, 500));
             }
         });
 
-        // Clear
+        // Clear all
         clearBtn.addEventListener('click', () => {
-            if (confirm('Clear all videos?')) {
-                generatedVideos.forEach(v => URL.revokeObjectURL(v.url));
-                generatedVideos = [];
+            if (confirm(`Clear all ${videos.length} videos?`)) {
+                videos.forEach(v => URL.revokeObjectURL(v.url));
+                videos = [];
                 videosGrid.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-icon">🎬</div>
                         <h3>No videos yet</h3>
-                        <p>Enter prompts and generate!</p>
+                        <p>Enter prompts above and click Generate!</p>
                     </div>
                 `;
                 videoCount.textContent = '0';
