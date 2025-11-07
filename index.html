@@ -342,10 +342,17 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎬 Image Animator - 5 Sec Videos</h1>
-            <p style="color: #6c757d; font-size: 16px; margin-top: 8px;">
-                Single Image → Animated Video (Zoom, Pan, Ken Burns Effect)
-            </p>
+            <h1>curl -X POST https://api.creatomate.com/v2/renders \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer b348e67f030d4ed9a162c738c2fef7e13d6324fb9634c6ce7e78e449a4ebf05706bb4b1e4d9f8104d59f9e64ec1d29b1" \
+     -d '{
+  "template_id": "8ee9ab62-d4e1-4591-ad83-6187c4cf8131",
+  "modifications": {
+    "Video.source": "https://creatomate.com/files/assets/7347c3b7-e1a8-4439-96f1-f3dfc95c3d28",
+    "Text-1.text": "Your Text And Video Here",
+    "Text-2.text": "Create & Automate\n[size 150%]Video[/size]"
+  }
+}'         </p>
             <div class="badge">✅ RELIABLE • NO ENCODING ISSUES • UNLIMITED PROMPTS</div>
         </div>
 
