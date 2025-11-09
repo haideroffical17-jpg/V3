@@ -168,6 +168,11 @@
             font-size: 18px;
             font-weight: 700;
             cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .submit-button:hover {
+            transform: scale(1.02);
         }
 
         .error-message {
@@ -184,15 +189,8 @@
             cursor: pointer;
         }
 
-        .admin-secret-trigger {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            width: 30px;
-            height: 30px;
-            opacity: 0;
-            cursor: pointer;
-            z-index: 1000;
+        .toggle-form:hover {
+            text-decoration: underline;
         }
 
         /* Dashboard */
@@ -611,9 +609,6 @@
     </style>
 </head>
 <body>
-    <!-- Secret Admin Trigger (Triple Click Bottom Right Corner) -->
-    <div class="admin-secret-trigger" onclick="adminClickCount()"></div>
-
     <!-- Header -->
     <div class="header">
         <div class="logo">
@@ -662,7 +657,7 @@
                 <p class="toggle-form" onclick="switchToLogin()">Already have an account? Login</p>
             </div>
             
-            <!-- Login Form -->
+            <!-- Login Form (Admin can login here too) -->
             <div id="loginForm" style="display: none;">
                 <h2>Welcome Back</h2>
                 <form onsubmit="handleLogin(event)">
@@ -677,23 +672,6 @@
                     <button type="submit" class="submit-button">Login</button>
                 </form>
                 <p class="toggle-form" onclick="switchToSignup()">Don't have an account? Sign Up</p>
-            </div>
-
-            <!-- Admin Login Form (Hidden) -->
-            <div id="adminLoginForm" style="display: none;">
-                <h2 style="color: #ff0844;">🔐 Admin Access</h2>
-                <form onsubmit="handleAdminLogin(event)">
-                    <div class="form-group">
-                        <label>Admin Username</label>
-                        <input type="text" id="admin-username" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Admin Password</label>
-                        <input type="password" id="admin-password" required>
-                    </div>
-                    <button type="submit" class="submit-button" style="background: linear-gradient(135deg, #ff0844, #ff5c00);">Admin Login</button>
-                </form>
-                <p class="toggle-form" onclick="switchToLogin()">← Back to Login</p>
             </div>
         </div>
     </div>
@@ -873,25 +851,6 @@ Example prompts:
         const ADMIN_PASSWORD = 'HaiderAli369';
         const ADMIN_USER_ID = -1;
 
-        // Admin secret access
-        let adminClicks = 0;
-        let adminClickTimer = null;
-
-        function adminClickCount() {
-            adminClicks++;
-            
-            if (adminClickTimer) clearTimeout(adminClickTimer);
-            
-            if (adminClicks >= 3) {
-                switchToAdmin();
-                adminClicks = 0;
-            }
-            
-            adminClickTimer = setTimeout(() => {
-                adminClicks = 0;
-            }, 1000);
-        }
-
         // Initialize data
         let currentUser = null;
         let isAdmin = false;
@@ -922,14 +881,12 @@ Example prompts:
             document.getElementById('authModal').style.display = 'flex';
             document.getElementById('signupForm').style.display = 'block';
             document.getElementById('loginForm').style.display = 'none';
-            document.getElementById('adminLoginForm').style.display = 'none';
         }
 
         function openLoginModal() {
             document.getElementById('authModal').style.display = 'flex';
             document.getElementById('signupForm').style.display = 'none';
             document.getElementById('loginForm').style.display = 'block';
-            document.getElementById('adminLoginForm').style.display = 'none';
         }
 
         function closeModal() {
@@ -939,22 +896,11 @@ Example prompts:
         function switchToLogin() {
             document.getElementById('signupForm').style.display = 'none';
             document.getElementById('loginForm').style.display = 'block';
-            document.getElementById('adminLoginForm').style.display = 'none';
         }
 
         function switchToSignup() {
             document.getElementById('loginForm').style.display = 'none';
             document.getElementById('signupForm').style.display = 'block';
-            document.getElementById('adminLoginForm').style.display = 'none';
-        }
-
-        function switchToAdmin() {
-            if (!document.getElementById('authModal').style.display || document.getElementById('authModal').style.display === 'none') {
-                document.getElementById('authModal').style.display = 'flex';
-            }
-            document.getElementById('signupForm').style.display = 'none';
-            document.getElementById('loginForm').style.display = 'none';
-            document.getElementById('adminLoginForm').style.display = 'block';
         }
 
         // Signup handler
@@ -993,13 +939,24 @@ Example prompts:
             alert('✅ Account created successfully! Welcome to Unlimited Video!');
         }
 
-        // Login handler
+        // Login handler (Admin can login here with same credentials)
         function handleLogin(event) {
             event.preventDefault();
             
             const username = document.getElementById('login-username').value.trim();
             const password = document.getElementById('login-password').value;
             
+            // Check if Admin
+            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                isAdmin = true;
+                currentUser = { id: ADMIN_USER_ID, username: ADMIN_USERNAME, isAdmin: true };
+                localStorage.setItem('veo-admin', 'true');
+                closeModal();
+                showAdminPanel();
+                return;
+            }
+            
+            // Check regular user
             const user = users.find(u => 
                 u.username.toLowerCase() === username.toLowerCase() && 
                 u.password === password
@@ -1015,24 +972,6 @@ Example prompts:
             
             closeModal();
             showDashboard();
-        }
-
-        // Admin login handler
-        function handleAdminLogin(event) {
-            event.preventDefault();
-            
-            const username = document.getElementById('admin-username').value;
-            const password = document.getElementById('admin-password').value;
-            
-            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-                isAdmin = true;
-                currentUser = { id: ADMIN_USER_ID, username: ADMIN_USERNAME, isAdmin: true };
-                localStorage.setItem('veo-admin', 'true');
-                closeModal();
-                showAdminPanel();
-            } else {
-                alert('❌ Invalid admin credentials!');
-            }
         }
 
         // Logout
