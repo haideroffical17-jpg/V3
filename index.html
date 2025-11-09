@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unlimited Video Generator - Veo Style</title>
+    <title>Unlimited Video Generator - No Backend Required</title>
     <style>
         * {
             margin: 0;
@@ -45,8 +45,30 @@
             opacity: 0.9;
         }
 
+        .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
         .content {
             padding: 40px;
+        }
+
+        .alert {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            border-left-color: #10b981;
         }
 
         .input-section {
@@ -58,6 +80,9 @@
             color: #667eea;
             margin-bottom: 15px;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .prompt-textarea {
@@ -71,6 +96,7 @@
             font-family: 'Courier New', monospace;
             background: #f8f9ff;
             transition: all 0.3s;
+            line-height: 1.6;
         }
 
         .prompt-textarea:focus {
@@ -144,6 +170,26 @@
             transition: all 0.3s;
             text-transform: uppercase;
             letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
         }
 
         .btn-primary {
@@ -184,27 +230,53 @@
 
         .progress-section.active {
             display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .progress-bar {
             width: 100%;
-            height: 30px;
+            height: 40px;
             background: #e0e7ff;
-            border-radius: 15px;
+            border-radius: 20px;
             overflow: hidden;
             margin-bottom: 15px;
+            position: relative;
         }
 
         .progress-fill {
             height: 100%;
             background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
             width: 0%;
-            transition: width 0.3s;
+            transition: width 0.5s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: 600;
+            font-size: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
 
         .status-text {
@@ -212,6 +284,32 @@
             font-size: 16px;
             color: #667eea;
             font-weight: 600;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            display: block;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
         }
 
         .results-section {
@@ -227,6 +325,12 @@
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             transition: all 0.3s;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         .video-card:hover {
@@ -239,6 +343,17 @@
             height: 200px;
             object-fit: cover;
             background: #000;
+        }
+
+        .video-placeholder {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3em;
         }
 
         .video-card-content {
@@ -293,36 +408,12 @@
 
         .download-btn:hover {
             background: #764ba2;
+            transform: translateY(-2px);
         }
 
-        .stats-bar {
-            display: flex;
-            justify-content: space-around;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            color: white;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 2em;
-            font-weight: bold;
-            display: block;
-        }
-
-        .stat-label {
-            font-size: 0.9em;
-            opacity: 0.9;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .download-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
         }
 
         .loading-spinner {
@@ -333,6 +424,44 @@
             height: 40px;
             animation: spin 1s linear infinite;
             margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .example-prompts {
+            background: #f8f9ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border: 2px dashed #667eea;
+        }
+
+        .example-prompts h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .example-prompts ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .example-prompts li {
+            padding: 8px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .example-prompts li:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(5px);
         }
 
         @media (max-width: 768px) {
@@ -351,6 +480,15 @@
             .btn {
                 width: 100%;
             }
+
+            .stats-bar {
+                flex-wrap: wrap;
+            }
+
+            .stat-item {
+                flex: 1 1 50%;
+                margin: 10px 0;
+            }
         }
     </style>
 </head>
@@ -359,11 +497,19 @@
         <!-- Header -->
         <div class="header">
             <h1>🎬 Unlimited Video Generator</h1>
-            <p>Veo 3.1 Style - Batch Processing Power</p>
+            <p>Professional Batch Video Creation Tool</p>
+            <div class="badge">✨ No Backend Required - Pure JavaScript</div>
         </div>
 
         <!-- Main Content -->
         <div class="content">
+            <!-- Alert -->
+            <div class="alert alert-success">
+                <strong>🎉 Demo Mode Active!</strong> This is a fully functional demo using mock data. 
+                Videos are simulated but the interface works exactly like the real tool. 
+                Connect to a real API endpoint to generate actual videos!
+            </div>
+
             <!-- Stats Bar -->
             <div class="stats-bar">
                 <div class="stat-item">
@@ -386,22 +532,37 @@
 
             <!-- Input Section -->
             <div class="input-section">
-                <div class="section-title">📝 Enter Your Prompts (1 Line = 1 Video)</div>
+                <div class="section-title">
+                    📝 Enter Your Prompts (1 Line = 1 Video)
+                </div>
                 <textarea 
                     id="promptInput" 
                     class="prompt-textarea" 
-                    placeholder="A cat playing piano in cinematic style
-A dog running on the beach at sunset
-A futuristic city with flying cars
+                    placeholder="A cat playing piano in cinematic style, 4K quality
+A dog running on the beach at sunset, slow motion
+A futuristic city with flying cars, neon lights
 An astronaut floating in space with Earth in background
-A beautiful waterfall in a tropical forest
+A beautiful waterfall in a tropical forest, birds chirping
 
 Enter unlimited prompts here - one per line!
-Press Generate to start batch processing..."
+Each line will create a separate video.
+Try it now - paste as many prompts as you want!"
                 ></textarea>
                 <div class="helper-text">
                     <span id="lineCount">0 prompts</span>
-                    Tip: Each line will create a separate video. No limit!
+                    💡 Tip: Each line will create a separate video. No limit on number of prompts!
+                </div>
+
+                <!-- Example Prompts -->
+                <div class="example-prompts">
+                    <h4>🎯 Quick Examples (Click to use):</h4>
+                    <ul>
+                        <li onclick="addExamplePrompt('A majestic lion walking through the African savanna at golden hour')">🦁 Lion in savanna at golden hour</li>
+                        <li onclick="addExamplePrompt('A sleek sports car driving through a neon-lit cyberpunk city at night')">🏎️ Sports car in cyberpunk city</li>
+                        <li onclick="addExamplePrompt('A peaceful zen garden with falling cherry blossoms and koi fish swimming')">🌸 Zen garden with cherry blossoms</li>
+                        <li onclick="addExamplePrompt('A dragon flying over snow-capped mountains, breathing fire')">🐉 Dragon flying over mountains</li>
+                        <li onclick="addExamplePrompt('A busy Tokyo street at night with neon signs and rain reflections')">🗼 Tokyo street at night</li>
+                    </ul>
                 </div>
             </div>
 
@@ -410,30 +571,34 @@ Press Generate to start batch processing..."
                 <div class="setting-box">
                     <label>🎥 Aspect Ratio</label>
                     <select id="aspectRatio">
-                        <option value="16:9">16:9 (Landscape)</option>
-                        <option value="9:16">9:16 (Portrait)</option>
-                        <option value="1:1">1:1 (Square)</option>
+                        <option value="16:9">16:9 (Landscape - YouTube)</option>
+                        <option value="9:16">9:16 (Portrait - TikTok/Reels)</option>
+                        <option value="1:1">1:1 (Square - Instagram)</option>
+                        <option value="4:3">4:3 (Classic TV)</option>
                     </select>
                 </div>
                 <div class="setting-box">
                     <label>⏱️ Video Duration</label>
                     <select id="duration">
+                        <option value="3">3 seconds</option>
                         <option value="5">5 seconds</option>
-                        <option value="8" selected>8 seconds</option>
+                        <option value="8" selected>8 seconds (Recommended)</option>
                         <option value="10">10 seconds</option>
                     </select>
                 </div>
                 <div class="setting-box">
                     <label>🎨 Quality</label>
                     <select id="quality">
-                        <option value="fast">Fast (Lower Quality)</option>
-                        <option value="standard" selected>Standard</option>
-                        <option value="high">High (Slower)</option>
+                        <option value="fast">Fast (480p)</option>
+                        <option value="standard" selected>Standard (720p)</option>
+                        <option value="high">High (1080p)</option>
+                        <option value="ultra">Ultra (4K)</option>
                     </select>
                 </div>
                 <div class="setting-box">
                     <label>⚡ Concurrent Jobs</label>
                     <input type="number" id="concurrent" value="3" min="1" max="10">
+                    <small style="color: #666; font-size: 12px;">How many videos to process simultaneously</small>
                 </div>
             </div>
 
@@ -445,11 +610,11 @@ Press Generate to start batch processing..."
                 <button class="btn btn-secondary" onclick="clearAll()">
                     🗑️ Clear All
                 </button>
-                <button class="btn btn-secondary" onclick="downloadAll()">
+                <button class="btn btn-secondary" onclick="downloadAll()" id="downloadAllBtn" disabled>
                     📥 Download All
                 </button>
-                <button class="btn btn-secondary" onclick="stopGeneration()">
-                    ⏸️ Stop
+                <button class="btn btn-secondary" onclick="stopGeneration()" id="stopBtn" disabled>
+                    ⏸️ Stop Processing
                 </button>
             </div>
 
@@ -469,15 +634,26 @@ Press Generate to start batch processing..."
     </div>
 
     <script>
-        // Configuration
-        const API_ENDPOINT = 'http://localhost:5000/generate'; // Your API endpoint
+        // ==================== CONFIGURATION ====================
+        const USE_REAL_API = false; // Set to true when you have a real backend
+        const API_ENDPOINT = 'http://localhost:5000/generate';
         
+        // Mock video URLs for demo (replace with your API)
+        const DEMO_VIDEOS = [
+            'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4',
+            'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+            'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+            'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+            'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4'
+        ];
+
+        // ==================== GLOBAL STATE ====================
         let prompts = [];
         let results = [];
         let isGenerating = false;
         let currentIndex = 0;
 
-        // Update line count
+        // ==================== UPDATE LINE COUNT ====================
         document.getElementById('promptInput').addEventListener('input', function() {
             const text = this.value.trim();
             const lines = text.split('\n').filter(line => line.trim() !== '');
@@ -485,7 +661,16 @@ Press Generate to start batch processing..."
             document.getElementById('totalPrompts').textContent = lines.length;
         });
 
-        // Start generation
+        // ==================== ADD EXAMPLE PROMPT ====================
+        function addExamplePrompt(prompt) {
+            const textarea = document.getElementById('promptInput');
+            const currentText = textarea.value.trim();
+            textarea.value = currentText ? currentText + '\n' + prompt : prompt;
+            textarea.dispatchEvent(new Event('input'));
+            textarea.focus();
+        }
+
+        // ==================== START GENERATION ====================
         async function startGeneration() {
             const promptText = document.getElementById('promptInput').value.trim();
             
@@ -508,11 +693,15 @@ Press Generate to start batch processing..."
             results = [];
             currentIndex = 0;
             isGenerating = true;
+            
             document.getElementById('generateBtn').disabled = true;
+            document.getElementById('stopBtn').disabled = false;
             document.getElementById('progressSection').classList.add('active');
             document.getElementById('resultsSection').innerHTML = '';
-            
-            updateStats();
+            document.getElementById('completedVideos').textContent = '0';
+            document.getElementById('processingVideos').textContent = '0';
+            document.getElementById('failedVideos').textContent = '0';
+            document.getElementById('downloadAllBtn').disabled = true;
 
             // Get settings
             const settings = {
@@ -526,12 +715,12 @@ Press Generate to start batch processing..."
             await batchProcess(settings);
         }
 
-        // Batch processing
+        // ==================== BATCH PROCESSING ====================
         async function batchProcess(settings) {
             const concurrent = settings.concurrent;
             const chunks = [];
             
-            // Split into chunks
+            // Split into chunks for parallel processing
             for (let i = 0; i < prompts.length; i += concurrent) {
                 chunks.push(prompts.slice(i, i + concurrent));
             }
@@ -554,52 +743,68 @@ Press Generate to start batch processing..."
             // Complete
             isGenerating = false;
             document.getElementById('generateBtn').disabled = false;
-            document.getElementById('statusText').textContent = '✅ All videos generated!';
+            document.getElementById('stopBtn').disabled = true;
+            document.getElementById('statusText').textContent = '✅ All videos generated successfully!';
+            document.getElementById('downloadAllBtn').disabled = false;
         }
 
-        // Generate single video
+        // ==================== GENERATE SINGLE VIDEO ====================
         async function generateVideo(prompt, index, settings) {
             // Create card
             const card = createVideoCard(prompt, index);
             document.getElementById('resultsSection').appendChild(card);
 
+            // Increment processing counter
+            document.getElementById('processingVideos').textContent = 
+                parseInt(document.getElementById('processingVideos').textContent) + 1;
+
             try {
-                // Update status
-                updateCardStatus(index, 'processing', '⏳ Generating...');
+                updateCardStatus(index, 'processing', '⏳ Generating video...');
 
-                // Call API
-                const response = await fetch(API_ENDPOINT, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        prompt: prompt,
-                        aspectRatio: settings.aspectRatio,
-                        duration: settings.duration,
-                        quality: settings.quality
-                    })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    // Success
-                    results.push({
-                        prompt: prompt,
-                        videoUrl: data.video_url,
-                        provider: data.provider
+                let videoUrl;
+                
+                if (USE_REAL_API) {
+                    // REAL API CALL
+                    const response = await fetch(API_ENDPOINT, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            prompt: prompt,
+                            aspectRatio: settings.aspectRatio,
+                            duration: settings.duration,
+                            quality: settings.quality
+                        })
                     });
 
-                    updateCardStatus(index, 'success', `✅ Generated by ${data.provider}`);
-                    updateCardVideo(index, data.video_url);
-                    
-                    document.getElementById('completedVideos').textContent = 
-                        parseInt(document.getElementById('completedVideos').textContent) + 1;
+                    const data = await response.json();
+
+                    if (!data.success) {
+                        throw new Error(data.error || 'Generation failed');
+                    }
+
+                    videoUrl = data.video_url;
                 } else {
-                    // Error
-                    throw new Error(data.error || 'Unknown error');
+                    // MOCK API (Demo mode)
+                    await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 3000)); // Simulate processing time
+                    
+                    // Randomly select a demo video
+                    videoUrl = DEMO_VIDEOS[index % DEMO_VIDEOS.length];
                 }
+
+                // Success
+                results.push({
+                    prompt: prompt,
+                    videoUrl: videoUrl,
+                    settings: settings
+                });
+
+                updateCardStatus(index, 'success', `✅ Generated (${settings.quality} quality)`);
+                updateCardVideo(index, videoUrl);
+                
+                document.getElementById('completedVideos').textContent = 
+                    parseInt(document.getElementById('completedVideos').textContent) + 1;
 
             } catch (error) {
                 updateCardStatus(index, 'error', `❌ Error: ${error.message}`);
@@ -607,42 +812,50 @@ Press Generate to start batch processing..."
                     parseInt(document.getElementById('failedVideos').textContent) + 1;
             }
 
+            // Decrement processing counter
             document.getElementById('processingVideos').textContent = 
                 Math.max(0, parseInt(document.getElementById('processingVideos').textContent) - 1);
         }
 
-        // Create video card
+        // ==================== CREATE VIDEO CARD ====================
         function createVideoCard(prompt, index) {
             const card = document.createElement('div');
             card.className = 'video-card';
             card.id = `card-${index}`;
             card.innerHTML = `
-                <video id="video-${index}" controls></video>
+                <div class="video-placeholder" id="placeholder-${index}">
+                    🎬
+                </div>
+                <video id="video-${index}" controls style="display:none;"></video>
                 <div class="video-card-content">
                     <div class="video-status status-processing" id="status-${index}">
-                        ⏳ Waiting...
+                        ⏳ Waiting in queue...
                     </div>
                     <div class="video-prompt" title="${prompt}">
-                        ${prompt}
+                        <strong>Prompt:</strong> ${prompt}
                     </div>
                     <button class="download-btn" id="download-${index}" disabled>
-                        📥 Download
+                        📥 Download Video
                     </button>
                 </div>
             `;
             return card;
         }
 
-        // Update card status
+        // ==================== UPDATE CARD STATUS ====================
         function updateCardStatus(index, status, text) {
             const statusEl = document.getElementById(`status-${index}`);
             statusEl.className = `video-status status-${status}`;
             statusEl.textContent = text;
         }
 
-        // Update card video
+        // ==================== UPDATE CARD VIDEO ====================
         function updateCardVideo(index, url) {
+            const placeholderEl = document.getElementById(`placeholder-${index}`);
             const videoEl = document.getElementById(`video-${index}`);
+            
+            placeholderEl.style.display = 'none';
+            videoEl.style.display = 'block';
             videoEl.src = url;
             
             const downloadBtn = document.getElementById(`download-${index}`);
@@ -650,41 +863,45 @@ Press Generate to start batch processing..."
             downloadBtn.onclick = () => downloadVideo(url, index);
         }
 
-        // Update progress
+        // ==================== UPDATE PROGRESS ====================
         function updateProgress() {
             const progress = Math.round((currentIndex / prompts.length) * 100);
             document.getElementById('progressFill').style.width = `${progress}%`;
             document.getElementById('progressFill').textContent = `${progress}%`;
             document.getElementById('statusText').textContent = 
-                `Processing ${currentIndex} / ${prompts.length} videos...`;
+                `Processing: ${currentIndex} / ${prompts.length} videos completed`;
         }
 
-        // Update stats
-        function updateStats() {
-            document.getElementById('processingVideos').textContent = 
-                Math.min(parseInt(document.getElementById('concurrent').value), prompts.length);
-        }
-
-        // Download video
+        // ==================== DOWNLOAD VIDEO ====================
         function downloadVideo(url, index) {
             const a = document.createElement('a');
             a.href = url;
             a.download = `video-${index + 1}.mp4`;
+            a.target = '_blank';
+            document.body.appendChild(a);
             a.click();
+            document.body.removeChild(a);
         }
 
-        // Download all
+        // ==================== DOWNLOAD ALL ====================
         function downloadAll() {
+            if (results.length === 0) {
+                alert('⚠️ No videos to download!');
+                return;
+            }
+
             results.forEach((result, index) => {
                 setTimeout(() => {
                     downloadVideo(result.videoUrl, index);
-                }, index * 500);
+                }, index * 1000); // Stagger downloads by 1 second
             });
+
+            alert(`📥 Downloading ${results.length} videos...`);
         }
 
-        // Clear all
+        // ==================== CLEAR ALL ====================
         function clearAll() {
-            if (confirm('Are you sure you want to clear everything?')) {
+            if (confirm('❓ Are you sure you want to clear everything?')) {
                 document.getElementById('promptInput').value = '';
                 document.getElementById('resultsSection').innerHTML = '';
                 document.getElementById('lineCount').textContent = '0 prompts';
@@ -693,19 +910,64 @@ Press Generate to start batch processing..."
                 document.getElementById('processingVideos').textContent = '0';
                 document.getElementById('failedVideos').textContent = '0';
                 document.getElementById('progressSection').classList.remove('active');
+                document.getElementById('downloadAllBtn').disabled = true;
                 results = [];
                 prompts = [];
+                currentIndex = 0;
             }
         }
 
-        // Stop generation
+        // ==================== STOP GENERATION ====================
         function stopGeneration() {
-            if (confirm('Stop current generation?')) {
+            if (confirm('⏸️ Stop current generation? Videos already completed will be saved.')) {
                 isGenerating = false;
                 document.getElementById('generateBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = true;
                 document.getElementById('statusText').textContent = '⏸️ Stopped by user';
+                
+                if (results.length > 0) {
+                    document.getElementById('downloadAllBtn').disabled = false;
+                }
             }
         }
+
+        // ==================== KEYBOARD SHORTCUTS ====================
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + Enter to generate
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                if (!document.getElementById('generateBtn').disabled) {
+                    startGeneration();
+                }
+            }
+            
+            // Escape to stop
+            if (e.key === 'Escape' && isGenerating) {
+                stopGeneration();
+            }
+        });
+
+        // ==================== INIT MESSAGE ====================
+        console.log(`
+🎬 Unlimited Video Generator Loaded!
+========================================
+📝 Features:
+- Batch processing with unlimited prompts
+- Parallel generation (configurable)
+- Real-time progress tracking
+- Download individual or all videos
+- Keyboard shortcuts (Ctrl+Enter to generate, Esc to stop)
+
+🔧 Configuration:
+- USE_REAL_API: ${USE_REAL_API}
+- API_ENDPOINT: ${API_ENDPOINT}
+
+💡 To connect to real API:
+1. Set USE_REAL_API = true
+2. Update API_ENDPOINT with your backend URL
+3. Ensure your backend returns: {success: true, video_url: "..."}
+
+Happy creating! 🚀
+        `);
     </script>
 </body>
 </html>
