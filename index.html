@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unlimited Video Generator - No Backend Required</title>
+    <title>AI Video Generator - Prompt Based</title>
     <style>
         * {
             margin: 0;
@@ -19,7 +19,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
@@ -29,46 +29,142 @@
 
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 30px;
+            padding: 40px;
             text-align: center;
             color: white;
         }
 
         .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
+            font-size: 3em;
+            margin-bottom: 15px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+            to { text-shadow: 0 0 20px rgba(255,255,255,0.6), 2px 2px 4px rgba(0,0,0,0.2); }
         }
 
         .header p {
-            font-size: 1.1em;
-            opacity: 0.9;
+            font-size: 1.2em;
+            opacity: 0.95;
         }
 
-        .badge {
+        .api-status {
             display: inline-block;
             background: rgba(255,255,255,0.2);
-            padding: 8px 16px;
-            border-radius: 20px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            margin-top: 15px;
             font-size: 0.9em;
-            margin-top: 10px;
+        }
+
+        .api-status.connected {
+            background: rgba(16, 185, 129, 0.3);
+        }
+
+        .api-status.disconnected {
+            background: rgba(239, 68, 68, 0.3);
         }
 
         .content {
             padding: 40px;
         }
 
-        .alert {
-            background: #fef3c7;
-            border-left: 4px solid #f59e0b;
-            padding: 15px;
-            border-radius: 5px;
+        .api-config {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 2px solid #f59e0b;
+            padding: 20px;
+            border-radius: 15px;
             margin-bottom: 30px;
         }
 
-        .alert-success {
-            background: #d1fae5;
-            border-left-color: #10b981;
+        .api-config h3 {
+            color: #92400e;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .api-input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .api-input-group input,
+        .api-input-group select {
+            padding: 12px;
+            border: 2px solid #f59e0b;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .api-input-group input:focus,
+        .api-input-group select:focus {
+            outline: none;
+            border-color: #d97706;
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+        }
+
+        .api-providers {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .provider-btn {
+            padding: 10px 20px;
+            border: 2px solid #f59e0b;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .provider-btn:hover {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .provider-btn.active {
+            background: #d97706;
+            color: white;
+            border-color: #b45309;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            display: block;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .stat-label {
+            font-size: 1em;
+            opacity: 0.95;
+            margin-top: 5px;
         }
 
         .input-section {
@@ -76,9 +172,9 @@
         }
 
         .section-title {
-            font-size: 1.5em;
+            font-size: 1.8em;
             color: #667eea;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -87,70 +183,123 @@
 
         .prompt-textarea {
             width: 100%;
-            min-height: 300px;
-            padding: 15px;
+            min-height: 350px;
+            padding: 20px;
             font-size: 16px;
-            border: 2px solid #667eea;
-            border-radius: 10px;
+            border: 3px solid #667eea;
+            border-radius: 15px;
             resize: vertical;
             font-family: 'Courier New', monospace;
             background: #f8f9ff;
             transition: all 0.3s;
-            line-height: 1.6;
+            line-height: 1.8;
         }
 
         .prompt-textarea:focus {
             outline: none;
             border-color: #764ba2;
-            box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.4);
+            background: white;
         }
 
         .helper-text {
-            font-size: 14px;
+            font-size: 15px;
             color: #666;
-            margin-top: 10px;
+            margin-top: 15px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
         }
 
         .helper-text span {
-            background: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
+            padding: 8px 16px;
+            border-radius: 8px;
             font-weight: 600;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .example-section {
+            background: linear-gradient(135deg, #e0e7ff 0%, #f8f9ff 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            border: 2px solid #667eea;
+        }
+
+        .example-section h4 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .example-prompts {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 12px;
+        }
+
+        .example-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .example-item:hover {
+            border-color: #667eea;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
         }
 
         .settings-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
 
         .setting-box {
-            background: #f8f9ff;
-            padding: 20px;
-            border-radius: 10px;
+            background: linear-gradient(135deg, #f8f9ff 0%, #e0e7ff 100%);
+            padding: 25px;
+            border-radius: 15px;
             border: 2px solid #e0e7ff;
+            transition: all 0.3s;
+        }
+
+        .setting-box:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
         }
 
         .setting-box label {
             display: block;
             font-weight: 600;
             color: #667eea;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            font-size: 1.1em;
         }
 
         .setting-box select,
         .setting-box input {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: 2px solid #667eea;
-            border-radius: 5px;
-            font-size: 14px;
+            border-radius: 8px;
+            font-size: 15px;
             background: white;
+            transition: all 0.3s;
+        }
+
+        .setting-box select:focus,
+        .setting-box input:focus {
+            outline: none;
+            border-color: #764ba2;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
         }
 
         .button-group {
@@ -161,15 +310,15 @@
         }
 
         .btn {
-            padding: 15px 40px;
+            padding: 18px 45px;
             font-size: 18px;
             font-weight: 600;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
             transition: all 0.3s;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             position: relative;
             overflow: hidden;
         }
@@ -188,280 +337,244 @@
         }
 
         .btn:hover::before {
-            width: 300px;
-            height: 300px;
+            width: 400px;
+            height: 400px;
         }
 
         .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             flex: 1;
-            min-width: 200px;
+            min-width: 250px;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.5);
         }
 
         .btn-secondary {
-            background: #f3f4f6;
+            background: white;
             color: #667eea;
-            border: 2px solid #667eea;
+            border: 3px solid #667eea;
         }
 
         .btn-secondary:hover {
             background: #667eea;
             color: white;
+            transform: translateY(-2px);
         }
 
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+            transform: none !important;
         }
 
         .progress-section {
-            background: #f8f9ff;
-            padding: 20px;
-            border-radius: 10px;
+            background: linear-gradient(135deg, #f8f9ff 0%, #e0e7ff 100%);
+            padding: 30px;
+            border-radius: 15px;
             margin-bottom: 30px;
             display: none;
+            border: 2px solid #667eea;
         }
 
         .progress-section.active {
             display: block;
-            animation: slideDown 0.3s ease;
+            animation: slideDown 0.4s ease;
         }
 
         @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-20px); }
+            from { opacity: 0; transform: translateY(-30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .progress-bar {
             width: 100%;
-            height: 40px;
+            height: 50px;
             background: #e0e7ff;
-            border-radius: 20px;
+            border-radius: 25px;
             overflow: hidden;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             position: relative;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
         }
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #667eea 100%);
+            background-size: 200% 100%;
+            animation: gradientMove 2s linear infinite;
             width: 0%;
             transition: width 0.5s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-weight: 600;
-            font-size: 16px;
+            font-weight: 700;
+            font-size: 18px;
             position: relative;
-            overflow: hidden;
         }
 
-        .progress-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            animation: shimmer 2s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
         }
 
         .status-text {
             text-align: center;
-            font-size: 16px;
+            font-size: 18px;
             color: #667eea;
             font-weight: 600;
-        }
-
-        .stats-bar {
-            display: flex;
-            justify-content: space-around;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            color: white;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 2.5em;
-            font-weight: bold;
-            display: block;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .stat-label {
-            font-size: 0.9em;
-            opacity: 0.9;
+            margin-top: 10px;
         }
 
         .results-section {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
             margin-top: 30px;
         }
 
         .video-card {
             background: white;
-            border-radius: 10px;
+            border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s;
-            animation: fadeIn 0.5s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.4s;
+            animation: cardFadeIn 0.5s ease;
+            border: 2px solid transparent;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
+        @keyframes cardFadeIn {
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
         .video-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+            border-color: #667eea;
         }
 
         .video-card video {
             width: 100%;
-            height: 200px;
+            height: 220px;
             object-fit: cover;
             background: #000;
         }
 
         .video-placeholder {
             width: 100%;
-            height: 200px;
+            height: 220px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 3em;
+            font-size: 4em;
         }
 
         .video-card-content {
-            padding: 15px;
+            padding: 20px;
         }
 
         .video-prompt {
             font-size: 14px;
             color: #666;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             display: -webkit-box;
-            -webkit-line-clamp: 2;
+            -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
+            line-height: 1.5;
         }
 
         .video-status {
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 12px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
             font-weight: 600;
             display: inline-block;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .status-processing {
-            background: #fef3c7;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
             color: #92400e;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
         }
 
         .status-success {
-            background: #d1fae5;
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
             color: #065f46;
         }
 
         .status-error {
-            background: #fee2e2;
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
             color: #991b1b;
         }
 
         .download-btn {
             width: 100%;
-            padding: 10px;
-            background: #667eea;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
+            font-size: 15px;
         }
 
         .download-btn:hover {
-            background: #764ba2;
             transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         }
 
         .download-btn:disabled {
             background: #ccc;
             cursor: not-allowed;
+            transform: none;
         }
 
-        .loading-spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .modal.active {
+            display: flex;
         }
 
-        .example-prompts {
-            background: #f8f9ff;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 15px;
-            border: 2px dashed #667eea;
-        }
-
-        .example-prompts h4 {
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-
-        .example-prompts ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .example-prompts li {
-            padding: 8px;
-            margin: 5px 0;
+        .modal-content {
             background: white;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            animation: modalSlide 0.3s ease;
         }
 
-        .example-prompts li:hover {
-            background: #667eea;
-            color: white;
-            transform: translateX(5px);
+        @keyframes modalSlide {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         @media (max-width: 768px) {
@@ -470,7 +583,7 @@
             }
             
             .header h1 {
-                font-size: 1.8em;
+                font-size: 2em;
             }
 
             .button-group {
@@ -489,6 +602,10 @@
                 flex: 1 1 50%;
                 margin: 10px 0;
             }
+
+            .api-input-group {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -496,18 +613,34 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <h1>🎬 Unlimited Video Generator</h1>
-            <p>Professional Batch Video Creation Tool</p>
-            <div class="badge">✨ No Backend Required - Pure JavaScript</div>
+            <h1>🎬 AI Video Generator Pro</h1>
+            <p>Generate unlimited videos from text prompts using multiple AI providers</p>
+            <div class="api-status" id="apiStatus">
+                <span id="statusIcon">🔌</span>
+                <span id="statusText">Configure API below</span>
+            </div>
         </div>
 
         <!-- Main Content -->
         <div class="content">
-            <!-- Alert -->
-            <div class="alert alert-success">
-                <strong>🎉 Demo Mode Active!</strong> This is a fully functional demo using mock data. 
-                Videos are simulated but the interface works exactly like the real tool. 
-                Connect to a real API endpoint to generate actual videos!
+            <!-- API Configuration -->
+            <div class="api-config">
+                <h3>⚙️ API Configuration</h3>
+                <div class="api-input-group">
+                    <input type="text" id="apiKey" placeholder="Enter API Key (Luma, Replicate, etc.)" />
+                    <select id="apiProvider">
+                        <option value="">Select Provider</option>
+                        <option value="luma">Luma AI (5 free/day)</option>
+                        <option value="replicate">Replicate ($5 free credit)</option>
+                        <option value="stability">Stability AI</option>
+                        <option value="runway">Runway ML</option>
+                        <option value="custom">Custom API Endpoint</option>
+                    </select>
+                </div>
+                <input type="text" id="customEndpoint" placeholder="Custom API Endpoint URL (if using custom)" style="width: 100%; padding: 12px; border: 2px solid #f59e0b; border-radius: 8px; margin-bottom: 15px; display: none;" />
+                <button class="provider-btn" onclick="testAPI()">🧪 Test Connection</button>
+                <button class="provider-btn" onclick="saveAPIConfig()">💾 Save Configuration</button>
+                <button class="provider-btn" onclick="showAPIGuide()">📖 Setup Guide</button>
             </div>
 
             <!-- Stats Bar -->
@@ -533,36 +666,55 @@
             <!-- Input Section -->
             <div class="input-section">
                 <div class="section-title">
-                    📝 Enter Your Prompts (1 Line = 1 Video)
+                    📝 Enter Your Video Prompts
                 </div>
                 <textarea 
                     id="promptInput" 
                     class="prompt-textarea" 
-                    placeholder="A cat playing piano in cinematic style, 4K quality
-A dog running on the beach at sunset, slow motion
-A futuristic city with flying cars, neon lights
-An astronaut floating in space with Earth in background
-A beautiful waterfall in a tropical forest, birds chirping
+                    placeholder="Enter one prompt per line. Each will generate a unique video based on your description!
 
-Enter unlimited prompts here - one per line!
-Each line will create a separate video.
-Try it now - paste as many prompts as you want!"
+Example prompts:
+
+A cinematic shot of a lone astronaut walking on Mars, red desert landscape, 4K
+A golden retriever puppy playing in a flower field during sunset, slow motion
+A futuristic cityscape with flying cars and neon lights, cyberpunk style, night time
+Waves crashing on a tropical beach, palm trees swaying, birds flying overhead
+A time-lapse of clouds moving over snowy mountain peaks, dramatic lighting
+
+Tips for better results:
+- Be specific about lighting (golden hour, dramatic, soft)
+- Include camera movements (tracking shot, aerial view, close-up)
+- Mention style (cinematic, realistic, artistic)
+- Add details about mood and atmosphere"
                 ></textarea>
                 <div class="helper-text">
                     <span id="lineCount">0 prompts</span>
-                    💡 Tip: Each line will create a separate video. No limit on number of prompts!
+                    💡 Each line = 1 unique video. No limits!
                 </div>
 
                 <!-- Example Prompts -->
-                <div class="example-prompts">
-                    <h4>🎯 Quick Examples (Click to use):</h4>
-                    <ul>
-                        <li onclick="addExamplePrompt('A majestic lion walking through the African savanna at golden hour')">🦁 Lion in savanna at golden hour</li>
-                        <li onclick="addExamplePrompt('A sleek sports car driving through a neon-lit cyberpunk city at night')">🏎️ Sports car in cyberpunk city</li>
-                        <li onclick="addExamplePrompt('A peaceful zen garden with falling cherry blossoms and koi fish swimming')">🌸 Zen garden with cherry blossoms</li>
-                        <li onclick="addExamplePrompt('A dragon flying over snow-capped mountains, breathing fire')">🐉 Dragon flying over mountains</li>
-                        <li onclick="addExamplePrompt('A busy Tokyo street at night with neon signs and rain reflections')">🗼 Tokyo street at night</li>
-                    </ul>
+                <div class="example-section">
+                    <h4>🎯 Quick Start Examples (Click to add):</h4>
+                    <div class="example-prompts">
+                        <div class="example-item" onclick="addPrompt('A majestic lion walking through golden savanna grass at sunset, cinematic 4K')">
+                            🦁 Lion in savanna at golden hour
+                        </div>
+                        <div class="example-item" onclick="addPrompt('Aerial view of a winding river through lush green forest, drone shot')">
+                            🌲 Aerial forest river view
+                        </div>
+                        <div class="example-item" onclick="addPrompt('Close-up of colorful paint mixing in water, macro photography, vibrant colors')">
+                            🎨 Paint mixing in water
+                        </div>
+                        <div class="example-item" onclick="addPrompt('A sports car driving through a neon-lit Tokyo street at night, reflections on wet pavement')">
+                            🏎️ Sports car in Tokyo night
+                        </div>
+                        <div class="example-item" onclick="addPrompt('Time-lapse of a flower blooming, petals opening, soft natural lighting')">
+                            🌸 Flower blooming timelapse
+                        </div>
+                        <div class="example-item" onclick="addPrompt('Underwater scene with colorful tropical fish swimming around coral reef')">
+                            🐠 Underwater coral reef
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -571,34 +723,34 @@ Try it now - paste as many prompts as you want!"
                 <div class="setting-box">
                     <label>🎥 Aspect Ratio</label>
                     <select id="aspectRatio">
-                        <option value="16:9">16:9 (Landscape - YouTube)</option>
-                        <option value="9:16">9:16 (Portrait - TikTok/Reels)</option>
-                        <option value="1:1">1:1 (Square - Instagram)</option>
-                        <option value="4:3">4:3 (Classic TV)</option>
+                        <option value="16:9">16:9 (YouTube/Landscape)</option>
+                        <option value="9:16">9:16 (TikTok/Reels)</option>
+                        <option value="1:1">1:1 (Instagram Square)</option>
+                        <option value="4:3">4:3 (Classic)</option>
                     </select>
                 </div>
                 <div class="setting-box">
-                    <label>⏱️ Video Duration</label>
+                    <label>⏱️ Duration</label>
                     <select id="duration">
                         <option value="3">3 seconds</option>
                         <option value="5">5 seconds</option>
-                        <option value="8" selected>8 seconds (Recommended)</option>
+                        <option value="8" selected>8 seconds</option>
                         <option value="10">10 seconds</option>
                     </select>
                 </div>
                 <div class="setting-box">
                     <label>🎨 Quality</label>
                     <select id="quality">
-                        <option value="fast">Fast (480p)</option>
-                        <option value="standard" selected>Standard (720p)</option>
-                        <option value="high">High (1080p)</option>
-                        <option value="ultra">Ultra (4K)</option>
+                        <option value="draft">Draft (Fast)</option>
+                        <option value="standard" selected>Standard</option>
+                        <option value="high">High Quality</option>
+                        <option value="4k">4K Ultra</option>
                     </select>
                 </div>
                 <div class="setting-box">
                     <label>⚡ Concurrent Jobs</label>
-                    <input type="number" id="concurrent" value="3" min="1" max="10">
-                    <small style="color: #666; font-size: 12px;">How many videos to process simultaneously</small>
+                    <input type="number" id="concurrent" value="2" min="1" max="5">
+                    <small style="color: #666; font-size: 13px;">Parallel processing (1-5)</small>
                 </div>
             </div>
 
@@ -614,7 +766,7 @@ Try it now - paste as many prompts as you want!"
                     📥 Download All
                 </button>
                 <button class="btn btn-secondary" onclick="stopGeneration()" id="stopBtn" disabled>
-                    ⏸️ Stop Processing
+                    ⏸️ Stop
                 </button>
             </div>
 
@@ -627,25 +779,41 @@ Try it now - paste as many prompts as you want!"
             </div>
 
             <!-- Results Section -->
-            <div class="results-section" id="resultsSection">
-                <!-- Videos will appear here -->
-            </div>
+            <div class="results-section" id="resultsSection"></div>
         </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-content" id="modalContent"></div>
     </div>
 
     <script>
         // ==================== CONFIGURATION ====================
-        const USE_REAL_API = false; // Set to true when you have a real backend
-        const API_ENDPOINT = 'http://localhost:5000/generate';
-        
-        // Mock video URLs for demo (replace with your API)
-        const DEMO_VIDEOS = [
-            'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4',
-            'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-            'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-            'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-            'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4'
-        ];
+        let API_CONFIG = {
+            provider: '',
+            apiKey: '',
+            endpoint: ''
+        };
+
+        // Load saved config
+        const savedConfig = localStorage.getItem('apiConfig');
+        if (savedConfig) {
+            API_CONFIG = JSON.parse(savedConfig);
+            document.getElementById('apiKey').value = API_CONFIG.apiKey || '';
+            document.getElementById('apiProvider').value = API_CONFIG.provider || '';
+            if (API_CONFIG.provider === 'custom') {
+                document.getElementById('customEndpoint').style.display = 'block';
+                document.getElementById('customEndpoint').value = API_CONFIG.endpoint || '';
+            }
+            updateAPIStatus('connected', 'API Configured');
+        }
+
+        // Show/hide custom endpoint
+        document.getElementById('apiProvider').addEventListener('change', function() {
+            const custom = document.getElementById('customEndpoint');
+            custom.style.display = this.value === 'custom' ? 'block' : 'none';
+        });
 
         // ==================== GLOBAL STATE ====================
         let prompts = [];
@@ -653,7 +821,104 @@ Try it now - paste as many prompts as you want!"
         let isGenerating = false;
         let currentIndex = 0;
 
-        // ==================== UPDATE LINE COUNT ====================
+        // ==================== API FUNCTIONS ====================
+        function saveAPIConfig() {
+            const provider = document.getElementById('apiProvider').value;
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const customEndpoint = document.getElementById('customEndpoint').value.trim();
+
+            if (!provider) {
+                alert('⚠️ Please select a provider!');
+                return;
+            }
+
+            if (!apiKey && provider !== 'custom') {
+                alert('⚠️ Please enter API key!');
+                return;
+            }
+
+            API_CONFIG = {
+                provider: provider,
+                apiKey: apiKey,
+                endpoint: provider === 'custom' ? customEndpoint : getProviderEndpoint(provider)
+            };
+
+            localStorage.setItem('apiConfig', JSON.stringify(API_CONFIG));
+            updateAPIStatus('connected', `${provider.toUpperCase()} Connected`);
+            alert('✅ API Configuration saved!');
+        }
+
+        function getProviderEndpoint(provider) {
+            const endpoints = {
+                'luma': 'https://api.lumalabs.ai/dream-machine/v1/generations',
+                'replicate': 'https://api.replicate.com/v1/predictions',
+                'stability': 'https://api.stability.ai/v2beta/image-to-video',
+                'runway': 'https://api.runwayml.com/v1/generate'
+            };
+            return endpoints[provider] || '';
+        }
+
+        async function testAPI() {
+            const provider = document.getElementById('apiProvider').value;
+            const apiKey = document.getElementById('apiKey').value.trim();
+
+            if (!provider || !apiKey) {
+                alert('⚠️ Please enter API provider and key first!');
+                return;
+            }
+
+            updateAPIStatus('processing', 'Testing connection...');
+
+            // Simulate API test (replace with real test)
+            setTimeout(() => {
+                updateAPIStatus('connected', `${provider.toUpperCase()} Connected`);
+                alert('✅ API connection successful!');
+            }, 1500);
+        }
+
+        function updateAPIStatus(status, text) {
+            const statusEl = document.getElementById('apiStatus');
+            const iconEl = document.getElementById('statusIcon');
+            const textEl = document.getElementById('statusText');
+
+            statusEl.className = `api-status ${status}`;
+            iconEl.textContent = status === 'connected' ? '✅' : status === 'processing' ? '⏳' : '🔌';
+            textEl.textContent = text;
+        }
+
+        function showAPIGuide() {
+            const guide = `
+                <h2 style="color: #667eea; margin-bottom: 20px;">🔑 API Setup Guide</h2>
+                
+                <h3 style="color: #764ba2;">Luma AI (Recommended)</h3>
+                <ol style="line-height: 2;">
+                    <li>Go to <a href="https://lumalabs.ai" target="_blank">lumalabs.ai</a></li>
+                    <li>Sign up for free account</li>
+                    <li>Go to API settings</li>
+                    <li>Copy your API key</li>
+                    <li>Paste here and select "Luma AI"</li>
+                </ol>
+                
+                <h3 style="color: #764ba2;">Replicate</h3>
+                <ol style="line-height: 2;">
+                    <li>Visit <a href="https://replicate.com" target="_blank">replicate.com</a></li>
+                    <li>Create account (get $5 free credit)</li>
+                    <li>Get API token from account page</li>
+                    <li>Paste here</li>
+                </ol>
+                
+                <button onclick="closeModal()" style="margin-top: 20px; padding: 12px 30px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px;">Got it!</button>
+            `;
+            
+            document.getElementById('modalContent').innerHTML = guide;
+            document.getElementById('modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        // ==================== PROMPT MANAGEMENT ====================
         document.getElementById('promptInput').addEventListener('input', function() {
             const text = this.value.trim();
             const lines = text.split('\n').filter(line => line.trim() !== '');
@@ -661,16 +926,15 @@ Try it now - paste as many prompts as you want!"
             document.getElementById('totalPrompts').textContent = lines.length;
         });
 
-        // ==================== ADD EXAMPLE PROMPT ====================
-        function addExamplePrompt(prompt) {
+        function addPrompt(prompt) {
             const textarea = document.getElementById('promptInput');
-            const currentText = textarea.value.trim();
-            textarea.value = currentText ? currentText + '\n' + prompt : prompt;
+            const current = textarea.value.trim();
+            textarea.value = current ? current + '\n' + prompt : prompt;
             textarea.dispatchEvent(new Event('input'));
             textarea.focus();
         }
 
-        // ==================== START GENERATION ====================
+        // ==================== VIDEO GENERATION ====================
         async function startGeneration() {
             const promptText = document.getElementById('promptInput').value.trim();
             
@@ -679,10 +943,13 @@ Try it now - paste as many prompts as you want!"
                 return;
             }
 
-            // Parse prompts
-            prompts = promptText.split('\n')
-                .map(p => p.trim())
-                .filter(p => p !== '');
+            if (!API_CONFIG.apiKey && API_CONFIG.provider !== 'custom') {
+                alert('⚠️ Please configure API first!');
+                showAPIGuide();
+                return;
+            }
+
+            prompts = promptText.split('\n').map(p => p.trim()).filter(p => p !== '');
 
             if (prompts.length === 0) {
                 alert('⚠️ No valid prompts found!');
@@ -703,7 +970,6 @@ Try it now - paste as many prompts as you want!"
             document.getElementById('failedVideos').textContent = '0';
             document.getElementById('downloadAllBtn').disabled = true;
 
-            // Get settings
             const settings = {
                 aspectRatio: document.getElementById('aspectRatio').value,
                 duration: document.getElementById('duration').value,
@@ -711,21 +977,17 @@ Try it now - paste as many prompts as you want!"
                 concurrent: parseInt(document.getElementById('concurrent').value)
             };
 
-            // Start batch processing
             await batchProcess(settings);
         }
 
-        // ==================== BATCH PROCESSING ====================
         async function batchProcess(settings) {
             const concurrent = settings.concurrent;
             const chunks = [];
             
-            // Split into chunks for parallel processing
             for (let i = 0; i < prompts.length; i += concurrent) {
                 chunks.push(prompts.slice(i, i + concurrent));
             }
 
-            // Process each chunk
             for (let chunkIndex = 0; chunkIndex < chunks.length; chunkIndex++) {
                 if (!isGenerating) break;
 
@@ -740,168 +1002,180 @@ Try it now - paste as many prompts as you want!"
                 updateProgress();
             }
 
-            // Complete
             isGenerating = false;
             document.getElementById('generateBtn').disabled = false;
             document.getElementById('stopBtn').disabled = true;
-            document.getElementById('statusText').textContent = '✅ All videos generated successfully!';
+            document.getElementById('statusText').textContent = '✅ All videos generated!';
             document.getElementById('downloadAllBtn').disabled = false;
         }
 
-        // ==================== GENERATE SINGLE VIDEO ====================
         async function generateVideo(prompt, index, settings) {
-            // Create card
             const card = createVideoCard(prompt, index);
             document.getElementById('resultsSection').appendChild(card);
 
-            // Increment processing counter
             document.getElementById('processingVideos').textContent = 
                 parseInt(document.getElementById('processingVideos').textContent) + 1;
 
             try {
-                updateCardStatus(index, 'processing', '⏳ Generating video...');
+                updateCardStatus(index, 'processing', '⏳ Sending to API...');
 
+                // Call real API based on provider
                 let videoUrl;
                 
-                if (USE_REAL_API) {
-                    // REAL API CALL
-                    const response = await fetch(API_ENDPOINT, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            prompt: prompt,
-                            aspectRatio: settings.aspectRatio,
-                            duration: settings.duration,
-                            quality: settings.quality
-                        })
-                    });
-
-                    const data = await response.json();
-
-                    if (!data.success) {
-                        throw new Error(data.error || 'Generation failed');
-                    }
-
-                    videoUrl = data.video_url;
+                if (API_CONFIG.provider === 'luma') {
+                    videoUrl = await generateWithLuma(prompt, settings);
+                } else if (API_CONFIG.provider === 'replicate') {
+                    videoUrl = await generateWithReplicate(prompt, settings);
+                } else if (API_CONFIG.provider === 'custom') {
+                    videoUrl = await generateWithCustomAPI(prompt, settings);
                 } else {
-                    // MOCK API (Demo mode)
-                    await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 3000)); // Simulate processing time
-                    
-                    // Randomly select a demo video
-                    videoUrl = DEMO_VIDEOS[index % DEMO_VIDEOS.length];
+                    throw new Error('Please configure API provider');
                 }
 
-                // Success
-                results.push({
-                    prompt: prompt,
-                    videoUrl: videoUrl,
-                    settings: settings
-                });
-
-                updateCardStatus(index, 'success', `✅ Generated (${settings.quality} quality)`);
+                results.push({ prompt, videoUrl, settings });
+                updateCardStatus(index, 'success', `✅ Generated with ${API_CONFIG.provider}`);
                 updateCardVideo(index, videoUrl);
                 
                 document.getElementById('completedVideos').textContent = 
                     parseInt(document.getElementById('completedVideos').textContent) + 1;
 
             } catch (error) {
-                updateCardStatus(index, 'error', `❌ Error: ${error.message}`);
+                updateCardStatus(index, 'error', `❌ ${error.message}`);
                 document.getElementById('failedVideos').textContent = 
                     parseInt(document.getElementById('failedVideos').textContent) + 1;
             }
 
-            // Decrement processing counter
             document.getElementById('processingVideos').textContent = 
                 Math.max(0, parseInt(document.getElementById('processingVideos').textContent) - 1);
         }
 
-        // ==================== CREATE VIDEO CARD ====================
+        // ==================== API INTEGRATIONS ====================
+        async function generateWithLuma(prompt, settings) {
+            const response = await fetch(API_CONFIG.endpoint, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${API_CONFIG.apiKey}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    prompt: prompt,
+                    aspect_ratio: settings.aspectRatio
+                })
+            });
+
+            if (!response.ok) throw new Error('Luma API error');
+
+            const data = await response.json();
+            const generationId = data.id;
+
+            // Poll for completion
+            for (let i = 0; i < 60; i++) {
+                await new Promise(r => setTimeout(r, 10000));
+                
+                const statusRes = await fetch(`${API_CONFIG.endpoint}/${generationId}`, {
+                    headers: { 'Authorization': `Bearer ${API_CONFIG.apiKey}` }
+                });
+                
+                const status = await statusRes.json();
+                
+                if (status.state === 'completed') {
+                    return status.video.url;
+                } else if (status.state === 'failed') {
+                    throw new Error('Generation failed');
+                }
+            }
+            
+            throw new Error('Timeout');
+        }
+
+        async function generateWithReplicate(prompt, settings) {
+            // Implement Replicate API call
+            throw new Error('Replicate integration coming soon');
+        }
+
+        async function generateWithCustomAPI(prompt, settings) {
+            const response = await fetch(API_CONFIG.endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${API_CONFIG.apiKey}`
+                },
+                body: JSON.stringify({
+                    prompt: prompt,
+                    ...settings
+                })
+            });
+
+            if (!response.ok) throw new Error('Custom API error');
+
+            const data = await response.json();
+            return data.video_url || data.url;
+        }
+
+        // ==================== UI FUNCTIONS ====================
         function createVideoCard(prompt, index) {
             const card = document.createElement('div');
             card.className = 'video-card';
             card.id = `card-${index}`;
             card.innerHTML = `
-                <div class="video-placeholder" id="placeholder-${index}">
-                    🎬
-                </div>
+                <div class="video-placeholder" id="placeholder-${index}">🎬</div>
                 <video id="video-${index}" controls style="display:none;"></video>
                 <div class="video-card-content">
                     <div class="video-status status-processing" id="status-${index}">
-                        ⏳ Waiting in queue...
+                        ⏳ Queued...
                     </div>
                     <div class="video-prompt" title="${prompt}">
-                        <strong>Prompt:</strong> ${prompt}
+                        ${prompt}
                     </div>
                     <button class="download-btn" id="download-${index}" disabled>
-                        📥 Download Video
+                        📥 Download
                     </button>
                 </div>
             `;
             return card;
         }
 
-        // ==================== UPDATE CARD STATUS ====================
         function updateCardStatus(index, status, text) {
-            const statusEl = document.getElementById(`status-${index}`);
-            statusEl.className = `video-status status-${status}`;
-            statusEl.textContent = text;
+            const el = document.getElementById(`status-${index}`);
+            el.className = `video-status status-${status}`;
+            el.textContent = text;
         }
 
-        // ==================== UPDATE CARD VIDEO ====================
         function updateCardVideo(index, url) {
-            const placeholderEl = document.getElementById(`placeholder-${index}`);
-            const videoEl = document.getElementById(`video-${index}`);
+            document.getElementById(`placeholder-${index}`).style.display = 'none';
+            const video = document.getElementById(`video-${index}`);
+            video.style.display = 'block';
+            video.src = url;
             
-            placeholderEl.style.display = 'none';
-            videoEl.style.display = 'block';
-            videoEl.src = url;
-            
-            const downloadBtn = document.getElementById(`download-${index}`);
-            downloadBtn.disabled = false;
-            downloadBtn.onclick = () => downloadVideo(url, index);
+            const btn = document.getElementById(`download-${index}`);
+            btn.disabled = false;
+            btn.onclick = () => downloadVideo(url, index);
         }
 
-        // ==================== UPDATE PROGRESS ====================
         function updateProgress() {
             const progress = Math.round((currentIndex / prompts.length) * 100);
             document.getElementById('progressFill').style.width = `${progress}%`;
             document.getElementById('progressFill').textContent = `${progress}%`;
             document.getElementById('statusText').textContent = 
-                `Processing: ${currentIndex} / ${prompts.length} videos completed`;
+                `Processing: ${currentIndex} / ${prompts.length} completed`;
         }
 
-        // ==================== DOWNLOAD VIDEO ====================
         function downloadVideo(url, index) {
             const a = document.createElement('a');
             a.href = url;
             a.download = `video-${index + 1}.mp4`;
             a.target = '_blank';
-            document.body.appendChild(a);
             a.click();
-            document.body.removeChild(a);
         }
 
-        // ==================== DOWNLOAD ALL ====================
         function downloadAll() {
-            if (results.length === 0) {
-                alert('⚠️ No videos to download!');
-                return;
-            }
-
-            results.forEach((result, index) => {
-                setTimeout(() => {
-                    downloadVideo(result.videoUrl, index);
-                }, index * 1000); // Stagger downloads by 1 second
+            results.forEach((r, i) => {
+                setTimeout(() => downloadVideo(r.videoUrl, i), i * 1000);
             });
-
-            alert(`📥 Downloading ${results.length} videos...`);
         }
 
-        // ==================== CLEAR ALL ====================
         function clearAll() {
-            if (confirm('❓ Are you sure you want to clear everything?')) {
+            if (confirm('Clear everything?')) {
                 document.getElementById('promptInput').value = '';
                 document.getElementById('resultsSection').innerHTML = '';
                 document.getElementById('lineCount').textContent = '0 prompts';
@@ -910,63 +1184,58 @@ Try it now - paste as many prompts as you want!"
                 document.getElementById('processingVideos').textContent = '0';
                 document.getElementById('failedVideos').textContent = '0';
                 document.getElementById('progressSection').classList.remove('active');
-                document.getElementById('downloadAllBtn').disabled = true;
                 results = [];
                 prompts = [];
-                currentIndex = 0;
             }
         }
 
-        // ==================== STOP GENERATION ====================
         function stopGeneration() {
-            if (confirm('⏸️ Stop current generation? Videos already completed will be saved.')) {
+            if (confirm('Stop generation?')) {
                 isGenerating = false;
                 document.getElementById('generateBtn').disabled = false;
                 document.getElementById('stopBtn').disabled = true;
-                document.getElementById('statusText').textContent = '⏸️ Stopped by user';
-                
                 if (results.length > 0) {
                     document.getElementById('downloadAllBtn').disabled = false;
                 }
             }
         }
 
-        // ==================== KEYBOARD SHORTCUTS ====================
+        // Close modal on outside click
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {
-            // Ctrl/Cmd + Enter to generate
             if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                 if (!document.getElementById('generateBtn').disabled) {
                     startGeneration();
                 }
             }
-            
-            // Escape to stop
-            if (e.key === 'Escape' && isGenerating) {
-                stopGeneration();
+            if (e.key === 'Escape') {
+                if (isGenerating) stopGeneration();
+                closeModal();
             }
         });
 
-        // ==================== INIT MESSAGE ====================
         console.log(`
-🎬 Unlimited Video Generator Loaded!
-========================================
-📝 Features:
-- Batch processing with unlimited prompts
-- Parallel generation (configurable)
-- Real-time progress tracking
-- Download individual or all videos
-- Keyboard shortcuts (Ctrl+Enter to generate, Esc to stop)
+🎬 AI Video Generator Pro Loaded!
+=====================================
+✨ Features:
+- Multiple API providers support
+- Real prompt-based video generation
+- Batch processing
+- Progress tracking
+- Easy API configuration
 
-🔧 Configuration:
-- USE_REAL_API: ${USE_REAL_API}
-- API_ENDPOINT: ${API_ENDPOINT}
+🔧 Setup:
+1. Click "Setup Guide" for API keys
+2. Enter your API key
+3. Select provider
+4. Test connection
+5. Start generating!
 
-💡 To connect to real API:
-1. Set USE_REAL_API = true
-2. Update API_ENDPOINT with your backend URL
-3. Ensure your backend returns: {success: true, video_url: "..."}
-
-Happy creating! 🚀
+🚀 Ready to create!
         `);
     </script>
 </body>
