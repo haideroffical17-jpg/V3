@@ -1,1431 +1,294 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unlimited Video - Powered by GWH</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            color: #fff;
-            min-height: 100vh;
-        }
-
-        /* Header */
-        .header {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid rgba(0, 212, 255, 0.3);
-        }
-
-        .logo h1 {
-            font-size: 28px;
-            background: linear-gradient(90deg, #00d4ff, #10b981);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .powered-by {
-            font-size: 14px;
-            opacity: 0.7;
-        }
-
-        .auth-buttons button {
-            background: linear-gradient(135deg, #10b981, #059669);
-            padding: 10px 25px;
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            margin-left: 10px;
-            transition: transform 0.3s;
-        }
-
-        .auth-buttons button:hover {
-            transform: scale(1.05);
-        }
-
-        /* Landing Hero */
-        .hero {
-            text-align: center;
-            padding: 100px 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .hero h2 {
-            font-size: 48px;
-            margin-bottom: 20px;
-            text-shadow: 0 4px 12px rgba(0, 212, 255, 0.6);
-        }
-
-        .hero p {
-            font-size: 24px;
-            opacity: 0.9;
-            margin-bottom: 40px;
-        }
-
-        .cta-button {
-            background: linear-gradient(135deg, #ff0844, #ff5c00);
-            padding: 20px 60px;
-            border: none;
-            border-radius: 50px;
-            color: white;
-            font-size: 22px;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 8px 24px rgba(255, 8, 68, 0.4);
-            transition: all 0.3s;
-        }
-
-        .cta-button:hover {
-            transform: scale(1.05);
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-
-        .modal-content {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            padding: 40px;
-            border-radius: 20px;
-            max-width: 500px;
-            width: 90%;
-            box-shadow: 0 20px 60px rgba(0, 212, 255, 0.3);
-            border: 2px solid #00d4ff;
-            position: relative;
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 30px;
-            cursor: pointer;
-            color: #fff;
-        }
-
-        .modal-content h2 {
-            margin-bottom: 30px;
-            color: #00d4ff;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid rgba(0, 212, 255, 0.3);
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.05);
-            color: #fff;
-            font-size: 16px;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #00d4ff;
-        }
-
-        .submit-button {
-            width: 100%;
-            background: linear-gradient(135deg, #10b981, #059669);
-            padding: 15px;
-            border: none;
-            border-radius: 10px;
-            color: white;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .submit-button:hover {
-            transform: scale(1.02);
-        }
-
-        .error-message {
-            color: #ff0844;
-            font-size: 14px;
-            margin-top: 5px;
-            display: none;
-        }
-
-        .toggle-form {
-            text-align: center;
-            margin-top: 20px;
-            color: #00d4ff;
-            cursor: pointer;
-        }
-
-        .toggle-form:hover {
-            text-decoration: underline;
-        }
-
-        /* Dashboard */
-        .dashboard {
-            display: none;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-
-        .dashboard-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 40px;
-        }
-
-        .user-info h2 {
-            color: #00d4ff;
-            font-size: 32px;
-        }
-
-        .logout-button {
-            background: rgba(255, 8, 68, 0.8);
-            padding: 12px 30px;
-            border: none;
-            border-radius: 8px;
-            color: white;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            border: 2px solid rgba(0, 212, 255, 0.3);
-        }
-
-        .stat-card h3 {
-            font-size: 40px;
-            color: #00d4ff;
-            margin-bottom: 10px;
-        }
-
-        .video-generator {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 40px;
-            border-radius: 20px;
-            border: 2px solid rgba(0, 212, 255, 0.3);
-            margin-bottom: 40px;
-        }
-
-        .video-generator h2 {
-            margin-bottom: 20px;
-            color: #00d4ff;
-        }
-
-        .prompt-input {
-            width: 100%;
-            padding: 20px;
-            border: 2px solid rgba(0, 212, 255, 0.3);
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.05);
-            color: #fff;
-            font-size: 16px;
-            min-height: 120px;
-            font-family: 'Poppins', sans-serif;
-            resize: vertical;
-            margin-bottom: 15px;
-        }
-
-        .ratio-selector {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .ratio-option {
-            flex: 1;
-            padding: 15px;
-            border: 2px solid rgba(0, 212, 255, 0.3);
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.05);
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.3s;
-        }
-
-        .ratio-option:hover {
-            border-color: #00d4ff;
-            background: rgba(0, 212, 255, 0.1);
-        }
-
-        .ratio-option.selected {
-            border-color: #00d4ff;
-            background: rgba(0, 212, 255, 0.2);
-        }
-
-        .generate-button {
-            margin-top: 20px;
-            width: 100%;
-            background: linear-gradient(135deg, #ff0844, #ff5c00);
-            padding: 18px;
-            border: none;
-            border-radius: 10px;
-            color: white;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .generate-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .bulk-info {
-            background: rgba(16, 185, 129, 0.1);
-            border: 2px solid rgba(16, 185, 129, 0.3);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            font-size: 14px;
-        }
-
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 30px;
-        }
-
-        .video-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            overflow: hidden;
-            border: 2px solid rgba(0, 212, 255, 0.3);
-        }
-
-        .video-preview {
-            width: 100%;
-            height: 200px;
-            background: #000;
-            position: relative;
-            cursor: pointer;
-        }
-
-        .video-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .play-overlay {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60px;
-            height: 60px;
-            background: rgba(0, 212, 255, 0.9);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 30px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .play-overlay:hover {
-            background: rgba(0, 212, 255, 1);
-            transform: translate(-50%, -50%) scale(1.1);
-        }
-
-        .video-info {
-            padding: 20px;
-        }
-
-        .video-info h3 {
-            margin-bottom: 10px;
-            color: #00d4ff;
-            font-size: 16px;
-        }
-
-        .video-status {
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
-
-        .status-generating {
-            color: #ff5c00;
-        }
-
-        .status-ready {
-            color: #10b981;
-        }
-
-        .video-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .watch-button, .download-button {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .watch-button {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-        }
-
-        .watch-button:hover {
-            transform: scale(1.05);
-        }
-
-        .download-button {
-            background: #10b981;
-        }
-
-        .download-button:hover {
-            transform: scale(1.05);
-        }
-
-        .watch-button:disabled, .download-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-        }
-
-        .loading-content {
-            text-align: center;
-        }
-
-        .spinner {
-            border: 5px solid rgba(255, 255, 255, 0.1);
-            border-top: 5px solid #00d4ff;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .generation-queue {
-            background: rgba(255, 92, 0, 0.1);
-            border: 2px solid rgba(255, 92, 0, 0.3);
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-        }
-
-        .queue-item {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .queue-item:last-child {
-            margin-bottom: 0;
-        }
-
-        /* Video Player Modal */
-        .video-player-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            justify-content: center;
-            align-items: center;
-            z-index: 10001;
-        }
-
-        .video-player-content {
-            max-width: 90%;
-            max-height: 90%;
-            position: relative;
-        }
-
-        .video-player-content video {
-            width: 100%;
-            height: auto;
-            border-radius: 10px;
-        }
-
-        .close-player {
-            position: absolute;
-            top: -40px;
-            right: 0;
-            font-size: 36px;
-            color: white;
-            cursor: pointer;
-            background: rgba(255, 8, 68, 0.8);
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Admin Panel */
-        .admin-panel {
-            display: none;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-
-        .admin-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 40px;
-        }
-
-        .admin-header h2 {
-            color: #ff0844;
-            font-size: 36px;
-        }
-
-        .users-table {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            padding: 30px;
-            border: 2px solid rgba(255, 8, 68, 0.3);
-            overflow-x: auto;
-            margin-bottom: 40px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        th {
-            color: #ff0844;
-            font-weight: 700;
-        }
-
-        .delete-user-btn {
-            background: #ff0844;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 5px;
-            color: white;
-            cursor: pointer;
-        }
-
-        @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .auth-buttons {
-                margin-top: 15px;
-            }
-
-            .hero h2 {
-                font-size: 32px;
-            }
-
-            .ratio-selector {
-                flex-direction: column;
-            }
-
-            .video-actions {
-                flex-direction: column;
-            }
-        }
-    </style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Make Meta-AI Bookmarklet — Single File</title>
+  <style>
+    body{font-family:Inter,Arial,Helvetica,sans-serif;padding:18px;max-width:820px;margin:12px auto;color:#111}
+    h1{margin:0 0 6px;font-size:20px}
+    p{margin:6px 0;color:#333}
+    textarea,input{width:100%;box-sizing:border-box;padding:8px;margin-top:8px;font-size:14px}
+    button{padding:8px 12px;margin-top:10px;cursor:pointer}
+    .row{display:flex;gap:8px}
+    .row button{flex:1}
+    #bookmarkletLink{display:inline-block;margin-top:12px;padding:8px;background:#0a66c2;color:white;border-radius:6px;text-decoration:none}
+    .note{font-size:13px;color:#555;margin-top:8px}
+    pre{background:#f6f6f6;padding:10px;border-radius:6px;overflow:auto}
+  </style>
 </head>
 <body>
-    <!-- Header -->
-    <div class="header">
-        <div class="logo">
-            <h1>🎬 Unlimited Video</h1>
-            <p class="powered-by">Powered by Grow With Haider (GWH)</p>
-        </div>
-        <div class="auth-buttons" id="auth-buttons">
-            <button onclick="openSignupModal()">Sign Up FREE</button>
-            <button onclick="openLoginModal()">Login</button>
-        </div>
-    </div>
+  <h1>Single-file Meta AI Bookmarklet Maker</h1>
+  <p>Paste your prompts (one per line). Click <strong>Generate Bookmarklet</strong>, then drag the blue link to your bookmarks bar (or right-click → Bookmark this link). Open <strong>Meta AI</strong> tab, make it active, then click that bookmark to run automation on the page.</p>
 
-    <!-- Landing Page -->
-    <div id="landing-page">
-        <div class="hero">
-            <h2>Generate Unlimited AI Videos with VEO 3.1</h2>
-            <p>Create stunning videos from text prompts - 100% FREE Forever</p>
-            <button class="cta-button" onclick="openSignupModal()">Start Creating Videos Now!</button>
-        </div>
-    </div>
+  <label>Prompts (one per line):</label>
+  <textarea id="prompts" rows="8" placeholder="Write one prompt per line..."></textarea>
 
-    <!-- Auth Modal -->
-    <div id="authModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeModal()">&times;</span>
-            
-            <!-- Signup Form -->
-            <div id="signupForm">
-                <h2>Create Your FREE Account</h2>
-                <form onsubmit="handleSignup(event)">
-                    <div class="form-group">
-                        <label>Username (Unique)</label>
-                        <input type="text" id="signup-username" required>
-                        <span class="error-message" id="username-error">Username already taken!</span>
-                    </div>
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" id="signup-email" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input type="password" id="signup-password" required minlength="6">
-                    </div>
-                    <button type="submit" class="submit-button">Create Account</button>
-                </form>
-                <p class="toggle-form" onclick="switchToLogin()">Already have an account? Login</p>
-            </div>
-            
-            <!-- Login Form (Admin can login here too) -->
-            <div id="loginForm" style="display: none;">
-                <h2>Welcome Back</h2>
-                <form onsubmit="handleLogin(event)">
-                    <div class="form-group">
-                        <label>Username</label>
-                        <input type="text" id="login-username" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input type="password" id="login-password" required>
-                    </div>
-                    <button type="submit" class="submit-button">Login</button>
-                </form>
-                <p class="toggle-form" onclick="switchToSignup()">Don't have an account? Sign Up</p>
-            </div>
-        </div>
-    </div>
+  <label>Delay between prompts (ms)</label>
+  <input id="delay" type="text" value="2000" />
 
-    <!-- Video Player Modal -->
-    <div id="videoPlayerModal" class="video-player-modal">
-        <div class="video-player-content">
-            <span class="close-player" onclick="closeVideoPlayer()">&times;</span>
-            <video id="videoPlayer" controls autoplay>
-                <source id="videoSource" src="" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
-        </div>
-    </div>
+  <label>Timeout to wait for 'Download' (ms)</label>
+  <input id="timeout" type="text" value="90000" />
 
-    <!-- User Dashboard -->
-    <div id="dashboard" class="dashboard">
-        <div class="dashboard-header">
-            <div class="user-info">
-                <h2>Welcome, @<span id="username-display"></span>!</h2>
-            </div>
-            <button class="logout-button" onclick="handleLogout()">Logout</button>
-        </div>
+  <div class="row">
+    <button id="generate">Generate Bookmarklet</button>
+    <button id="copyCode">Copy Bookmarklet JS</button>
+  </div>
 
-        <div class="stats">
-            <div class="stat-card">
-                <h3 id="video-count">0</h3>
-                <p>Videos Generated</p>
-            </div>
-            <div class="stat-card">
-                <h3>∞</h3>
-                <p>Unlimited Credits</p>
-            </div>
-            <div class="stat-card">
-                <h3 id="download-count">0</h3>
-                <p>Downloads</p>
-            </div>
-        </div>
+  <a id="bookmarkletLink" href="#" draggable="true" title="Drag to bookmarks bar">Drag this to bookmarks bar after generation</a>
 
-        <!-- Generation Queue -->
-        <div id="generation-queue-container" style="display: none;" class="generation-queue">
-            <h3 style="margin-bottom: 15px; color: #ff5c00;">🔄 Generation Queue (<span id="queue-count">0</span> videos)</h3>
-            <div id="queue-list"></div>
-        </div>
+  <div class="note">
+    <strong>How to use:</strong>
+    <ol>
+      <li>Save this page (or keep it open).</li>
+      <li>Enter prompts & click <em>Generate Bookmarklet</em>.</li>
+      <li>Drag the blue link to your bookmarks bar, or right-click it → "Add to bookmarks".</li>
+      <li>Open <em>meta.ai</em> or <em>ai.meta.com</em>, make the tab active, then click the bookmark (the script will run on that page).</li>
+    </ol>
+    <strong>Limitations:</strong> The bookmarklet runs in the context of the page you click it on. It cannot upload files automatically (browser blocks programmatic file selection). Make sure your media are already uploaded on the page if needed.
+  </div>
 
-        <div class="video-generator">
-            <h2>Generate Videos with VEO 3.1</h2>
-            
-            <div class="bulk-info">
-                💡 <strong>Bulk Generation:</strong> Enter multiple prompts (one per line) to generate videos in sequence!
-            </div>
+  <h3>Bookmarklet JavaScript (read-only, for advanced users)</h3>
+  <pre id="jsCode"></pre>
 
-            <textarea 
-                id="video-prompt" 
-                class="prompt-input" 
-                placeholder="Enter your video prompt(s)... (one per line for bulk generation)
+<script>
+(function(){
+  const promptsEl = document.getElementById('prompts');
+  const delayEl = document.getElementById('delay');
+  const timeoutEl = document.getElementById('timeout');
+  const generateBtn = document.getElementById('generate');
+  const copyBtn = document.getElementById('copyCode');
+  const link = document.getElementById('bookmarkletLink');
+  const jsCodePre = document.getElementById('jsCode');
 
-Example prompts:
-• A cinematic shot of a sunset over the ocean with waves crashing
-• A futuristic city with flying cars at night
-• A cute puppy playing in a garden with butterflies
-• An astronaut floating in space with Earth in the background"></textarea>
+  // Core function that will be injected as bookmarklet.
+  // Keep it self-contained (no external deps).
+  function bookmarkletCore(promptsArray, options){
+    // This function runs INSIDE the target page when bookmarklet clicked.
+    (async function runPrompts(){
+      // Utility: sleep
+      const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-            <div class="ratio-selector">
-                <div class="ratio-option selected" data-ratio="16:9" onclick="selectRatio('16:9')">
-                    <div style="font-size: 24px; margin-bottom: 5px;">📺</div>
-                    <strong>16:9</strong>
-                    <div style="font-size: 12px; opacity: 0.7;">Landscape</div>
-                </div>
-                <div class="ratio-option" data-ratio="9:16" onclick="selectRatio('9:16')">
-                    <div style="font-size: 24px; margin-bottom: 5px;">📱</div>
-                    <strong>9:16</strong>
-                    <div style="font-size: 12px; opacity: 0.7;">Portrait / Shorts</div>
-                </div>
-            </div>
+      // CONFIG — adjust fallback selectors/keywords
+      const PROMPT_SELECTORS = [
+        'textarea[placeholder*="prompt"]',
+        'textarea[placeholder*="Write"]',
+        'textarea[aria-label*="Message"]',
+        'textarea',
+        'div[contenteditable="true"]'
+      ];
+      const RUN_KEYWORDS = ['run','generate','create','submit','send','ask','go'];
+      const DOWNLOAD_KEYWORDS = ['download','save','export','download image','download result','save image','save result'];
 
-            <button class="generate-button" id="generate-btn" onclick="generateVideos()">
-                🎬 Generate Video(s) with VEO 3.1
-            </button>
-        </div>
+      function findPromptEl(){
+        for(const s of PROMPT_SELECTORS){
+          try{
+            const el = document.querySelector(s);
+            if(el) return el;
+          }catch(e){}
+        }
+        // try searching for a contenteditable near common containers
+        const contentEditable = Array.from(document.querySelectorAll('[contenteditable="true"]')).find(e => {
+          // prefer larger elements
+          return (e.innerText || '').length < 10000;
+        });
+        return contentEditable || null;
+      }
 
-        <div id="video-gallery">
-            <h2 style="margin-bottom: 20px;">Your Videos</h2>
-            <div class="video-grid" id="video-grid"></div>
-        </div>
-    </div>
+      function setPromptText(el, text){
+        el.focus();
+        if(el.tagName && el.tagName.toLowerCase() === 'textarea'){
+          el.value = text;
+          el.dispatchEvent(new Event('input', {bubbles:true}));
+          el.dispatchEvent(new Event('change', {bubbles:true}));
+        } else {
+          // contenteditable
+          el.innerText = text;
+          el.dispatchEvent(new InputEvent('input', {bubbles:true}));
+        }
+      }
 
-    <!-- Admin Panel -->
-    <div id="admin-panel" class="admin-panel">
-        <div class="admin-header">
-            <h2>🔐 Admin Panel</h2>
-            <button class="logout-button" onclick="handleLogout()">Logout</button>
-        </div>
-
-        <div class="stats">
-            <div class="stat-card">
-                <h3 id="admin-total-users">0</h3>
-                <p>Total Users</p>
-            </div>
-            <div class="stat-card">
-                <h3 id="admin-total-videos">0</h3>
-                <p>Total Videos</p>
-            </div>
-            <div class="stat-card">
-                <h3 id="admin-total-downloads">0</h3>
-                <p>Total Downloads</p>
-            </div>
-        </div>
-
-        <!-- Admin Video Generator -->
-        <div class="video-generator">
-            <h2>🔥 Admin Video Generator</h2>
-            
-            <div class="bulk-info">
-                💡 <strong>Admin Bulk Generation:</strong> Generate multiple videos with different aspect ratios!
-            </div>
-
-            <textarea 
-                id="admin-video-prompt" 
-                class="prompt-input" 
-                placeholder="Enter prompts (one per line for bulk generation)..."></textarea>
-
-            <div class="ratio-selector">
-                <div class="ratio-option selected" data-ratio="16:9" onclick="selectAdminRatio('16:9')">
-                    <div style="font-size: 24px; margin-bottom: 5px;">📺</div>
-                    <strong>16:9</strong>
-                    <div style="font-size: 12px; opacity: 0.7;">Landscape</div>
-                </div>
-                <div class="ratio-option" data-ratio="9:16" onclick="selectAdminRatio('9:16')">
-                    <div style="font-size: 24px; margin-bottom: 5px;">📱</div>
-                    <strong>9:16</strong>
-                    <div style="font-size: 12px; opacity: 0.7;">Portrait / Shorts</div>
-                </div>
-            </div>
-
-            <button class="generate-button" id="admin-generate-btn" onclick="adminGenerateVideos()">
-                🎬 Generate Video(s) as Admin
-            </button>
-        </div>
-
-        <!-- Admin Video Gallery -->
-        <div style="margin-bottom: 40px;">
-            <h2 style="margin-bottom: 20px; color: #ff0844;">All Generated Videos</h2>
-            <div class="video-grid" id="admin-video-grid"></div>
-        </div>
-
-        <div class="users-table">
-            <h2 style="margin-bottom: 20px; color: #ff0844;">All Users</h2>
-            <table id="users-table">
-                <thead>
-                    <tr>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Videos</th>
-                        <th>Downloads</th>
-                        <th>Joined</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="users-tbody"></tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Loading Overlay -->
-    <div id="loading-overlay" class="loading-overlay">
-        <div class="loading-content">
-            <div class="spinner"></div>
-            <h3 id="loading-text">Generating your video with VEO 3.1...</h3>
-            <p id="loading-subtext">This may take 30-60 seconds</p>
-        </div>
-    </div>
-
-    <script>
-        // Admin credentials
-        const ADMIN_USERNAME = 'GrowWithHaider';
-        const ADMIN_PASSWORD = 'HaiderAli369';
-        const ADMIN_USER_ID = -1;
-
-        // Initialize data
-        let currentUser = null;
-        let isAdmin = false;
-        let users = JSON.parse(localStorage.getItem('veo-users')) || [];
-        let videos = JSON.parse(localStorage.getItem('veo-videos')) || [];
-        let selectedRatio = '16:9';
-        let selectedAdminRatio = '16:9';
-        let generationQueue = [];
-        let isGenerating = false;
-
-        // Check logged in user
-        window.onload = function() {
-            const savedUser = localStorage.getItem('veo-current-user');
-            const savedAdmin = localStorage.getItem('veo-admin');
-            
-            if (savedAdmin === 'true') {
-                isAdmin = true;
-                currentUser = { id: ADMIN_USER_ID, username: ADMIN_USERNAME, isAdmin: true };
-                showAdminPanel();
-            } else if (savedUser) {
-                currentUser = JSON.parse(savedUser);
-                showDashboard();
+      function clickButtonByKeywords(words){
+        // search visible buttons/links with matching text
+        const nodes = Array.from(document.querySelectorAll('button, a'));
+        // try exact visible buttons first (text content)
+        for(const n of nodes){
+          const t = (n.innerText || '').toLowerCase().trim();
+          if(!t) continue;
+          for(const w of words){
+            if(t.includes(w)) {
+              // ensure element is visible and enabled
+              const rect = n.getBoundingClientRect();
+              if(rect.width > 0 && rect.height > 0 && !n.disabled){
+                try { n.click(); return n; } catch(e) {}
+              }
             }
-        };
-
-        // Modal functions
-        function openSignupModal() {
-            document.getElementById('authModal').style.display = 'flex';
-            document.getElementById('signupForm').style.display = 'block';
-            document.getElementById('loginForm').style.display = 'none';
+          }
         }
+        return null;
+      }
 
-        function openLoginModal() {
-            document.getElementById('authModal').style.display = 'flex';
-            document.getElementById('signupForm').style.display = 'none';
-            document.getElementById('loginForm').style.display = 'block';
-        }
+      function tryClick(selector){
+        try{
+          const el = document.querySelector(selector);
+          if(el) { el.click(); return el; }
+        }catch(e){}
+        return null;
+      }
 
-        function closeModal() {
-            document.getElementById('authModal').style.display = 'none';
-        }
+      async function waitForDownloadButton(timeoutMs){
+        const start = Date.now();
+        // quick check
+        if(clickButtonByKeywords(DOWNLOAD_KEYWORDS)) return true;
 
-        function switchToLogin() {
-            document.getElementById('signupForm').style.display = 'none';
-            document.getElementById('loginForm').style.display = 'block';
-        }
-
-        function switchToSignup() {
-            document.getElementById('loginForm').style.display = 'none';
-            document.getElementById('signupForm').style.display = 'block';
-        }
-
-        // Signup handler
-        function handleSignup(event) {
-            event.preventDefault();
-            
-            const username = document.getElementById('signup-username').value.trim();
-            const email = document.getElementById('signup-email').value.trim();
-            const password = document.getElementById('signup-password').value;
-            
-            if (users.find(u => u.username.toLowerCase() === username.toLowerCase())) {
-                document.getElementById('username-error').style.display = 'block';
-                return;
+        return new Promise((resolve, reject) => {
+          const obs = new MutationObserver(() => {
+            if(clickButtonByKeywords(DOWNLOAD_KEYWORDS)){
+              obs.disconnect();
+              clearInterval(poll);
+              resolve(true);
             }
-            
-            document.getElementById('username-error').style.display = 'none';
-            
-            const newUser = {
-                id: Date.now(),
-                username: username,
-                email: email,
-                password: password,
-                videos: [],
-                downloads: 0,
-                createdAt: new Date().toISOString()
-            };
-            
-            users.push(newUser);
-            localStorage.setItem('veo-users', JSON.stringify(users));
-            
-            currentUser = newUser;
-            localStorage.setItem('veo-current-user', JSON.stringify(currentUser));
-            
-            closeModal();
-            showDashboard();
-            alert('✅ Account created successfully! Welcome to Unlimited Video!');
-        }
-
-        // Login handler (Admin can login here with same credentials)
-        function handleLogin(event) {
-            event.preventDefault();
-            
-            const username = document.getElementById('login-username').value.trim();
-            const password = document.getElementById('login-password').value;
-            
-            // Check if Admin
-            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-                isAdmin = true;
-                currentUser = { id: ADMIN_USER_ID, username: ADMIN_USERNAME, isAdmin: true };
-                localStorage.setItem('veo-admin', 'true');
-                closeModal();
-                showAdminPanel();
-                return;
+            if(Date.now() - start > timeoutMs){
+              obs.disconnect();
+              clearInterval(poll);
+              reject(new Error('timeout'));
             }
-            
-            // Check regular user
-            const user = users.find(u => 
-                u.username.toLowerCase() === username.toLowerCase() && 
-                u.password === password
-            );
-            
-            if (!user) {
-                alert('❌ Invalid username or password!');
-                return;
+          });
+          obs.observe(document.body, {childList:true, subtree:true, attributes:true, characterData:true});
+          const poll = setInterval(()=>{
+            if(clickButtonByKeywords(DOWNLOAD_KEYWORDS)){
+              obs.disconnect();
+              clearInterval(poll);
+              resolve(true);
             }
-            
-            currentUser = user;
-            localStorage.setItem('veo-current-user', JSON.stringify(currentUser));
-            
-            closeModal();
-            showDashboard();
-        }
-
-        // Logout
-        function handleLogout() {
-            localStorage.removeItem('veo-current-user');
-            localStorage.removeItem('veo-admin');
-            location.reload();
-        }
-
-        // Show dashboard
-        function showDashboard() {
-            document.getElementById('landing-page').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'block';
-            document.getElementById('auth-buttons').style.display = 'none';
-            
-            document.getElementById('username-display').textContent = currentUser.username;
-            updateStats();
-            loadUserVideos();
-        }
-
-        // Show admin panel
-        function showAdminPanel() {
-            document.getElementById('landing-page').style.display = 'none';
-            document.getElementById('admin-panel').style.display = 'block';
-            document.getElementById('auth-buttons').style.display = 'none';
-            
-            loadAdminData();
-        }
-
-        // Select ratio
-        function selectRatio(ratio) {
-            selectedRatio = ratio;
-            document.querySelectorAll('#dashboard .ratio-option').forEach(opt => {
-                opt.classList.remove('selected');
-            });
-            document.querySelector(`#dashboard .ratio-option[data-ratio="${ratio}"]`).classList.add('selected');
-        }
-
-        function selectAdminRatio(ratio) {
-            selectedAdminRatio = ratio;
-            document.querySelectorAll('#admin-panel .ratio-option').forEach(opt => {
-                opt.classList.remove('selected');
-            });
-            document.querySelector(`#admin-panel .ratio-option[data-ratio="${ratio}"]`).classList.add('selected');
-        }
-
-        // Generate videos (bulk support)
-        async function generateVideos() {
-            const promptText = document.getElementById('video-prompt').value.trim();
-            
-            if (!promptText) {
-                alert('⚠️ Please enter at least one video prompt!');
-                return;
+            if(Date.now() - start > timeoutMs){
+              obs.disconnect();
+              clearInterval(poll);
+              reject(new Error('timeout'));
             }
+          }, 800);
+        });
+      }
 
-            const prompts = promptText.split('\n').map(p => p.trim()).filter(p => p.length > 0);
-            
-            if (prompts.length === 0) {
-                alert('⚠️ Please enter at least one valid prompt!');
-                return;
-            }
+      // Start running prompts
+      const delay = (options && options.delay) || 1500;
+      const timeout = (options && options.timeout) || 90000;
 
-            prompts.forEach(prompt => {
-                generationQueue.push({
-                    id: Date.now() + Math.random(),
-                    prompt: prompt,
-                    ratio: selectedRatio,
-                    status: 'queued'
-                });
-            });
+      // safety: show a tiny on-page status so user knows bookmarklet ran
+      const statusNode = document.createElement('div');
+      statusNode.style.position = 'fixed';
+      statusNode.style.right = '12px';
+      statusNode.style.bottom = '12px';
+      statusNode.style.zIndex = 2147483647;
+      statusNode.style.background = 'rgba(10,10,10,0.85)';
+      statusNode.style.color = 'white';
+      statusNode.style.padding = '8px 10px';
+      statusNode.style.borderRadius = '8px';
+      statusNode.style.fontSize = '13px';
+      statusNode.style.fontFamily = 'Arial,sans-serif';
+      statusNode.textContent = 'Meta-AI Bookmarklet running...';
+      document.body.appendChild(statusNode);
 
-            document.getElementById('video-prompt').value = '';
-            updateQueueDisplay();
-            
-            if (!isGenerating) {
-                processQueue();
-            }
+      for(let i=0;i<promptsArray.length;i++){
+        try{
+          const text = promptsArray[i];
+          statusNode.textContent = `Running ${i+1}/${promptsArray.length}...`;
+
+          // find prompt element
+          const promptEl = findPromptEl();
+          if(!promptEl){
+            console.warn('Bookmarklet: prompt field not found');
+            statusNode.textContent = 'Prompt field not found — stopped';
+            break;
+          }
+
+          // set prompt text
+          setPromptText(promptEl, text);
+
+          // click run / generate
+          const runBtn = clickButtonByKeywords(RUN_KEYWORDS);
+          if(!runBtn){
+            // attempt common selectors as fallback
+            clickButtonByKeywords(['submit']);
+          }
+
+          // wait a bit for generation to start
+          await sleep(500);
+
+          // now wait until a Download/Save button appears (or timeout)
+          try{
+            await waitForDownloadButton(timeout);
+            // if download button appears, we already clicked it inside waitForDownloadButton
+            // small delay to let download start
+            await sleep(800);
+            statusNode.textContent = `Downloaded ${i+1}/${promptsArray.length}`;
+          }catch(e){
+            // timeout waiting for download
+            console.warn('Bookmarklet: timeout waiting for download for prompt index', i);
+            statusNode.textContent = `Timeout on ${i+1}/${promptsArray.length}`;
+          }
+
+          // polite delay before next prompt
+          await sleep(delay);
+
+        }catch(err){
+          console.error('Bookmarklet error:', err);
+          statusNode.textContent = 'Error occurred — check console';
+          break;
         }
+      } // end for
 
-        // Admin generate videos
-        async function adminGenerateVideos() {
-            const promptText = document.getElementById('admin-video-prompt').value.trim();
-            
-            if (!promptText) {
-                alert('⚠️ Please enter at least one video prompt!');
-                return;
-            }
+      // finish
+      statusNode.textContent = 'Bookmarklet finished';
+      setTimeout(()=>{ try{ document.body.removeChild(statusNode) }catch(e){} }, 4000);
 
-            const prompts = promptText.split('\n').map(p => p.trim()).filter(p => p.length > 0);
-            
-            if (prompts.length === 0) {
-                alert('⚠️ Please enter at least one valid prompt!');
-                return;
-            }
+    })();
+  } // end bookmarkletCore
 
-            const generateBtn = document.getElementById('admin-generate-btn');
-            generateBtn.disabled = true;
-            generateBtn.textContent = '⏳ Generating...';
+  // convert function to bookmarklet code string
+  function makeBookmarkletCode(prompts, delay, timeout){
+    // we will stringify the function and embed prompts/options
+    const fnString = "(" + bookmarkletCore.toString() + ")(" + JSON.stringify(prompts) + "," + JSON.stringify({delay:+delay, timeout:+timeout}) + ");";
+    // minify-ish: remove newlines and excessive spaces for safety
+    const min = fnString.replace(/\s+/g,' ').trim();
+    // create final javascript: URL
+    return 'javascript:(function(){' + encodeURIComponent(min) + '})()';
+  }
 
-            for (let i = 0; i < prompts.length; i++) {
-                document.getElementById('loading-text').textContent = `Generating video ${i + 1} of ${prompts.length}...`;
-                document.getElementById('loading-subtext').textContent = prompts[i].substring(0, 60) + '...';
-                document.getElementById('loading-overlay').style.display = 'flex';
+  function updateUIWithCode(code){
+    // display readable code too (decoded)
+    try{
+      const decoded = decodeURIComponent(code.replace(/^javascript:\(function\(\)\{/, '').replace(/\}\)\(\)$/, ''));
+      jsCodePre.textContent = decoded;
+    }catch(e){
+      jsCodePre.textContent = code;
+    }
+    link.href = code;
+    link.textContent = 'Drag this link to bookmarks bar (or right-click → bookmark)';
+  }
 
-                try {
-                    const videoData = await callVeoAPI(prompts[i], selectedAdminRatio);
-                    
-                    const newVideo = {
-                        id: Date.now() + i,
-                        userId: ADMIN_USER_ID,
-                        prompt: prompts[i],
-                        videoUrl: videoData.url,
-                        thumbnailUrl: videoData.thumbnail,
-                        duration: videoData.duration || '8s',
-                        resolution: '1080p',
-                        ratio: selectedAdminRatio,
-                        status: 'ready',
-                        createdAt: new Date().toISOString()
-                    };
-                    
-                    videos.push(newVideo);
-                    localStorage.setItem('veo-videos', JSON.stringify(videos));
-                } catch (error) {
-                    console.error('Video generation error:', error);
-                }
+  generateBtn.addEventListener('click', ()=>{
+    const prompts = promptsEl.value.split('\n').map(s => s.trim()).filter(Boolean);
+    if(prompts.length === 0){ alert('Please enter at least one prompt.'); return; }
+    const delay = parseInt(delayEl.value) || 1500;
+    const timeout = parseInt(timeoutEl.value) || 90000;
+    const code = makeBookmarkletCode(prompts, delay, timeout);
+    updateUIWithCode(code);
+    alert('Bookmarklet generated. Drag the blue link to your bookmarks bar and then open Meta AI page and click it there.');
+  });
 
-                await new Promise(resolve => setTimeout(resolve, 500));
-            }
+  copyBtn.addEventListener('click', ()=>{
+    const href = link.href;
+    if(!href || href === '#'){ alert('Generate the bookmarklet first.'); return; }
+    // copy JS to clipboard (decoded)
+    const decoded = decodeURIComponent(href);
+    navigator.clipboard.writeText(decoded).then(()=> alert('Bookmarklet code copied to clipboard. You can paste it into a bookmark or share.'), ()=> alert('Copy failed — try manually drag the link.'));
+  });
 
-            document.getElementById('loading-overlay').style.display = 'none';
-            document.getElementById('admin-video-prompt').value = '';
-            loadAdminData();
-            
-            generateBtn.disabled = false;
-            generateBtn.textContent = '🎬 Generate Video(s) as Admin';
-            
-            alert(`✅ Successfully generated ${prompts.length} video(s)!`);
-        }
-
-        // Process generation queue
-        async function processQueue() {
-            if (generationQueue.length === 0) {
-                isGenerating = false;
-                updateQueueDisplay();
-                return;
-            }
-
-            isGenerating = true;
-            const item = generationQueue[0];
-            item.status = 'generating';
-            updateQueueDisplay();
-
-            document.getElementById('loading-text').textContent = `Generating video...`;
-            document.getElementById('loading-subtext').textContent = item.prompt.substring(0, 60) + '...';
-            document.getElementById('loading-overlay').style.display = 'flex';
-
-            try {
-                const videoData = await callVeoAPI(item.prompt, item.ratio);
-                
-                const newVideo = {
-                    id: Date.now(),
-                    userId: currentUser.id,
-                    prompt: item.prompt,
-                    videoUrl: videoData.url,
-                    thumbnailUrl: videoData.thumbnail,
-                    duration: videoData.duration || '8s',
-                    resolution: '1080p',
-                    ratio: item.ratio,
-                    status: 'ready',
-                    createdAt: new Date().toISOString()
-                };
-                
-                videos.push(newVideo);
-                localStorage.setItem('veo-videos', JSON.stringify(videos));
-                
-                currentUser.videos.push(newVideo.id);
-                updateUserInDB();
-                
-                loadUserVideos();
-                updateStats();
-            } catch (error) {
-                console.error('Video generation error:', error);
-            }
-
-            document.getElementById('loading-overlay').style.display = 'none';
-            
-            generationQueue.shift();
-            
-            setTimeout(() => processQueue(), 500);
-        }
-
-        // Update queue display
-        function updateQueueDisplay() {
-            const container = document.getElementById('generation-queue-container');
-            const queueList = document.getElementById('queue-list');
-            const queueCount = document.getElementById('queue-count');
-
-            if (generationQueue.length === 0) {
-                container.style.display = 'none';
-                return;
-            }
-
-            container.style.display = 'block';
-            queueCount.textContent = generationQueue.length;
-
-            queueList.innerHTML = generationQueue.map((item, index) => `
-                <div class="queue-item">
-                    <div>
-                        <strong>${index + 1}. ${item.prompt.substring(0, 50)}${item.prompt.length > 50 ? '...' : ''}</strong>
-                        <div style="font-size: 12px; opacity: 0.7; margin-top: 5px;">
-                            ${item.ratio} • ${item.status === 'generating' ? '🔄 Generating...' : '⏳ In Queue'}
-                        </div>
-                    </div>
-                    <div style="text-align: right;">
-                        <div style="font-size: 24px;">
-                            ${item.ratio === '16:9' ? '📺' : '📱'}
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Call VEO 3.1 API
-        async function callVeoAPI(prompt, ratio) {
-            // SIMULATION - generates demo video
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    const videoId = Date.now();
-                    // Using sample videos for demo
-                    const sampleVideos = [
-                        'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4',
-                        'https://www.w3schools.com/html/mov_bbb.mp4',
-                        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
-                    ];
-                    const randomVideo = sampleVideos[Math.floor(Math.random() * sampleVideos.length)];
-                    
-                    resolve({
-                        url: randomVideo,
-                        thumbnail: `https://via.placeholder.com/${ratio === '16:9' ? '640x360' : '360x640'}/667eea/ffffff?text=VEO+3.1+Video`,
-                        duration: '8s'
-                    });
-                }, 3000); // 3 seconds
-            });
-
-            /* REAL GEMINI VEO 3.1 API:
-            const response = await fetch('YOUR_VEO_API_ENDPOINT', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer YOUR_API_KEY'
-                },
-                body: JSON.stringify({
-                    prompt: prompt,
-                    aspectRatio: ratio,
-                    duration: 8,
-                    resolution: '1080p'
-                })
-            });
-            const data = await response.json();
-            return {
-                url: data.video_url,
-                thumbnail: data.thumbnail_url,
-                duration: '8s'
-            };
-            */
-        }
-
-        // Watch video
-        function watchVideo(videoId) {
-            const video = videos.find(v => v.id === parseInt(videoId));
-            if (!video) {
-                alert('Video not found!');
-                return;
-            }
-
-            const modal = document.getElementById('videoPlayerModal');
-            const videoSource = document.getElementById('videoSource');
-            const videoPlayer = document.getElementById('videoPlayer');
-
-            videoSource.src = video.videoUrl;
-            videoPlayer.load();
-            modal.style.display = 'flex';
-        }
-
-        function closeVideoPlayer() {
-            const modal = document.getElementById('videoPlayerModal');
-            const videoPlayer = document.getElementById('videoPlayer');
-            
-            videoPlayer.pause();
-            modal.style.display = 'none';
-        }
-
-        // Load user videos
-        function loadUserVideos() {
-            const userVideos = videos.filter(v => v.userId === currentUser.id);
-            const grid = document.getElementById('video-grid');
-            
-            if (userVideos.length === 0) {
-                grid.innerHTML = '<p style="opacity: 0.7;">No videos yet. Generate your first video above! 🎬</p>';
-                return;
-            }
-            
-            grid.innerHTML = userVideos.reverse().map(video => `
-                <div class="video-card">
-                    <div class="video-preview" onclick="watchVideo('${video.id}')">
-                        ${video.thumbnailUrl ? 
-                            `<img src="${video.thumbnailUrl}" alt="Video thumbnail">` :
-                            '<div style="width: 100%; height: 100%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; font-size: 48px;">🎬</div>'
-                        }
-                        <div class="play-overlay">▶</div>
-                    </div>
-                    <div class="video-info">
-                        <h3>${video.prompt.substring(0, 60)}${video.prompt.length > 60 ? '...' : ''}</h3>
-                        <p class="video-status ${video.status === 'ready' ? 'status-ready' : 'status-generating'}">
-                            ${video.status === 'ready' ? '✅ Ready' : '⏳ Generating...'}
-                        </p>
-                        <p style="font-size: 12px; opacity: 0.6;">${video.resolution} • ${video.duration} • ${video.ratio}</p>
-                        <p style="font-size: 11px; opacity: 0.5; margin-bottom: 15px;">${new Date(video.createdAt).toLocaleString()}</p>
-                        <div class="video-actions">
-                            <button 
-                                class="watch-button" 
-                                onclick="watchVideo('${video.id}')" 
-                                ${video.status !== 'ready' ? 'disabled' : ''}>
-                                👁️ Watch
-                            </button>
-                            <button 
-                                class="download-button" 
-                                onclick="downloadVideo('${video.id}')" 
-                                ${video.status !== 'ready' ? 'disabled' : ''}>
-                                📥 Download
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Download video
-        function downloadVideo(videoId) {
-            const video = videos.find(v => v.id === parseInt(videoId));
-            
-            if (!video) {
-                alert('Video not found!');
-                return;
-            }
-            
-            currentUser.downloads++;
-            updateUserInDB();
-            updateStats();
-            
-            // Create download link
-            const link = document.createElement('a');
-            link.href = video.videoUrl;
-            link.download = `veo-video-${video.ratio}-${video.id}.mp4`;
-            link.target = '_blank';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            alert(`✅ Video download started!\n\nPrompt: ${video.prompt.substring(0, 50)}...\nQuality: ${video.resolution}\nRatio: ${video.ratio}`);
-        }
-
-        // Update stats
-        function updateStats() {
-            document.getElementById('video-count').textContent = currentUser.videos.length;
-            document.getElementById('download-count').textContent = currentUser.downloads;
-        }
-
-        // Update user in database
-        function updateUserInDB() {
-            const index = users.findIndex(u => u.id === currentUser.id);
-            if (index !== -1) {
-                users[index] = currentUser;
-                localStorage.setItem('veo-users', JSON.stringify(users));
-                localStorage.setItem('veo-current-user', JSON.stringify(currentUser));
-            }
-        }
-
-        // Load admin data
-        function loadAdminData() {
-            const totalDownloads = users.reduce((sum, user) => sum + user.downloads, 0);
-            
-            document.getElementById('admin-total-users').textContent = users.length;
-            document.getElementById('admin-total-videos').textContent = videos.length;
-            document.getElementById('admin-total-downloads').textContent = totalDownloads;
-            
-            const tbody = document.getElementById('users-tbody');
-            tbody.innerHTML = users.map(user => `
-                <tr>
-                    <td><strong>@${user.username}</strong></td>
-                    <td>${user.email}</td>
-                    <td>${user.videos.length}</td>
-                    <td>${user.downloads}</td>
-                    <td>${new Date(user.createdAt).toLocaleDateString()}</td>
-                    <td>
-                        <button class="delete-user-btn" onclick="deleteUser(${user.id})">
-                            Delete
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-
-            const adminGrid = document.getElementById('admin-video-grid');
-            if (videos.length === 0) {
-                adminGrid.innerHTML = '<p style="opacity: 0.7;">No videos generated yet.</p>';
-                return;
-            }
-
-            adminGrid.innerHTML = videos.slice().reverse().map(video => {
-                const user = users.find(u => u.id === video.userId) || { username: 'Admin' };
-                return `
-                    <div class="video-card">
-                        <div class="video-preview" onclick="watchVideo('${video.id}')">
-                            ${video.thumbnailUrl ? 
-                                `<img src="${video.thumbnailUrl}" alt="Video thumbnail">` :
-                                '<div style="width: 100%; height: 100%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; font-size: 48px;">🎬</div>'
-                            }
-                            <div class="play-overlay">▶</div>
-                        </div>
-                        <div class="video-info">
-                            <h3>${video.prompt.substring(0, 60)}${video.prompt.length > 60 ? '...' : ''}</h3>
-                            <p style="font-size: 12px; opacity: 0.8; margin-bottom: 10px;">👤 @${user.username}</p>
-                            <p class="video-status status-ready">✅ Ready</p>
-                            <p style="font-size: 12px; opacity: 0.6;">${video.resolution} • ${video.duration} • ${video.ratio}</p>
-                            <p style="font-size: 11px; opacity: 0.5; margin-bottom: 15px;">${new Date(video.createdAt).toLocaleString()}</p>
-                            <div class="video-actions">
-                                <button class="watch-button" onclick="watchVideo('${video.id}')">
-                                    👁️ Watch
-                                </button>
-                                <button class="download-button" onclick="downloadVideo('${video.id}')">
-                                    📥 Download
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // Delete user (admin only)
-        function deleteUser(userId) {
-            if (!confirm('Are you sure you want to delete this user and all their videos?')) {
-                return;
-            }
-            
-            users = users.filter(u => u.id !== userId);
-            videos = videos.filter(v => v.userId !== userId);
-            
-            localStorage.setItem('veo-users', JSON.stringify(users));
-            localStorage.setItem('veo-videos', JSON.stringify(videos));
-            
-            loadAdminData();
-            alert('✅ User deleted successfully!');
-        }
-    </script>
+  // init placeholders
+  link.href = '#';
+  jsCodePre.textContent = 'Click "Generate Bookmarklet" to produce the JS code here.';
+})();
+</script>
 </body>
 </html>
