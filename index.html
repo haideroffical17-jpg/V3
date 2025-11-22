@@ -117,7 +117,7 @@
             const imageCache = useRef({});
             const requestRef = useRef(null);
 
-            // Preload Images with robust error handling
+            // Preload Images
             useEffect(() => {
                 scenes.forEach(scene => {
                     if (!scene.image) return;
@@ -126,7 +126,6 @@
                     img.src = scene.image;
                     img.onerror = () => {
                         console.error(`Failed to load image for scene: ${scene.text}`);
-                        // Mark as broken in cache if needed, handled in draw
                     };
                     imageCache.current[scene.id] = img;
                 });
@@ -152,7 +151,6 @@
 
                 const img = imageCache.current[scene.id];
                 
-                // Check for broken/loading state
                 if (!img || !img.complete || img.naturalWidth === 0) {
                     ctx.fillStyle = '#ffffff'; 
                     ctx.font = '30px Inter';
@@ -183,6 +181,7 @@
                 if (canvasRatio > imgRatio) { renderW = width; renderH = width / imgRatio; } 
                 else { renderH = height; renderW = height * imgRatio; }
                 
+                // High Quality Smoothing
                 ctx.imageSmoothingEnabled = true;
                 ctx.imageSmoothingQuality = 'high';
                 
@@ -231,16 +230,17 @@
                 return () => clearInterval(interval);
             }, [isPlaying, isRendering, currentSceneIndex, scenes.length, clipDuration]);
 
-            // --- GENERATE IMAGE (Pollinations) ---
+            // --- GENERATE IMAGE (ULTRA HD) ---
             const generateImage = async (prompt, seed) => {
+                // Requested Higher Resolutions
                 let width, height;
                 if (aspectRatio === '9:16') { width = 1080; height = 1920; } 
-                else if (aspectRatio === '1:1') { width = 1280; height = 1280; } 
+                else if (aspectRatio === '1:1') { width = 1080; height = 1080; } 
                 else { width = 1920; height = 1080; }
                 
-                const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${width}&height=${height}&model=flux&seed=${seed}&nologo=true&enhance=true`;
+                // Removed enhance=true to avoid distortion, added strong prompts
+                const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${width}&height=${height}&model=flux&seed=${seed}&nologo=true`;
                 
-                // Fetch as blob to ensure it's loaded and valid
                 const response = await fetch(url);
                 if (!response.ok) throw new Error('Generation failed');
                 const blob = await response.blob();
@@ -255,14 +255,15 @@
                 if (lines.length === 0) return;
 
                 setGeneratedCount(0);
-                const BATCH_SIZE = 3; // Process 3 images at a time to prevent failures
+                const BATCH_SIZE = 3; 
                 
                 for (let i = 0; i < lines.length; i += BATCH_SIZE) {
                     const batch = lines.slice(i, i + BATCH_SIZE);
                     const batchPromises = batch.map(async (line, batchIdx) => {
                         try {
                             const seed = Math.floor(Math.random() * 1000000);
-                            const enhancedPrompt = line + ", hyper-realistic, 8k resolution, cinematic lighting, photorealistic, unreal engine 5 render";
+                            // Stronger Realism Prompt
+                            const enhancedPrompt = line + ", hyper-realistic photography, 8k resolution, sharp focus, cinematic lighting, highly detailed, raw photo style, photorealistic, unreal engine 5 render, clear image";
                             const imageUrl = await generateImage(enhancedPrompt, seed);
                             
                             return {
@@ -273,15 +274,7 @@
                                 isError: false
                             };
                         } catch (e) {
-                            console.error("Retrying...", e);
-                            // Simple Retry Logic
-                            try {
-                                const seed = Math.floor(Math.random() * 1000000);
-                                const imageUrl = await generateImage(line, seed); // Try simpler prompt
-                                return { image: imageUrl, text: line, id: Date.now() + i + batchIdx + Math.random(), movement: cameraMove, isError: false };
-                            } catch (retryErr) {
-                                return { image: null, text: line, id: Date.now() + i + batchIdx + Math.random(), isError: true };
-                            }
+                            return { image: null, text: line, id: Date.now() + i + batchIdx + Math.random(), isError: true };
                         }
                     });
 
