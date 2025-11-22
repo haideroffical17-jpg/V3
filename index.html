@@ -8,7 +8,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body { background: #050505; }
-    /* simple custom scrollbar to match classes used */
     .custom-scrollbar::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -23,7 +22,6 @@
   </style>
 </head>
 <body class="bg-[#050505]">
-
   <div id="root"></div>
 
   <!-- React + ReactDOM + Babel -->
@@ -31,7 +29,8 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-  <script type="text/babel" data-presets="env,react">
+  <!-- YOUR APP CODE -->
+  <script type="text/babel">
     const { useState, useEffect, useRef } = React;
 
     // Simple placeholder icon component
@@ -68,38 +67,32 @@
       const [cameraMove, setCameraMove] = useState('cinematic'); 
       const [showCaptions, setShowCaptions] = useState(false);
       
-      // Timeline State
       const [clipDuration, setClipDuration] = useState(5); // Seconds per clip
       const [progress, setProgress] = useState(0); 
       
-      // Canvas & Refs
       const canvasRef = useRef(null);
       const requestRef = useRef(null);
       const mediaRecorderRef = useRef(null);
       const recordedChunks = useRef([]);
       const imageCache = useRef({});
 
-      // API Key configuration
-      const apiKey = ""; 
+      const apiKey = ""; // <-- yahan apna Google API key lagani padegi
 
-      // Preload Images for Canvas to ensure smooth High Quality render
       useEffect(() => {
         scenes.forEach(scene => {
           if (!scene.image) return;
           const img = new Image();
-          img.crossOrigin = "anonymous"; // Important for canvas export
+          img.crossOrigin = "anonymous";
           img.src = scene.image;
           imageCache.current[scene.id] = img;
         });
       }, [scenes]);
 
-      // Canvas Animation Loop
       const animateCanvas = () => {
         const canvas = canvasRef.current;
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
         
-        // Handle High Quality Resolution
         let width = 1920;
         let height = 1080;
         if (aspectRatio === '9:16') { width = 1080; height = 1920; }
@@ -108,7 +101,6 @@
         if (canvas.width !== width) canvas.width = width;
         if (canvas.height !== height) canvas.height = height;
 
-        // Get Current Scene
         const scene = scenes[currentSceneIndex];
         
         if (!scene || scene.isError) {
@@ -124,8 +116,7 @@
           return; 
         }
 
-        // Smooth Animation Logic
-        const p = progress / 100; // 0 to 1
+        const p = progress / 100;
         let scale = 1;
         let tx = 0;
         let ty = 0;
@@ -152,13 +143,11 @@
             break;
         }
 
-        // Draw High Quality Image
         ctx.save();
         ctx.translate(width / 2, height / 2);
         ctx.scale(scale, scale);
         ctx.translate(-width / 2 + tx, -height / 2 + ty);
         
-        // Cover logic (Ensure image covers canvas without stretching)
         const imgRatio = img.width / img.height;
         const canvasRatio = width / height;
         let renderW, renderH;
@@ -174,7 +163,6 @@
         ctx.drawImage(img, (width - renderW) / 2, (height - renderH) / 2, renderW, renderH);
         ctx.restore();
 
-        // Draw Captions (High Res)
         if (showCaptions) {
           ctx.fillStyle = 'rgba(0,0,0,0.6)';
           ctx.fillRect(0, height - 140, width, 140);
@@ -187,7 +175,6 @@
         }
       };
 
-      // Loop Driver
       useEffect(() => {
         const loop = () => {
           animateCanvas();
@@ -197,11 +184,9 @@
         return () => cancelAnimationFrame(requestRef.current);
       }, [currentSceneIndex, progress, scenes, showCaptions, aspectRatio]);
 
-      // Timer & Sequencer Logic
       useEffect(() => {
         let interval;
         if ((isPlaying || isRendering) && scenes.length > 0) {
-          // Fixed 60fps logic for smoother rendering
           const fps = 60; 
           const stepTime = 1000 / fps; 
           const totalSteps = (clipDuration * 1000) / stepTime;
@@ -215,7 +200,6 @@
                   setCurrentSceneIndex(prev => prev + 1);
                   return 0; 
                 } else {
-                  // Finished
                   if (isRendering) stopRendering();
                   setIsPlaying(false); 
                   return 100;
@@ -231,7 +215,6 @@
       const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
       const generateSingleImage = async (promptText, ratio, modelType) => {
-        // Enhanced Keywords for Quality
         let modelKeywords = "";
         if (modelType === 'veo3') {
           modelKeywords = ", Veo 3 style, masterpiece, 8k resolution, highly detailed, cinematic lighting, trending on artstation, unreal engine 5, sharp focus";
@@ -258,7 +241,7 @@
 
           const data = await response.json();
           if (data.predictions && data.predictions[0]) {
-            return \`data:image/png;base64,\${data.predictions[0].bytesBase64Encoded}\`;
+            return `data:image/png;base64,${data.predictions[0].bytesBase64Encoded}`;
           }
           throw new Error('No output');
         } catch (error) {
@@ -291,7 +274,7 @@
             } catch (e) {
               const errorSceneObj = {
                 image: null,
-                text: \`Generation Failed: \${line.substring(0, 30)}...\`,
+                text: `Generation Failed: ${line.substring(0, 30)}...`,
                 id: Date.now() + index + Math.random(),
                 movement: 'none',
                 isError: true
@@ -321,7 +304,6 @@
         setIsPlaying(!isPlaying);
       };
 
-      // --- HQ RENDER ENGINE ---
       const startRendering = () => {
         if (scenes.length === 0) return;
         
@@ -331,13 +313,10 @@
         setIsPlaying(false); 
 
         const canvas = canvasRef.current;
-        // 60 FPS Capture for smooth video
         const stream = canvas.captureStream(60); 
         
-        // High Bitrate for Quality (8 Mbps)
         const options = { mimeType: 'video/webm; codecs=vp9', videoBitsPerSecond: 8000000 };
         
-        // Fallback for Safari/Older Browsers
         let mediaRecorder;
         try {
           mediaRecorder = new MediaRecorder(stream, options);
@@ -360,7 +339,7 @@
           const a = document.createElement('a');
           a.style.display = 'none';
           a.href = url;
-          a.download = \`CineVerse_Ultra_\${Date.now()}.webm\`; 
+          a.download = `CineVerse_Ultra_${Date.now()}.webm`; 
           document.body.appendChild(a);
           a.click();
           window.URL.revokeObjectURL(url);
@@ -416,7 +395,7 @@
           </header>
 
           <main className="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
-            {/* LEFT SIDE: SCRIPT & SETTINGS */}
+            {/* LEFT SIDE */}
             <div className="lg:col-span-4 space-y-6 h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar pr-2">
               <div className="bg-[#111] border border-white/10 rounded-2xl p-5 shadow-xl">
                 <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 flex items-center gap-2">
@@ -464,7 +443,7 @@
                         onClick={() => setCameraMove(m)}
                         className={`py-2 rounded-lg border text-[10px] uppercase font-bold transition-all ${cameraMove === m ? 'bg-purple-600 border-purple-500 text-white' : 'border-white/10 text-gray-500 hover:bg-white/5'}`}
                       >
-                        {m.replace('cinematic', 'Auto')}
+                        {m === 'cinematic' ? 'Auto' : m}
                       </button>
                     ))}
                   </div>
@@ -489,7 +468,6 @@
                 </button>
               </div>
 
-              {/* Timeline Clips */}
               {scenes.length > 0 && (
                 <div className="bg-[#111] border border-white/10 rounded-2xl p-5">
                   <div className="flex justify-between items-center mb-4">
@@ -532,11 +510,9 @@
               )}
             </div>
 
-            {/* RIGHT SIDE: PREVIEW & RENDER */}
+            {/* RIGHT SIDE */}
             <div className="lg:col-span-8 flex flex-col h-[calc(100vh-120px)]">
-              {/* Main Canvas Viewport */}
               <div className="flex-1 bg-[#000] border border-white/10 rounded-2xl relative overflow-hidden flex items-center justify-center shadow-2xl">
-                {/* The Real Canvas (Always active) */}
                 <canvas 
                   ref={canvasRef}
                   className={`shadow-2xl transition-all ${scenes.length > 0 ? 'opacity-100' : 'opacity-0'}`}
@@ -548,7 +524,6 @@
                   }}
                 />
 
-                {/* Rendering Overlay */}
                 {isRendering && (
                   <div className="absolute inset-0 bg-black/80 z-50 flex flex-col items-center justify-center backdrop-blur-sm">
                     <div className="w-24 h-24 relative mb-6">
@@ -567,7 +542,6 @@
                   </div>
                 )}
 
-                {/* Empty State */}
                 {scenes.length === 0 && !isLoading && (
                   <div className="text-center absolute opacity-50 pointer-events-none">
                     <div className="w-24 h-24 bg-[#111] rounded-3xl flex items-center justify-center mx-auto mb-6 border border-white/10 rotate-3">
@@ -580,7 +554,6 @@
                   </div>
                 )}
 
-                {/* Playback Controls (Hidden during Render) */}
                 {!isRendering && scenes.length > 0 && (
                   <div className="absolute bottom-0 w-full bg-gradient-to-t from-black via-black/60 to-transparent p-8 z-10 opacity-0 hover:opacity-100 transition-opacity duration-300">
                     <div className="flex items-center justify-center gap-6">
@@ -612,7 +585,6 @@
                       </button>
                     </div>
                     
-                    {/* Toggle Captions */}
                     <div className="absolute bottom-8 right-8">
                       <button 
                         onClick={() => setShowCaptions(!showCaptions)}
@@ -626,7 +598,6 @@
                 )}
               </div>
 
-              {/* Timeline Strip */}
               <div className="h-32 mt-6 relative">
                 <div className="absolute inset-0 bg-[#111] border border-white/10 rounded-2xl overflow-hidden flex items-center px-4">
                   <div className="flex gap-2 overflow-x-auto custom-scrollbar w-full pb-2 pt-2">
