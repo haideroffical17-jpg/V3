@@ -3,710 +3,441 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Creator Studio - Professional Tools Suite</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <title>AI Creator Studio - Bulk Video Generator</title>
     
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: #f8fafc;
-            overflow-x: hidden;
+            background-color: #0f172a; 
+            color: white;
+            font-family: 'Inter', sans-serif;
         }
-
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #1e293b; }
-        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
-
-        .tool-card {
-            background: linear-gradient(145deg, #1e293b, #334155);
-            border: 2px solid #334155;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1e293b; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
-        .tool-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
-            transition: left 0.5s;
-        }
-        
-        .tool-card:hover::before {
-            left: 100%;
-        }
-        
-        .tool-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            border-color: #6366f1;
-            box-shadow: 0 20px 40px -15px rgba(99, 102, 241, 0.4);
-        }
-
-        .tool-view {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background-color: #0f172a;
-            z-index: 100;
-            transform: translateX(100%);
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            flex-direction: column;
-        }
-        .tool-view.active {
-            transform: translateX(0);
-        }
-
-        .spinner {
-            width: 24px;
-            height: 24px;
-            border: 3px solid rgba(255,255,255,0.1);
-            border-radius: 50%;
-            border-top-color: #6366f1;
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in-up {
-            animation: fadeInUp 0.6s ease-out forwards;
-        }
-
-        .gradient-text {
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .glow-effect {
-            box-shadow: 0 0 30px rgba(99, 102, 241, 0.3);
-        }
-
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #000; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
     </style>
 </head>
-<body class="min-h-screen">
+<body>
+    <div id="root"></div>
 
-    <!-- ================= MAIN DASHBOARD ================= -->
-    <div id="dashboard" class="min-h-screen flex flex-col overflow-y-auto">
-        
-        <!-- Header -->
-        <header class="bg-slate-900/50 backdrop-blur-xl border-b border-slate-800 sticky top-0 z-50">
-            <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center shadow-lg glow-effect">
-                        <i class="fas fa-cube text-white text-xl"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-2xl font-black text-white tracking-tight">AI Creator Studio</h1>
-                        <p class="text-xs text-slate-400 font-medium">Professional Tools Suite</p>
-                    </div>
-                </div>
-                <div class="px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/30 shadow-lg glow-effect">
-                    <span class="text-xs font-bold text-indigo-400 tracking-wider">POWERED BY GROW WITH HAIDER</span>
-                </div>
-            </div>
-        </header>
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
 
-        <!-- Hero Section -->
-        <section class="flex-1 flex items-center justify-center px-6 py-20">
-            <div class="max-w-7xl w-full">
-                
-                <!-- Title -->
-                <div class="text-center mb-16 animate-fade-in-up">
-                    <h2 class="text-6xl font-black mb-4">
-                        <span class="gradient-text">Create. Generate. Innovate.</span>
-                    </h2>
-                    <p class="text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
-                        Three powerful AI tools in one place. Generate speech, create videos, and produce bulk images instantly.
-                    </p>
-                </div>
+        const Icons = {
+            Video: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>,
+            ArrowRight: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" x2="19" y1="12" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>,
+            Play: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>,
+            Pause: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>,
+            Download: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>,
+            Loader2: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>,
+            Home: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
+            Trash2: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>,
+            Type: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" x2="15" y1="20" y2="20"/><line x1="12" x2="12" y1="4" y2="20"/></svg>,
+            Layers: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        };
 
-                <!-- Tools Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    
-                    <!-- Tool 1: Text to Speech -->
-                    <div onclick="openTool('tts-tool')" class="tool-card p-8 rounded-3xl cursor-pointer group" style="animation-delay: 0.1s;">
-                        <div class="flex flex-col h-full">
-                            <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 text-white flex items-center justify-center text-4xl mb-6 group-hover:scale-110 transition-transform duration-300 shadow-xl">
-                                <i class="fas fa-microphone"></i>
-                            </div>
-                            <h3 class="text-2xl font-bold text-white mb-3 group-hover:text-indigo-400 transition-colors">Text to Speech Pro</h3>
-                            <p class="text-slate-400 leading-relaxed mb-6 flex-grow">60+ Voices. Unlimited characters. Instant MP3 download with professional audio quality.</p>
-                            <div class="flex items-center gap-2 text-indigo-400 font-bold text-sm">
-                                <span>Open Tool</span>
-                                <i class="fas fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
-                            </div>
-                        </div>
+        function App() {
+            const [currentView, setCurrentView] = useState('home');
+
+            return (
+                <div className="min-h-screen flex flex-col items-center">
+                    {currentView === 'home' && <HomePage onNavigate={setCurrentView} />}
+                    {currentView === 'video' && <VideoGenerator onBack={() => setCurrentView('home')} />}
+                </div>
+            );
+        }
+
+        function HomePage({ onNavigate }) {
+            return (
+                <div className="w-full max-w-6xl px-4 py-12 flex flex-col items-center animate-fade-in min-h-screen justify-center">
+                    <div className="bg-slate-800/50 border border-slate-700 rounded-full px-6 py-2 mb-6">
+                        <span className="text-blue-400 text-xs font-bold tracking-widest uppercase">POWERED BY GROW WITH HAIDER</span>
                     </div>
 
-                    <!-- Tool 2: Bulk Video Generator -->
-                    <div onclick="openTool('video-tool')" class="tool-card p-8 rounded-3xl cursor-pointer group" style="animation-delay: 0.2s;">
-                        <div class="flex flex-col h-full">
-                            <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 text-white flex items-center justify-center text-4xl mb-6 group-hover:scale-110 transition-transform duration-300 shadow-xl">
-                                <i class="fas fa-film"></i>
+                    <h1 className="text-5xl md:text-6xl font-extrabold text-center mb-4 tracking-tight">
+                        AI Creator Studio
+                    </h1>
+                    <p className="text-slate-400 text-lg mb-16">Professional Tools Suite</p>
+
+                    <div className="w-full max-w-md">
+                        <div className="group relative bg-slate-800/40 border border-slate-700 rounded-3xl p-8 hover:bg-slate-800/60 transition-all hover:border-blue-500/30 cursor-pointer flex flex-col justify-between shadow-2xl" onClick={() => onNavigate('video')}>
+                            <div>
+                                <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
+                                    <Icons.Video className="w-8 h-8 text-white" />
+                                </div>
+                                <h3 className="text-2xl font-bold mb-3">Bulk Video Generator</h3>
+                                <p className="text-slate-400 mb-6">Create unlimited videos from text. Ultra HD Flux Quality. Direct Download.</p>
                             </div>
-                            <h3 class="text-2xl font-bold text-white mb-3 group-hover:text-indigo-400 transition-colors">Bulk Video Generator</h3>
-                            <p class="text-slate-400 leading-relaxed mb-6 flex-grow">Create cinematic videos with AI. Multiple scenes, camera movements, and 4K export capabilities.</p>
-                            <div class="flex items-center gap-2 text-indigo-400 font-bold text-sm">
-                                <span>Open Tool</span>
-                                <i class="fas fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
+                            <div className="flex items-center gap-2 text-blue-400 font-semibold group-hover:gap-3 transition-all">
+                                Open Tool <Icons.ArrowRight className="w-4 h-4" />
                             </div>
                         </div>
                     </div>
-
-                    <!-- Tool 3: Bulk Image Generator -->
-                    <div onclick="openTool('image-tool')" class="tool-card p-8 rounded-3xl cursor-pointer group" style="animation-delay: 0.3s;">
-                        <div class="flex flex-col h-full">
-                            <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 text-white flex items-center justify-center text-4xl mb-6 group-hover:scale-110 transition-transform duration-300 shadow-xl">
-                                <i class="fas fa-images"></i>
-                            </div>
-                            <h3 class="text-2xl font-bold text-white mb-3 group-hover:text-indigo-400 transition-colors">Bulk Image Generator</h3>
-                            <p class="text-slate-400 leading-relaxed mb-6 flex-grow">Generate unlimited images at once. Auto-enhance prompts for 8K quality with direct downloads.</p>
-                            <div class="flex items-center gap-2 text-indigo-400 font-bold text-sm">
-                                <span>Open Tool</span>
-                                <i class="fas fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
-
-                <!-- Footer Info -->
-                <div class="mt-16 text-center">
-                    <div class="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-slate-800/50 border border-slate-700">
-                        <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                        <span class="text-sm text-slate-300 font-medium">All tools ready • No signup required • Free to use</span>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-    </div>
-
-
-    <!-- ================= TOOL 1: TEXT TO SPEECH PRO ================= -->
-    <div id="tts-tool" class="tool-view">
-        <div class="h-16 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-6 shrink-0">
-            <div class="flex items-center gap-4">
-                <button onclick="closeTool('tts-tool')" class="w-10 h-10 rounded-full hover:bg-slate-800 flex items-center justify-center text-slate-400 transition-colors">
-                    <i class="fas fa-arrow-left text-lg"></i>
-                </button>
-                <div>
-                    <h2 class="font-bold text-white text-lg">Text to Speech Pro</h2>
-                    <span class="text-xs text-indigo-400">Powered by Grow With Haider</span>
-                </div>
-            </div>
-        </div>
-        
-        <div class="flex-1 bg-slate-950 text-white p-8 overflow-y-auto">
-            <div class="max-w-4xl mx-auto">
-                <div class="bg-slate-900 border border-slate-800 rounded-xl p-8 text-center">
-                    <i class="fas fa-microphone text-6xl text-indigo-500 mb-4"></i>
-                    <h3 class="text-2xl font-bold mb-4">Text to Speech Tool</h3>
-                    <p class="text-slate-400 mb-6">Full TTS functionality will be loaded here</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- ================= TOOL 2: BULK VIDEO GENERATOR ================= -->
-    <div id="video-tool" class="tool-view">
-        <div class="h-16 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-6 shrink-0">
-            <div class="flex items-center gap-4">
-                <button onclick="closeTool('video-tool')" class="w-10 h-10 rounded-full hover:bg-slate-800 flex items-center justify-center text-slate-400 transition-colors">
-                    <i class="fas fa-arrow-left text-lg"></i>
-                </button>
-                <div>
-                    <h2 class="font-bold text-white text-lg">Bulk Video Generator</h2>
-                    <span class="text-xs text-indigo-400">Powered by Grow With Haider</span>
-                </div>
-            </div>
-        </div>
-        
-        <div class="flex-1 flex flex-col md:flex-row overflow-hidden bg-slate-950">
-            <!-- Left Sidebar -->
-            <div class="w-full md:w-96 bg-slate-900 border-r border-slate-800 flex flex-col shrink-0 p-6 shadow-2xl overflow-y-auto">
-                
-                <!-- API Key Section -->
-                <div class="mb-6 bg-indigo-500/10 border border-indigo-500/30 rounded-xl p-4">
-                    <label class="text-xs font-bold text-slate-400 uppercase mb-2 block">Gemini API Key</label>
-                    <input type="password" id="video-api-key" placeholder="Enter API Key..." class="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-white text-sm outline-none focus:border-indigo-500 mb-3">
-                    <button onclick="saveVideoApiKey()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-2 rounded-lg text-sm font-bold transition-all">
-                        <i class="fas fa-save mr-2"></i>Save Key
-                    </button>
-                </div>
-
-                <div class="mb-6">
-                    <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Aspect Ratio</label>
-                    <select id="video-ratio" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white outline-none focus:border-indigo-500">
-                        <option value="16:9">16:9 Landscape</option>
-                        <option value="9:16">9:16 Portrait</option>
-                        <option value="1:1">1:1 Square</option>
-                    </select>
-                </div>
-
-                <div class="mb-6">
-                    <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Camera Movement</label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button onclick="setVideoCamera('cinematic')" id="cam-cinematic" class="cam-btn py-2 rounded-lg border border-white/10 text-xs uppercase font-bold text-gray-500 hover:bg-white/5 transition-all">Cinematic</button>
-                        <button onclick="setVideoCamera('zoomIn')" id="cam-zoomIn" class="cam-btn py-2 rounded-lg border border-white/10 text-xs uppercase font-bold text-gray-500 hover:bg-white/5 transition-all">Zoom In</button>
-                        <button onclick="setVideoCamera('panLeft')" id="cam-panLeft" class="cam-btn py-2 rounded-lg border border-white/10 text-xs uppercase font-bold text-gray-500 hover:bg-white/5 transition-all">Pan Left</button>
-                        <button onclick="setVideoCamera('shake')" id="cam-shake" class="cam-btn py-2 rounded-lg border border-white/10 text-xs uppercase font-bold text-gray-500 hover:bg-white/5 transition-all">Shake</button>
-                    </div>
-                </div>
-
-                <div class="flex-1 flex flex-col mb-6 min-h-[200px]">
-                    <div class="flex justify-between items-end mb-2">
-                        <label class="text-xs font-bold text-slate-500 uppercase">Video Scenes</label>
-                        <span class="text-xs text-indigo-400 font-mono bg-indigo-500/10 px-2 py-1 rounded" id="video-count">0 Scenes</span>
-                    </div>
-                    <textarea id="video-prompts" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl p-4 text-sm text-white outline-none focus:border-indigo-500 resize-none font-mono" placeholder="Enter scene descriptions (one per line)...&#10;&#10;Example:&#10;A futuristic samurai walking in neon rain&#10;Close up of his cybernetic eye"></textarea>
-                </div>
-
-                <div id="video-status" class="hidden mb-4 bg-indigo-900/30 border border-indigo-500/30 rounded-xl p-3 text-center">
-                    <span class="text-sm font-bold text-indigo-400" id="video-status-text">Processing...</span>
-                </div>
-
-                <div class="space-y-3">
-                    <button onclick="generateVideoScenes()" id="btn-video-gen" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-4 rounded-xl font-bold text-lg shadow-lg transition-all flex items-center justify-center gap-2">
-                        <i class="fas fa-wand-magic-sparkles"></i> Generate Scenes
-                    </button>
-                    <button onclick="renderVideo()" id="btn-video-render" class="hidden w-full bg-emerald-600 hover:bg-emerald-500 text-white py-4 rounded-xl font-bold text-lg shadow-lg transition-all flex items-center justify-center gap-2">
-                        <i class="fas fa-video"></i> Render Video
-                    </button>
-                </div>
-            </div>
-
-            <!-- Right Area: Canvas -->
-            <div class="flex-1 flex flex-col p-6 overflow-y-auto bg-black">
-                <div class="flex-1 flex items-center justify-center bg-slate-950 rounded-2xl border border-slate-800 relative">
-                    <canvas id="video-canvas" class="max-w-full max-h-full shadow-2xl"></canvas>
-                    
-                    <div id="video-empty" class="absolute text-center">
-                        <i class="fas fa-film text-6xl text-slate-700 mb-4"></i>
-                        <h3 class="text-xl font-bold text-slate-500">Ready to Create</h3>
-                        <p class="text-sm text-slate-600 mt-2">Enter scenes to start generating</p>
-                    </div>
-                </div>
-
-                <!-- Timeline -->
-                <div id="video-timeline" class="hidden mt-6 h-32 bg-slate-900 rounded-xl border border-slate-800 overflow-x-auto p-4 flex gap-2">
-                    <!-- Timeline items will be added here -->
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- ================= TOOL 3: BULK IMAGE GENERATOR ================= -->
-    <div id="image-tool" class="tool-view">
-        <div class="h-16 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-6 shrink-0">
-            <div class="flex items-center gap-4">
-                <button onclick="closeTool('image-tool')" class="w-10 h-10 rounded-full hover:bg-slate-800 flex items-center justify-center text-slate-400 transition-colors">
-                    <i class="fas fa-arrow-left text-lg"></i>
-                </button>
-                <div>
-                    <h2 class="font-bold text-white text-lg">Bulk Image Generator</h2>
-                    <span class="text-xs text-indigo-400">Powered by Grow With Haider</span>
-                </div>
-            </div>
-        </div>
-        
-        <div class="flex-1 flex flex-col md:flex-row overflow-hidden bg-slate-950">
-            <!-- Left Sidebar -->
-            <div class="w-full md:w-96 bg-slate-900 border-r border-slate-800 flex flex-col shrink-0 p-6 shadow-2xl overflow-y-auto">
-                <div class="mb-6">
-                    <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Aspect Ratio</label>
-                    <select id="img-ratio" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white outline-none focus:border-indigo-500">
-                        <option value="1920x1080">Landscape (16:9)</option>
-                        <option value="1024x1024">Square (1:1)</option>
-                        <option value="1080x1920">Portrait (9:16)</option>
-                        <option value="2560x1440">2K Cinematic</option>
-                    </select>
-                </div>
-
-                <div class="mb-6">
-                    <label class="flex items-center gap-3 cursor-pointer bg-indigo-500/10 border border-indigo-500/30 p-4 rounded-xl hover:bg-indigo-500/20 transition-colors">
-                        <input type="checkbox" id="img-enhance" checked class="w-5 h-5 rounded border-slate-600 text-indigo-600">
-                        <div>
-                            <span class="text-sm text-white font-bold block">🚀 Auto-Enhance Quality</span>
-                            <span class="text-xs text-slate-400">Converts prompts to 8K quality</span>
-                        </div>
-                    </label>
-                </div>
-
-                <div class="flex-1 flex flex-col mb-6 min-h-[200px]">
-                    <div class="flex justify-between items-end mb-2">
-                        <label class="text-xs font-bold text-slate-500 uppercase">Image Prompts</label>
-                        <span class="text-xs text-indigo-400 font-mono bg-indigo-500/10 px-2 py-1 rounded" id="img-count">0 Prompts</span>
-                    </div>
-                    <textarea id="img-prompts" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl p-4 text-sm text-white outline-none focus:border-indigo-500 resize-none font-mono" placeholder="Enter prompts (one per line)..."></textarea>
-                </div>
-
-                <div id="img-status" class="hidden mb-4 bg-indigo-900/30 border border-indigo-500/30 rounded-xl p-3 text-center">
-                    <span class="text-sm font-bold text-indigo-400" id="img-status-text">Preparing...</span>
-                </div>
-
-                <div class="space-y-3">
-                    <button onclick="generateImages()" id="btn-img-gen" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-4 rounded-xl font-bold text-lg shadow-lg transition-all flex items-center justify-center gap-2">
-                        <i class="fas fa-wand-magic-sparkles"></i> Generate Images
-                    </button>
-                    <button onclick="downloadAllImages()" id="btn-img-download" class="hidden w-full bg-emerald-600 hover:bg-emerald-500 text-white py-4 rounded-xl font-bold text-lg shadow-lg transition-all flex items-center justify-center gap-2">
-                        <i class="fas fa-file-zipper"></i> Download All (.zip)
-                    </button>
-                </div>
-            </div>
-
-            <!-- Right Grid -->
-            <div class="flex-1 p-6 overflow-y-auto" id="img-grid-container">
-                <div id="img-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                    <div class="col-span-full flex flex-col items-center justify-center h-96 text-slate-600 border-2 border-dashed border-slate-800 rounded-3xl">
-                        <i class="fas fa-images text-6xl mb-4 opacity-20"></i>
-                        <h3 class="text-xl font-bold text-slate-500">Ready to Create</h3>
-                        <p class="text-sm text-slate-600 mt-1">Enter prompts to start generating</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- ================= JAVASCRIPT ================= -->
-    <script>
-        // --- GLOBAL VARIABLES ---
-        let generatedImages = [];
-        let videoScenes = [];
-        let currentVideoScene = 0;
-        let selectedCamera = 'cinematic';
-
-        // --- Navigation Functions ---
-        function openTool(id) {
-            document.getElementById(id).classList.add('active');
-            if(id === 'video-tool') {
-                const savedKey = localStorage.getItem('gemini_api_key');
-                if(savedKey) document.getElementById('video-api-key').value = savedKey;
-                setVideoCamera('cinematic');
-            }
-        }
-        
-        function closeTool(id) {
-            document.getElementById(id).classList.remove('active');
+            );
         }
 
-        // --- VIDEO GENERATOR FUNCTIONS ---
-        function saveVideoApiKey() {
-            const key = document.getElementById('video-api-key').value.trim();
-            if(!key) return alert('Please enter API Key');
-            localStorage.setItem('gemini_api_key', key);
-            alert('API Key saved successfully!');
-        }
-
-        function setVideoCamera(type) {
-            selectedCamera = type;
-            document.querySelectorAll('.cam-btn').forEach(btn => {
-                btn.classList.remove('bg-purple-600', 'border-purple-500', 'text-white');
-                btn.classList.add('border-white/10', 'text-gray-500');
-            });
-            const activeBtn = document.getElementById(`cam-${type}`);
-            activeBtn.classList.remove('border-white/10', 'text-gray-500');
-            activeBtn.classList.add('bg-purple-600', 'border-purple-500', 'text-white');
-        }
-
-        const videoInput = document.getElementById('video-prompts');
-        if(videoInput) {
-            videoInput.addEventListener('input', () => {
-                const lines = videoInput.value.split('\n').filter(l => l.trim()).length;
-                document.getElementById('video-count').textContent = `${lines} Scenes`;
-            });
-        }
-
-        async function generateWithGeminiImagen(prompt, aspectRatio) {
-            const apiKey = localStorage.getItem('gemini_api_key');
-            if(!apiKey) {
-                alert('Please enter Gemini API Key first!');
-                return null;
-            }
+        function VideoGenerator({ onBack }) {
+            const [prompts, setPrompts] = useState('');
+            const [scenes, setScenes] = useState([]); 
+            const [currentSceneIndex, setCurrentSceneIndex] = useState(0);
+            const [isPlaying, setIsPlaying] = useState(false);
+            const [isRendering, setIsRendering] = useState(false); 
+            const [aspectRatio, setAspectRatio] = useState('16:9');
+            const [cameraMove, setCameraMove] = useState('cinematic'); 
+            const [isLoading, setIsLoading] = useState(false);
+            const [showCaptions, setShowCaptions] = useState(false);
+            const [generatedCount, setGeneratedCount] = useState(0);
             
-            try {
-                const response = await fetch(
-                    `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`,
-                    {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            instances: [{ prompt: prompt }],
-                            parameters: { sampleCount: 1, aspectRatio: aspectRatio }
-                        })
-                    }
-                );
-                if (!response.ok) throw new Error('API Error');
-                const result = await response.json();
-                return `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
-            } catch (e) {
-                console.error('Imagen API failed:', e);
-                return null;
-            }
-        }
-
-        async function generateVideoScenes() {
-            const prompts = document.getElementById('video-prompts').value.split('\n').filter(p=>p.trim());
-            if(!prompts.length) return alert("Enter scene descriptions");
+            const [clipDuration, setClipDuration] = useState(5); 
+            const [progress, setProgress] = useState(0); 
             
-            const apiKey = localStorage.getItem('gemini_api_key');
-            if(!apiKey) return alert("Please save API Key first!");
-            
-            const btn = document.getElementById('btn-video-gen');
-            const ratio = document.getElementById('video-ratio').value;
-            const statusText = document.getElementById('video-status-text');
-            const statusBar = document.getElementById('video-status');
-            const timeline = document.getElementById('video-timeline');
-            const emptyState = document.getElementById('video-empty');
+            const canvasRef = useRef(null);
+            const mediaRecorderRef = useRef(null);
+            const recordedChunks = useRef([]);
+            const imageCache = useRef({});
+            const requestRef = useRef(null);
 
-            btn.disabled = true;
-            btn.innerHTML = '<div class="spinner"></div> Generating...';
-            statusBar.classList.remove('hidden');
-            videoScenes = [];
-            timeline.innerHTML = '';
-
-            emptyState.classList.add('hidden');
-
-            for(let i=0; i<prompts.length; i++) {
-                const p = prompts[i];
-                statusText.textContent = `Generating scene ${i+1} of ${prompts.length}...`;
-
-                const enhancedPrompt = `${p}, cinematic lighting, hyper-realistic, 8k, masterpiece, sharp focus, detailed`;
-
-                let imageUrl = await generateWithGeminiImagen(enhancedPrompt, ratio);
-                
-                if(!imageUrl) {
-                    const [w, h] = ratio === '16:9' ? [1920, 1080] : ratio === '9:16' ? [1080, 1920] : [1080, 1080];
-                    const seed = Math.floor(Math.random() * 999999);
-                    imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}?width=${w}&height=${h}&model=flux&seed=${seed}&nologo=true`;
-                }
-
-                videoScenes.push({
-                    id: i,
-                    text: p,
-                    image: imageUrl,
-                    movement: selectedCamera
-                });
-
-                // Add to timeline
-                const timelineItem = document.createElement('div');
-                timelineItem.className = 'min-w-[120px] h-20 rounded-lg overflow-hidden border-2 border-slate-700 cursor-pointer hover:border-indigo-500 transition-all';
-                timelineItem.innerHTML = `<img src="${imageUrl}" class="w-full h-full object-cover">`;
-                timelineItem.onclick = () => displayVideoScene(i);
-                timeline.appendChild(timelineItem);
-            }
-
-            timeline.classList.remove('hidden');
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Generate Scenes';
-            statusText.textContent = "All scenes ready!";
-            document.getElementById('btn-video-render').classList.remove('hidden');
-            
-            displayVideoScene(0);
-            
-            setTimeout(() => statusBar.classList.add('hidden'), 3000);
-        }
-
-        function displayVideoScene(index) {
-            if(!videoScenes[index]) return;
-            
-            currentVideoScene = index;
-            const canvas = document.getElementById('video-canvas');
-            const ctx = canvas.getContext('2d');
-            const scene = videoScenes[index];
-            
-            const ratio = document.getElementById('video-ratio').value;
-            let width = 1920, height = 1080;
-            if(ratio === '9:16') { width = 1080; height = 1920; }
-            if(ratio === '1:1') { width = 1080; height = 1080; }
-            
-            canvas.width = width;
-            canvas.height = height;
-            
-            const img = new Image();
-            img.crossOrigin = "anonymous";
-            img.onload = () => {
-                ctx.drawImage(img, 0, 0, width, height);
-            };
-            img.src = scene.image;
-        }
-
-        function renderVideo() {
-            alert('Video rendering will download all scenes as images. Full video export coming soon!');
-            // Here you can add canvas recording logic for actual video export
-        }
-
-        // --- IMAGE GENERATOR FUNCTIONS ---
-        const imgInput = document.getElementById('img-prompts');
-        if(imgInput) {
-            imgInput.addEventListener('input', () => {
-                const lines = imgInput.value.split('\n').filter(l => l.trim()).length;
-                document.getElementById('img-count').textContent = `${lines} Prompts`;
-            });
-        }
-
-        async function forceDownload(url, filename) {
-            try {
-                const response = await fetch(url);
-                const blob = await response.blob();
-                const blobUrl = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = blobUrl;
-                link.download = filename;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                URL.revokeObjectURL(blobUrl);
-            } catch (e) {
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = filename;
-                link.target = "_blank";
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            }
-        }
-
-        async function generateImages() {
-            const prompts = document.getElementById('img-prompts').value.split('\n').filter(p=>p.trim());
-            if(!prompts.length) return alert("Enter prompts");
-            
-            const btn = document.getElementById('btn-img-gen');
-            const grid = document.getElementById('img-grid');
-            const ratio = document.getElementById('img-ratio').value;
-            const [w, h] = ratio.split('x');
-            const enhance = document.getElementById('img-enhance').checked;
-            const statusText = document.getElementById('img-status-text');
-            const statusBar = document.getElementById('img-status');
-
-            let ratioStr = "1:1";
-            if(w==1920) ratioStr = "16:9";
-            if(h==1920) ratioStr = "9:16";
-
-            btn.disabled = true;
-            btn.innerHTML = '<div class="spinner"></div> Processing...';
-            statusBar.classList.remove('hidden');
-            grid.innerHTML = '';
-            generatedImages = [];
-
-            const cardIds = [];
-            prompts.forEach((p, idx) => {
-                const card = document.createElement('div');
-                card.id = `img-card-${idx}`;
-                card.className = 'bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 shadow-lg h-64 flex flex-col items-center justify-center opacity-50';
-                card.innerHTML = `<i class="far fa-clock text-4xl mb-3 text-slate-600"></i><span class="text-sm font-bold text-slate-500">Pending...</span>`;
-                grid.appendChild(card);
-                cardIds.push(`img-card-${idx}`);
-            });
-
-            for(let i=0; i<prompts.length; i++) {
-                const p = prompts[i];
-                const card = document.getElementById(cardIds[i]);
-                
-                statusText.textContent = `Generating ${i+1} of ${prompts.length}...`;
-                card.style.opacity = '1';
-                card.innerHTML = `<div class="spinner border-indigo-500 mb-3"></div><span class="text-sm font-bold text-indigo-400">Generating...</span>`;
-
-                let finalPrompt = p;
-                if(enhance) {
-                    finalPrompt = `${p}, cinematic lighting, hyper-realistic, 8k, masterpiece, sharp focus, detailed texture`;
-                }
-
-                let url = await generateWithGeminiImagen(finalPrompt, ratioStr);
-                let source = "Imagen 4";
-
-                if (!url) {
-                    source = "Flux HD";
-                    const seed = Math.floor(Math.random() * 999999);
-                    url = `https://image.pollinations.ai/prompt/${encodeURIComponent(finalPrompt)}?width=${w}&height=${h}&model=flux&seed=${seed}&nologo=true`;
-                }
-
-                await new Promise((resolve) => {
+            // Preload Images with robust error handling
+            useEffect(() => {
+                scenes.forEach(scene => {
+                    if (!scene.image) return;
                     const img = new Image();
-                    img.crossOrigin = "anonymous";
-                    img.onload = () => {
-                        generatedImages.push({ url: url, name: `image_${i+1}.jpg` });
-                        
-                        card.className = "bg-slate-800 rounded-2xl p-3 shadow-xl border border-slate-700 flex flex-col gap-3";
-                        card.innerHTML = `
-                            <div class="relative w-full overflow-hidden rounded-xl bg-slate-950">
-                                <img src="${url}" class="w-full h-auto object-contain cursor-pointer" onclick="window.open('${url}', '_blank')">
-                                <div class="absolute top-3 right-3 bg-black/80 text-white text-xs font-bold px-2 py-1 rounded-lg">${source}</div>
-                            </div>
-                            <button onclick="forceDownload('${url}', 'img_${i+1}.jpg')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl text-sm font-bold transition-all">
-                                <i class="fas fa-download"></i> Download
-                            </button>
-                        `;
-                        resolve();
-                    };
+                    img.crossOrigin = "anonymous"; 
+                    img.src = scene.image;
                     img.onerror = () => {
-                        card.innerHTML = `<i class="fas fa-exclamation-triangle text-red-500 text-3xl"></i>`;
-                        resolve();
+                        console.error(`Failed to load image for scene: ${scene.text}`);
+                        // Mark as broken in cache if needed, handled in draw
                     };
-                    img.src = url;
+                    imageCache.current[scene.id] = img;
                 });
-            }
+            }, [scenes]);
 
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Generate Images';
-            statusText.textContent = "Complete!";
-            
-            if(generatedImages.length > 0) {
-                document.getElementById('btn-img-download').classList.remove('hidden');
-            }
-            
-            setTimeout(() => statusBar.classList.add('hidden'), 3000);
+            // Animation Logic
+            const animateCanvas = () => {
+                const canvas = canvasRef.current;
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                
+                let width = 1920; let height = 1080;
+                if (aspectRatio === '9:16') { width = 1080; height = 1920; }
+                if (aspectRatio === '1:1') { width = 1080; height = 1080; }
+                
+                if (canvas.width !== width) canvas.width = width;
+                if (canvas.height !== height) canvas.height = height;
+
+                ctx.fillStyle = '#0f172a'; ctx.fillRect(0, 0, width, height);
+
+                const scene = scenes[currentSceneIndex];
+                if (!scene) return;
+
+                const img = imageCache.current[scene.id];
+                
+                // Check for broken/loading state
+                if (!img || !img.complete || img.naturalWidth === 0) {
+                    ctx.fillStyle = '#ffffff'; 
+                    ctx.font = '30px Inter';
+                    ctx.textAlign = 'center';
+                    ctx.fillText("Loading Scene...", width/2, height/2);
+                    return; 
+                }
+
+                const p = progress / 100;
+                let scale = 1; let tx = 0; let ty = 0;
+
+                switch (scene.movement) {
+                    case 'zoomIn': scale = 1 + (p * 0.3); break;
+                    case 'panLeft': scale = 1.2; tx = (width * 0.05) - (p * width * 0.1); break;
+                    case 'shake': scale = 1.1; const s = Math.sin(p * 40) * 15; tx = s; ty = s; break;
+                    case 'cinematic': default: scale = 1 + (p * 0.15); tx = -(p * width * 0.02); ty = -(p * height * 0.02); break;
+                }
+
+                ctx.save();
+                ctx.translate(width / 2, height / 2);
+                ctx.scale(scale, scale);
+                ctx.translate(-width / 2 + tx, -height / 2 + ty);
+                
+                const imgRatio = img.width / img.height;
+                const canvasRatio = width / height;
+                let renderW, renderH;
+                
+                if (canvasRatio > imgRatio) { renderW = width; renderH = width / imgRatio; } 
+                else { renderH = height; renderW = height * imgRatio; }
+                
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                
+                ctx.drawImage(img, (width - renderW) / 2, (height - renderH) / 2, renderW, renderH);
+                ctx.restore();
+
+                if (showCaptions) {
+                    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+                    ctx.fillRect(0, height - 160, width, 160);
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 48px Inter';
+                    ctx.textAlign = 'center';
+                    ctx.shadowColor = "black";
+                    ctx.shadowBlur = 20;
+                    ctx.fillText(scene.text, width/2, height - 70);
+                }
+            };
+
+            useEffect(() => {
+                const loop = () => { animateCanvas(); requestRef.current = requestAnimationFrame(loop); };
+                requestRef.current = requestAnimationFrame(loop);
+                return () => cancelAnimationFrame(requestRef.current);
+            }, [currentSceneIndex, progress, scenes, showCaptions, aspectRatio]);
+
+            useEffect(() => {
+                let interval;
+                if ((isPlaying || isRendering) && scenes.length > 0) {
+                    const fps = 60; const stepTime = 1000 / fps; const totalSteps = (clipDuration * 1000) / stepTime;
+                    interval = setInterval(() => {
+                        setProgress((old) => {
+                            const newProgress = old + (100 / totalSteps);
+                            if (newProgress >= 100) {
+                                if (currentSceneIndex < scenes.length - 1) {
+                                    setCurrentSceneIndex(prev => prev + 1);
+                                    return 0; 
+                                } else {
+                                    if (isRendering) stopRendering();
+                                    setIsPlaying(false); 
+                                    return 100;
+                                }
+                            }
+                            return newProgress;
+                        });
+                    }, stepTime);
+                }
+                return () => clearInterval(interval);
+            }, [isPlaying, isRendering, currentSceneIndex, scenes.length, clipDuration]);
+
+            // --- GENERATE IMAGE (Pollinations) ---
+            const generateImage = async (prompt, seed) => {
+                let width, height;
+                if (aspectRatio === '9:16') { width = 1080; height = 1920; } 
+                else if (aspectRatio === '1:1') { width = 1280; height = 1280; } 
+                else { width = 1920; height = 1080; }
+                
+                const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${width}&height=${height}&model=flux&seed=${seed}&nologo=true&enhance=true`;
+                
+                // Fetch as blob to ensure it's loaded and valid
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Generation failed');
+                const blob = await response.blob();
+                return URL.createObjectURL(blob);
+            };
+
+            // --- BATCHED GENERATION (Smart Queue) ---
+            const handleGenerate = async () => {
+                setIsLoading(true);
+                setIsPlaying(false);
+                const lines = prompts.split('\n').filter(line => line.trim() !== '');
+                if (lines.length === 0) return;
+
+                setGeneratedCount(0);
+                const BATCH_SIZE = 3; // Process 3 images at a time to prevent failures
+                
+                for (let i = 0; i < lines.length; i += BATCH_SIZE) {
+                    const batch = lines.slice(i, i + BATCH_SIZE);
+                    const batchPromises = batch.map(async (line, batchIdx) => {
+                        try {
+                            const seed = Math.floor(Math.random() * 1000000);
+                            const enhancedPrompt = line + ", hyper-realistic, 8k resolution, cinematic lighting, photorealistic, unreal engine 5 render";
+                            const imageUrl = await generateImage(enhancedPrompt, seed);
+                            
+                            return {
+                                image: imageUrl,
+                                text: line,
+                                id: Date.now() + i + batchIdx + Math.random(),
+                                movement: cameraMove,
+                                isError: false
+                            };
+                        } catch (e) {
+                            console.error("Retrying...", e);
+                            // Simple Retry Logic
+                            try {
+                                const seed = Math.floor(Math.random() * 1000000);
+                                const imageUrl = await generateImage(line, seed); // Try simpler prompt
+                                return { image: imageUrl, text: line, id: Date.now() + i + batchIdx + Math.random(), movement: cameraMove, isError: false };
+                            } catch (retryErr) {
+                                return { image: null, text: line, id: Date.now() + i + batchIdx + Math.random(), isError: true };
+                            }
+                        }
+                    });
+
+                    const newBatchScenes = await Promise.all(batchPromises);
+                    setScenes(prev => [...prev, ...newBatchScenes]);
+                    setGeneratedCount(prev => prev + newBatchScenes.length);
+                }
+
+                setPrompts('');
+                if (scenes.length === 0) setCurrentSceneIndex(0);
+                setIsLoading(false);
+            };
+
+            const togglePlay = () => {
+                if (currentSceneIndex === scenes.length - 1 && progress >= 99) { setCurrentSceneIndex(0); setProgress(0); }
+                setIsPlaying(!isPlaying);
+            };
+
+            const startRendering = () => {
+                if (scenes.length === 0) return;
+                setCurrentSceneIndex(0); setProgress(0); setIsRendering(true); setIsPlaying(false); 
+                const stream = canvasRef.current.captureStream(60); 
+                const options = { mimeType: 'video/webm; codecs=vp9', videoBitsPerSecond: 8000000 }; 
+                try { mediaRecorderRef.current = new MediaRecorder(stream, options); } catch (e) { mediaRecorderRef.current = new MediaRecorder(stream); }
+                recordedChunks.current = [];
+                mediaRecorderRef.current.ondataavailable = (e) => { if (e.data.size > 0) recordedChunks.current.push(e.data); };
+                mediaRecorderRef.current.onstop = () => {
+                    const blob = new Blob(recordedChunks.current, { type: 'video/webm' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url; a.download = `UltraHD_Video_${Date.now()}.webm`; 
+                    a.click(); window.URL.revokeObjectURL(url);
+                    setIsRendering(false);
+                };
+                mediaRecorderRef.current.start();
+            };
+
+            const stopRendering = () => mediaRecorderRef.current?.stop();
+
+            return (
+                <div className="w-full min-h-screen flex flex-col bg-[#0f172a]">
+                    <header className="border-b border-slate-700 bg-slate-800/50 backdrop-blur-md sticky top-0 z-20">
+                        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+                            <div className="flex items-center gap-3 cursor-pointer" onClick={onBack}>
+                                <button className="p-2 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition-colors"><Icons.Home className="w-5 h-5"/></button>
+                                <div className="h-6 w-[1px] bg-slate-600 mx-1"></div>
+                                <div className="bg-blue-600 p-1.5 rounded-lg"><Icons.Video className="w-5 h-5 text-white" /></div>
+                                <h1 className="text-lg font-bold text-white">Bulk Video Generator</h1>
+                            </div>
+                            <button onClick={startRendering} disabled={scenes.length === 0 || isRendering} className={`flex items-center gap-2 px-5 py-2 rounded-full text-xs font-bold tracking-wide transition-all ${isRendering ? 'bg-slate-700 text-slate-400' : 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/20'}`}>
+                                {isRendering ? <><Icons.Loader2 className="w-3 h-3 animate-spin" /> Processing...</> : <><Icons.Download className="w-4 h-4" /> Download 4K</>}
+                            </button>
+                        </div>
+                    </header>
+
+                    <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        <div className="lg:col-span-4 space-y-6 h-[calc(100vh-100px)] overflow-y-auto custom-scrollbar pr-2">
+                            <div className="glass-card rounded-2xl p-5">
+                                <label className="text-xs font-bold text-slate-400 uppercase mb-3 block flex justify-between">
+                                    <span>Enter Prompts (1 Line = 1 Clip)</span>
+                                    <span className="text-blue-400">Free & Unlimited</span>
+                                </label>
+                                <textarea value={prompts} onChange={(e) => setPrompts(e.target.value)} placeholder="A futuristic car driving in rain&#10;Close up of a robotic eye" className="w-full bg-slate-900/80 border border-slate-600 rounded-xl p-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none min-h-[180px] text-slate-200 placeholder:text-slate-600 resize-none" />
+                                <div className="grid grid-cols-2 gap-3 mt-4">
+                                    <div>
+                                        <label className="text-[10px] font-bold text-slate-500 uppercase mb-1 block">Aspect Ratio</label>
+                                        <select value={aspectRatio} onChange={(e) => setAspectRatio(e.target.value)} className="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-xs text-slate-300 outline-none">
+                                            <option value="16:9">16:9 (YouTube)</option><option value="9:16">9:16 (Reels)</option><option value="1:1">1:1 (Post)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="text-[10px] font-bold text-slate-500 uppercase mb-1 block">Motion Style</label>
+                                        <select value={cameraMove} onChange={(e) => setCameraMove(e.target.value)} className="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-xs text-slate-300 outline-none">
+                                            <option value="cinematic">Cinematic</option><option value="zoomIn">Zoom In</option><option value="panLeft">Pan Left</option><option value="shake">Action Shake</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <button onClick={handleGenerate} disabled={isLoading || !prompts.trim()} className={`w-full mt-5 py-3 rounded-xl font-bold text-sm shadow-lg transition-all flex items-center justify-center gap-2 ${isLoading ? 'bg-slate-700 text-slate-400' : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white'}`}>
+                                    {isLoading ? <><Icons.Loader2 className="w-4 h-4 animate-spin"/> Generating...</> : "Generate Scenes"}
+                                </button>
+                            </div>
+                            
+                            {/* VERTICAL LIST (Left) */}
+                            {scenes.length > 0 && (
+                                <div className="glass-card rounded-2xl p-4">
+                                    <div className="flex justify-between items-center mb-3">
+                                        <h3 className="text-xs font-bold text-slate-400 uppercase">Timeline ({scenes.length})</h3>
+                                        <button onClick={() => setScenes([])} className="p-1.5 hover:bg-red-500/20 text-red-400 rounded-lg transition-colors"><Icons.Trash2 className="w-4 h-4"/></button>
+                                    </div>
+                                    <div className="space-y-2 max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
+                                        {scenes.map((scene, idx) => (
+                                            <div key={scene.id} onClick={() => { setCurrentSceneIndex(idx); setIsPlaying(false); setProgress(0); }} className={`flex items-center gap-3 p-2 rounded-xl cursor-pointer border transition-all ${currentSceneIndex === idx ? 'bg-blue-600/20 border-blue-500' : 'bg-slate-800 border-transparent hover:bg-slate-700'}`}>
+                                                <div className="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center text-[10px] font-mono text-slate-300">{idx+1}</div>
+                                                {scene.isError ? <span className="text-xs text-red-400 flex-1">Failed</span> : <span className="text-xs text-slate-300 flex-1 truncate">{scene.text}</span>}
+                                                {scene.image && <img src={scene.image} className="w-10 h-10 rounded-lg object-cover bg-slate-900"/>}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="lg:col-span-8 h-full flex flex-col">
+                            <div className="flex-1 bg-black border border-slate-700 rounded-2xl relative overflow-hidden flex items-center justify-center shadow-2xl">
+                                <canvas ref={canvasRef} className="shadow-2xl" style={{ maxHeight: '100%', maxWidth: '100%', aspectRatio: aspectRatio === '16:9' ? '16/9' : aspectRatio === '9:16' ? '9/16' : '1/1' }} />
+                                {isRendering && (
+                                    <div className="absolute inset-0 bg-slate-900/90 z-50 flex flex-col items-center justify-center backdrop-blur-md">
+                                        <Icons.Loader2 className="w-12 h-12 text-blue-500 animate-spin mb-4" />
+                                        <h2 className="text-xl font-bold text-white">Rendering Video...</h2>
+                                        <p className="text-slate-400 text-sm mt-2">Clip {currentSceneIndex + 1} / {scenes.length}</p>
+                                    </div>
+                                )}
+                                {scenes.length === 0 && !isLoading && (
+                                    <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-600">
+                                        <div className="w-20 h-20 rounded-3xl bg-slate-800/50 flex items-center justify-center mb-4 border border-slate-700"><Icons.Video className="w-10 h-10 opacity-50" /></div>
+                                        <p className="text-lg font-medium">Ready to Create</p>
+                                        <p className="text-sm opacity-60">Enter prompts to start</p>
+                                    </div>
+                                )}
+                                {!isRendering && scenes.length > 0 && (
+                                    <div className="absolute bottom-0 w-full p-6 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex justify-center gap-6 opacity-0 hover:opacity-100 transition-opacity">
+                                        <button onClick={togglePlay} className="w-14 h-14 bg-white rounded-full flex items-center justify-center text-black hover:scale-105 transition-transform shadow-lg shadow-white/20">
+                                            {isPlaying ? <Icons.Pause className="w-6 h-6 fill-current"/> : <Icons.Play className="w-6 h-6 fill-current ml-1"/>}
+                                        </button>
+                                        <div className="absolute right-6 bottom-8">
+                                            <button onClick={() => setShowCaptions(!showCaptions)} className={`p-2 rounded-lg border ${showCaptions ? 'bg-white text-black' : 'bg-black/50 text-white border-white/20'}`} title="Toggle Captions"><Icons.Type className="w-5 h-5"/></button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* HORIZONTAL TIMELINE STRIP (Bottom of Right Panel) */}
+                            {scenes.length > 0 && (
+                                <div className="h-28 mt-4 relative">
+                                    <div className="absolute inset-0 glass-card rounded-2xl overflow-hidden flex items-center px-4">
+                                        <div className="flex gap-3 overflow-x-auto custom-scrollbar w-full pb-2 pt-2">
+                                            {scenes.map((scene, idx) => (
+                                                <div key={scene.id} onClick={() => { setCurrentSceneIndex(idx); setIsPlaying(false); setProgress(0); }} className={`relative h-20 min-w-[120px] rounded-xl overflow-hidden cursor-pointer border-2 transition-all flex-shrink-0 ${currentSceneIndex === idx ? 'border-blue-500 opacity-100 shadow-lg shadow-blue-500/20 scale-105 z-10' : 'border-slate-700 opacity-50 hover:opacity-80'}`}>
+                                                    {scene.image && <img src={scene.image} className="w-full h-full object-cover" />}
+                                                    <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-[10px] px-2 py-1 truncate text-slate-300 font-medium backdrop-blur-sm">{idx+1}. {scene.text}</div>
+                                                    {currentSceneIndex === idx && !isRendering && <div className="absolute bottom-0 left-0 top-0 bg-blue-500/30 border-r-2 border-blue-500 transition-all duration-75 z-20" style={{ width: `${progress}%` }}></div>}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                    </main>
+                </div>
+            );
         }
 
-        async function downloadAllImages() {
-            if(generatedImages.length === 0) return;
-            const btn = document.getElementById('btn-img-download');
-            btn.innerHTML = '<div class="spinner"></div> Zipping...';
-            btn.disabled = true;
-
-            try {
-                const zip = new JSZip();
-                const folder = zip.folder("AI_Images");
-                await Promise.all(generatedImages.map(async (imgObj) => {
-                    try {
-                        const response = await fetch(imgObj.url);
-                        const blob = await response.blob();
-                        folder.file(imgObj.name, blob);
-                    } catch(e) {}
-                }));
-                const content = await zip.generateAsync({ type: "blob" });
-                saveAs(content, "Bulk_Images.zip");
-            } catch (e) {}
-            
-            btn.innerHTML = '<i class="fas fa-file-zipper"></i> Download All (.zip)';
-            btn.disabled = false;
-        }
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
-
 </body>
 </html>
