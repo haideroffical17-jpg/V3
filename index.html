@@ -70,12 +70,13 @@
         .animate-pop {
             animation: popIn 0.3s ease-out forwards;
         }
-        
+
         /* Video Tool Specifics */
         .motion-btn.active {
-            background-color: #7c3aed;
-            border-color: #6d28d9;
+            background-color: #8b5cf6; /* Purple-500 */
+            border-color: #7c3aed;
             color: white;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
         }
     </style>
 </head>
@@ -85,7 +86,7 @@
     <div id="dashboard" class="flex-1 overflow-y-auto p-6 md:p-10 animate-fade-in flex items-center justify-center">
         <div class="max-w-6xl w-full">
             <div class="mb-12 text-center">
-                <div class="inline-block mb-3 px-6 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20">
+                <div class="inline-block mb-3 px-6 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 shadow-[0_0_15px_rgba(99,102,241,0.3)]">
                     <span class="text-xs font-bold text-indigo-400 tracking-widest uppercase">✨ Powered by Grow With Haider</span>
                 </div>
                 <h1 class="text-5xl font-black text-white mb-4 tracking-tight">AI Creator Studio</h1>
@@ -101,9 +102,6 @@
                     </div>
                     <h3 class="text-xl font-bold text-white mb-2">Bulk Image Generator</h3>
                     <p class="text-sm text-slate-400 leading-relaxed">Unlimited. Auto-Enhance. Direct Download.</p>
-                    <span class="mt-6 text-indigo-400 font-bold text-sm flex items-center gap-2 group-hover:translate-x-1 transition-transform">
-                        Open Tool <i class="fa-solid fa-arrow-right"></i>
-                    </span>
                 </div>
 
                 <!-- Tool 2: Text to Speech -->
@@ -112,22 +110,16 @@
                         <i class="fa-solid fa-microphone-lines"></i>
                     </div>
                     <h3 class="text-xl font-bold text-white mb-2">Text to Speech</h3>
-                    <p class="text-sm text-slate-400 leading-relaxed">100+ Voices. Unlimited Text. MP3 Export.</p>
-                    <span class="mt-6 text-emerald-400 font-bold text-sm flex items-center gap-2 group-hover:translate-x-1 transition-transform">
-                        Open Tool <i class="fa-solid fa-arrow-right"></i>
-                    </span>
+                    <p class="text-sm text-slate-400 leading-relaxed">100+ Voices. Unlimited Text. 100% Working.</p>
                 </div>
 
-                <!-- Tool 3: AI Video Creator (New) -->
+                <!-- Tool 3: AI Video Creator -->
                 <div onclick="openTool('video-tool')" class="dashboard-card p-8 rounded-3xl flex flex-col items-center text-center group border-purple-500/30 hover:border-purple-500">
                     <div class="w-16 h-16 rounded-2xl bg-purple-600 text-white flex items-center justify-center text-3xl shadow-lg shadow-purple-600/30 mb-6 group-hover:scale-110 transition-transform">
                         <i class="fa-solid fa-video"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-2">AI Video Creator</h3>
-                    <p class="text-sm text-slate-400 leading-relaxed">Text to Video. Auto Motion. 4K Render.</p>
-                    <span class="mt-6 text-purple-400 font-bold text-sm flex items-center gap-2 group-hover:translate-x-1 transition-transform">
-                        Open Tool <i class="fa-solid fa-arrow-right"></i>
-                    </span>
+                    <h3 class="text-xl font-bold text-white mb-2">CineVerse Ultra</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">Script to Video. Auto Motion. 4K Render.</p>
                 </div>
 
             </div>
@@ -150,6 +142,7 @@
         </div>
 
         <div class="flex-1 flex flex-col md:flex-row overflow-hidden bg-slate-950">
+             <!-- Sidebar -->
              <div class="w-full md:w-96 bg-slate-900 border-r border-slate-800 flex flex-col h-full shrink-0 z-10 p-6 shadow-2xl overflow-y-auto md:overflow-y-visible">
                  <div class="mb-4">
                     <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Aspect Ratio</label>
@@ -184,6 +177,7 @@
                     </button>
                  </div>
              </div>
+             <!-- Grid -->
              <div class="flex-1 p-6 overflow-y-auto scroll-smooth bg-slate-950" id="grid-container">
                  <div id="bulk-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 pb-32">
                     <div class="col-span-full flex flex-col items-center justify-center h-96 text-slate-600">
@@ -212,34 +206,41 @@
         <div class="flex-1 p-4 md:p-8 overflow-y-auto bg-slate-950">
             <div class="max-w-4xl mx-auto bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-xl">
                 <div class="mb-6">
-                    <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Select Voice (100+ Voices)</label>
+                    <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Select Voice (100% Stable)</label>
                     <div class="relative">
                         <select id="tts-voice" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-white focus:border-emerald-500 outline-none appearance-none cursor-pointer text-lg h-12">
-                            <optgroup label="⭐ Popular"><option value="Brian">Brian (UK)</option><option value="Salli">Salli (US)</option></optgroup>
-                            <optgroup label="🇮🇳 Indian"><option value="Aditi">Aditi</option><option value="Raveena">Raveena</option></optgroup>
-                            <!-- Using a supported voice for Urdu instead of failing "Zainab" -->
-                            <optgroup label="🇵🇰 Urdu"><option value="Zeina">Urdu (Standard)</option></optgroup>
-                            <!-- More voices as needed -->
+                            
+                            <optgroup label="⭐ Popular English">
+                                <option value="Brian">Brian (UK - Narrator)</option>
+                                <option value="Salli">Salli (US - Energetic)</option>
+                                <option value="Matthew">Matthew (US - Deep)</option>
+                                <option value="Amy">Amy (UK - Soft)</option>
+                            </optgroup>
+
+                            <optgroup label="🇮🇳 Hindi & Urdu Friendly">
+                                <option value="Aditi">Aditi (Best for Urdu/Hindi)</option>
+                                <option value="Raveena">Raveena (Indian English)</option>
+                            </optgroup>
+
                              <optgroup label="🇺🇸 English (US)">
-                                <option value="Salli">Salli (Female)</option>
-                                <option value="Joey">Joey (Male)</option>
-                                <option value="Matthew">Matthew (Male)</option>
-                                <option value="Justin">Justin (Child)</option>
-                                <option value="Ivy">Ivy (Child)</option>
-                                <option value="Joanna">Joanna (Female)</option>
-                                <option value="Kendra">Kendra (Female)</option>
-                                <option value="Kimberly">Kimberly (Female)</option>
+                                <option value="Joey">Joey (US - Deep)</option>
+                                <option value="Justin">Justin (US - Child)</option>
+                                <option value="Ivy">Ivy (US - Child)</option>
+                                <option value="Joanna">Joanna (US - Soft)</option>
+                                <option value="Kendra">Kendra (US - Formal)</option>
+                                <option value="Kimberly">Kimberly (US - Mature)</option>
                             </optgroup>
+                            
                             <optgroup label="🇬🇧 English (UK)">
-                                <option value="Brian" selected>Brian (Male)</option>
-                                <option value="Amy">Amy (Female)</option>
-                                <option value="Emma">Emma (Female)</option>
-                                <option value="Geraint">Geraint (Male)</option>
+                                <option value="Emma">Emma (UK)</option>
+                                <option value="Geraint">Geraint (Welsh)</option>
                             </optgroup>
+                            
                              <optgroup label="🇦🇺 English (AU)">
-                                <option value="Russell">Russell (Male)</option>
-                                <option value="Nicole">Nicole (Female)</option>
+                                <option value="Russell">Russell</option>
+                                <option value="Nicole">Nicole</option>
                             </optgroup>
+                            
                             <optgroup label="🌍 Global">
                                 <option value="Zeina">Arabic</option>
                                 <option value="Zhiyu">Chinese</option>
@@ -249,6 +250,7 @@
                                 <option value="Conchita">Spanish</option>
                                 <option value="Giorgio">Italian</option>
                                 <option value="Takumi">Japanese</option>
+                                <option value="Seoyeon">Korean</option>
                                 <option value="Maxim">Russian</option>
                                 <option value="Vitoria">Portuguese</option>
                             </optgroup>
@@ -257,7 +259,7 @@
                     </div>
                 </div>
                 <div class="flex-1 flex flex-col mb-8">
-                    <textarea id="tts-text" class="w-full h-64 bg-slate-950 border border-slate-700 rounded-lg p-5 text-white outline-none focus:border-emerald-500 resize-none font-mono leading-relaxed text-lg" placeholder="Paste your script here (Dual Engine Supported)..."></textarea>
+                    <textarea id="tts-text" class="w-full h-64 bg-slate-950 border border-slate-700 rounded-lg p-5 text-white outline-none focus:border-emerald-500 resize-none font-mono leading-relaxed text-lg" placeholder="Paste your script here (Unlimited Text Supported)..."></textarea>
                 </div>
                 <div class="bg-slate-950 rounded-xl p-6 border border-slate-800">
                     <div id="player-wrapper" class="hidden mb-6 animate-fade-in"><audio id="main-audio-player" controls class="w-full h-12 rounded"></audio></div>
@@ -273,9 +275,8 @@
         </div>
     </div>
 
-    <!-- ================= TOOL 3: VIDEO CREATOR (CINEVERSE ULTRA) ================= -->
+    <!-- ================= TOOL 3: CINEVERSE ULTRA (VIDEO) ================= -->
     <div id="video-tool" class="tool-view">
-        <!-- Header -->
         <div class="h-16 bg-[#090909] border-b border-white/10 flex items-center justify-between px-6 shrink-0 z-30">
             <div class="flex items-center gap-4">
                 <button onclick="closeTool('video-tool')" class="w-10 h-10 rounded-full hover:bg-white/10 flex items-center justify-center text-slate-400 transition-colors">
@@ -286,14 +287,12 @@
                 </div>
             </div>
             <button onclick="renderVideo()" id="btn-render" disabled class="flex items-center gap-2 px-6 py-2 rounded-full text-xs font-bold bg-white text-black hover:bg-purple-500 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-                <i class="fa-solid fa-download"></i> Render 4K Video
+                <i class="fa-solid fa-download"></i> Render 4K
             </button>
         </div>
 
-        <!-- Main Layout -->
         <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 bg-[#050505] overflow-hidden">
-            
-            <!-- Left: Script & Settings -->
+            <!-- Left Settings -->
             <div class="lg:col-span-4 border-r border-white/10 p-6 overflow-y-auto bg-[#0a0a0a]">
                 <div class="space-y-6">
                     <div>
@@ -302,15 +301,7 @@
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Visual Engine</label>
-                            <select id="video-model" class="w-full bg-[#151515] text-xs border border-white/10 rounded-lg px-3 py-3 text-gray-300 outline-none focus:border-purple-500">
-                                <option value="veo3">Veo 3 (Ultra Real)</option>
-                                <option value="veo">Veo 2 (Action)</option>
-                                <option value="cinematic">Cinematic 4K</option>
-                            </select>
-                        </div>
-                        <div>
+                         <div>
                             <label class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Format</label>
                             <select id="video-ratio" class="w-full bg-[#151515] text-xs border border-white/10 rounded-lg px-3 py-3 text-gray-300 outline-none focus:border-purple-500">
                                 <option value="16:9">16:9 Landscape</option>
@@ -318,12 +309,19 @@
                                 <option value="1:1">1:1 Square</option>
                             </select>
                         </div>
+                         <div>
+                            <label class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Visuals</label>
+                            <select id="video-model" class="w-full bg-[#151515] text-xs border border-white/10 rounded-lg px-3 py-3 text-gray-300 outline-none focus:border-purple-500">
+                                <option value="veo3">Veo 3 (Ultra Real)</option>
+                                <option value="veo">Veo 2 (Action)</option>
+                                <option value="cinematic">Cinematic</option>
+                            </select>
+                        </div>
                     </div>
 
-                    <div>
+                     <div>
                         <label class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Camera Motion</label>
                         <div class="grid grid-cols-4 gap-2" id="motion-options">
-                            <!-- JS will handle selection -->
                             <button onclick="setMotion('cinematic')" class="motion-btn active py-2 rounded-lg border text-[10px] uppercase font-bold bg-purple-600 border-purple-500 text-white">Auto</button>
                             <button onclick="setMotion('zoomIn')" class="motion-btn py-2 rounded-lg border border-white/10 text-gray-500 hover:bg-white/5">Zoom</button>
                             <button onclick="setMotion('panLeft')" class="motion-btn py-2 rounded-lg border border-white/10 text-gray-500 hover:bg-white/5">Pan</button>
@@ -332,35 +330,40 @@
                     </div>
 
                     <button onclick="generateVideoScenes()" id="btn-gen-scenes" class="w-full py-4 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold text-xs uppercase tracking-wider shadow-lg hover:shadow-purple-500/30 transition-all flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-bolt"></i> Generate Scenes
+                        <i class="fa-solid fa-bolt"></i> GENERATE SCENES
                     </button>
-
-                    <!-- Timeline List -->
-                    <div id="video-timeline" class="space-y-2 mt-4 hidden">
-                        <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest"><i class="fa-solid fa-layer-group mr-2"></i>Timeline</h3>
-                        <div id="timeline-container" class="max-h-[200px] overflow-y-auto pr-2 space-y-2">
-                            <!-- Scenes injected here -->
-                        </div>
-                    </div>
                 </div>
             </div>
 
-            <!-- Right: Canvas Preview -->
-            <div class="lg:col-span-8 bg-black flex items-center justify-center relative p-8">
-                <canvas id="video-canvas" class="shadow-2xl max-w-full max-h-full"></canvas>
-                
-                <!-- Rendering Overlay -->
-                <div id="render-overlay" class="hidden absolute inset-0 bg-black/90 flex flex-col items-center justify-center z-50">
-                    <div class="spinner w-12 h-12 mb-4 border-purple-500 border-t-transparent"></div>
-                    <h2 class="text-2xl font-bold text-white">Rendering Video...</h2>
-                    <div class="w-64 h-1.5 bg-gray-800 rounded-full mt-4 overflow-hidden">
-                        <div id="render-progress" class="h-full bg-purple-500 w-0 transition-all"></div>
+            <!-- Right Preview -->
+            <div class="lg:col-span-8 bg-black flex flex-col relative h-full">
+                <!-- Canvas -->
+                <div class="flex-1 flex items-center justify-center relative bg-[#050505] overflow-hidden p-4">
+                    <canvas id="video-canvas" class="shadow-2xl max-w-full max-h-full"></canvas>
+                    
+                    <!-- Rendering Overlay -->
+                    <div id="render-overlay" class="hidden absolute inset-0 bg-black/90 flex flex-col items-center justify-center z-50">
+                        <div class="spinner w-12 h-12 mb-4 border-purple-500 border-t-transparent"></div>
+                        <h2 class="text-2xl font-bold text-white">Rendering Video...</h2>
+                        <div class="w-64 h-1.5 bg-gray-800 rounded-full mt-4 overflow-hidden">
+                            <div id="render-progress" class="h-full bg-purple-500 w-0 transition-all"></div>
+                        </div>
+                    </div>
+
+                    <!-- Play Button -->
+                    <div id="video-controls" class="absolute bottom-8 flex gap-4 opacity-0 hover:opacity-100 transition-opacity bg-black/50 p-3 rounded-full backdrop-blur-md z-20 cursor-pointer" onclick="toggleVideoPlay()">
+                        <i class="fa-solid fa-play text-xl text-white" id="play-icon"></i>
                     </div>
                 </div>
 
-                <!-- Controls -->
-                <div id="video-controls" class="absolute bottom-8 flex gap-4 opacity-0 hover:opacity-100 transition-opacity bg-black/50 p-3 rounded-full backdrop-blur-md">
-                    <button onclick="toggleVideoPlay()" class="text-white hover:text-purple-400"><i class="fa-solid fa-play text-xl" id="play-icon"></i></button>
+                <!-- Timeline (Bottom) -->
+                <div class="h-36 bg-[#0a0a0a] border-t border-white/10 flex flex-col">
+                    <div class="px-4 py-2 flex justify-between items-center border-b border-white/5">
+                        <h3 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest"><i class="fa-solid fa-layer-group mr-1"></i>Timeline</h3>
+                    </div>
+                    <div id="timeline-container" class="flex-1 overflow-x-auto flex items-center gap-2 p-3 custom-scrollbar">
+                         <div class="text-xs text-gray-600 italic w-full text-center pt-4">Add scenes to view timeline</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -372,7 +375,165 @@
         function openTool(id) { document.getElementById(id).classList.add('active'); }
         function closeTool(id) { document.getElementById(id).classList.remove('active'); }
 
-        // --- VIDEO TOOL LOGIC (Vanilla JS Port) ---
+        // --- BULK GENERATOR ---
+        let generatedImages = [];
+        const bulkInput = document.getElementById('bulk-prompt');
+        if(bulkInput) {
+             bulkInput.addEventListener('input', () => {
+                const lines = bulkInput.value.split('\n').filter(l => l.trim()).length;
+                document.getElementById('prompt-count').textContent = `${lines} Prompts`;
+            });
+        }
+
+        async function forceDownload(url, filename) {
+            try {
+                const response = await fetch(url);
+                const blob = await response.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(blobUrl);
+            } catch (e) {
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = filename;
+                link.target = "_blank";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+
+        async function generateBulk() {
+            const prompts = document.getElementById('bulk-prompt').value.split('\n').filter(p=>p.trim());
+            if(!prompts.length) return alert("Enter prompts");
+            
+            const btn = document.getElementById('btn-bulk');
+            const grid = document.getElementById('bulk-grid');
+            const ratio = document.getElementById('bulk-ratio').value;
+            const [w, h] = ratio.split('x');
+            const autoEnhance = document.getElementById('auto-enhance').checked;
+
+            btn.disabled = true; btn.innerHTML = '<div class="spinner border-white w-5 h-5"></div> Processing...';
+            grid.innerHTML = ''; generatedImages = [];
+
+            const cardIds = [];
+            prompts.forEach((p, idx) => {
+                const card = document.createElement('div');
+                card.id = `card-${idx}`;
+                card.className = 'bg-slate-800 rounded-xl p-3 h-64 flex flex-col items-center justify-center opacity-50';
+                card.innerHTML = `<i class="fa-regular fa-clock text-3xl mb-2 text-slate-500"></i><span>Pending...</span>`;
+                grid.appendChild(card);
+                cardIds.push(`card-${idx}`);
+            });
+
+            if(window.innerWidth < 768) document.getElementById('grid-container').scrollIntoView({ behavior: 'smooth' });
+
+            for(let i=0; i<prompts.length; i++) {
+                const p = prompts[i];
+                const card = document.getElementById(cardIds[i]);
+                
+                card.style.opacity = '1';
+                card.innerHTML = '<div class="spinner border-indigo-500"></div><span class="text-xs mt-2 text-indigo-400">Generating...</span>';
+                card.scrollIntoView({behavior:'smooth', block:'center'});
+
+                let finalPrompt = p;
+                if(autoEnhance) finalPrompt += ", cinematic lighting, hyper-realistic, 8k, masterpiece";
+
+                const seed = Math.floor(Math.random() * 999999);
+                const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(finalPrompt)}?width=${w}&height=${h}&model=flux&seed=${seed}&nologo=true&t=${Date.now()}`;
+
+                await new Promise((resolve) => {
+                    const img = new Image();
+                    img.crossOrigin = "Anonymous";
+                    img.onload = () => {
+                        generatedImages.push({ url: url, name: `img_${i}.jpg` });
+                        card.className = 'bg-slate-800 rounded-xl p-3 h-auto animate-pop group';
+                        card.innerHTML = `<div class="relative w-full overflow-hidden rounded-lg bg-slate-900"><img src="${url}" class="w-full h-auto object-contain" onclick="window.open('${url}', '_blank')"><div class="absolute top-2 right-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded backdrop-blur-sm">Flux HD</div></div><div class="mt-2"><button onclick="forceDownload('${url}','img_${i}.jpg')" class="w-full bg-indigo-600 py-2 rounded text-xs font-bold text-white hover:bg-indigo-500 transition-colors">Download</button></div>`;
+                        resolve();
+                    };
+                    img.onerror = () => { card.innerHTML = `<div class="text-red-500 text-xs">Failed</div>`; resolve(); };
+                    img.src = url;
+                });
+            }
+            btn.disabled = false; btn.innerHTML = 'Start Batch';
+            document.getElementById('btn-download-all').classList.remove('hidden');
+        }
+        
+        async function downloadAllImages() {
+             const zip = new JSZip();
+             const folder = zip.folder("Images");
+             for(let img of generatedImages) { try { const b = await (await fetch(img.url)).blob(); folder.file(img.name, b); } catch(e) {} }
+             const content = await zip.generateAsync({type:"blob"});
+             saveAs(content, "images.zip");
+        }
+
+        // --- TTS (StreamElements Reliable) ---
+        async function generateAudio() {
+            const text = document.getElementById('tts-text').value;
+            const voice = document.getElementById('tts-voice').value;
+            const status = document.getElementById('audio-status');
+            const btn = document.getElementById('play-btn');
+            const playerWrapper = document.getElementById('player-wrapper');
+            const player = document.getElementById('main-audio-player');
+            const dlBtn = document.getElementById('audio-dl-btn');
+
+            if(!text) return alert("Enter text.");
+            
+            btn.disabled = true; btn.classList.add('opacity-75');
+            status.innerHTML = 'Initializing...';
+            dlBtn.classList.add('hidden'); playerWrapper.classList.add('hidden');
+
+            function splitText(input) {
+                const MAX = 800; const chunks = []; let curr = "";
+                const sents = input.match(/[^.!?\n]+[.!?\n]+|[^.!?\n]+$/g) || [input];
+                for(let s of sents) {
+                    if((curr + s).length < MAX) curr += s;
+                    else { if(curr) chunks.push(curr); curr = s; }
+                }
+                if(curr) chunks.push(curr);
+                return chunks.filter(c => c.trim().length > 0);
+            }
+
+            const chunks = splitText(text);
+            const blobs = [];
+
+            try {
+                for(let i=0; i<chunks.length; i++) {
+                    status.innerHTML = `<span class="text-emerald-400 animate-pulse">Generating Part ${i+1}/${chunks.length}...</span>`;
+                    let blob = null;
+                    for(let attempt=0; attempt<3; attempt++) {
+                         try {
+                             const res = await fetch(`https://api.streamelements.com/kappa/v2/speech?voice=${voice}&text=${encodeURIComponent(chunks[i])}`);
+                             if(res.ok && (await res.clone().blob()).size > 100) {
+                                 blob = await res.blob();
+                                 break; 
+                             }
+                         } catch(e) { await new Promise(r => setTimeout(r, 2000)); }
+                    }
+                    if(!blob) throw new Error("Chunk failed");
+                    blobs.push(blob);
+                    if(i < chunks.length - 1) await new Promise(r => setTimeout(r, 1500)); 
+                }
+
+                const finalBlob = new Blob(blobs, {type:'audio/mp3'});
+                const url = URL.createObjectURL(finalBlob);
+                player.src = url; playerWrapper.classList.remove('hidden');
+                dlBtn.href = url; dlBtn.download = `voiceover_${Date.now()}.mp3`; dlBtn.classList.remove('hidden');
+                player.play(); 
+                status.innerHTML = '<span class="text-green-400">Success!</span>';
+            } catch(e) {
+                status.innerHTML = '<span class="text-red-400">Failed</span>';
+                alert("Error. Try shorter text.");
+            }
+            btn.disabled = false; btn.classList.remove('opacity-75');
+        }
+
+        // --- CINEVERSE ULTRA (Video Logic) ---
         let videoScenes = [];
         let currentSceneIdx = 0;
         let isVideoPlaying = false;
@@ -396,13 +557,12 @@
         async function generateVideoScenes() {
             const script = document.getElementById('video-script').value;
             const lines = script.split('\n').filter(l => l.trim());
-            if(!lines.length) return alert("Enter a script first!");
+            if(!lines.length) return alert("Enter script!");
 
             const btn = document.getElementById('btn-gen-scenes');
             btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Generating...';
             
             videoScenes = [];
-            document.getElementById('video-timeline').classList.remove('hidden');
             const container = document.getElementById('timeline-container');
             container.innerHTML = '';
 
@@ -411,42 +571,40 @@
             let width = 1920, height = 1080;
             if(ratio === '9:16') { width=1080; height=1920; }
             if(ratio === '1:1') { width=1080; height=1080; }
-            
             canvas.width = width; canvas.height = height;
 
-            // Generate Images for Scenes
             for(let i=0; i<lines.length; i++) {
                 const prompt = lines[i];
-                
-                // Creating Placeholder
                 const div = document.createElement('div');
-                div.className = 'flex items-center gap-3 p-2 rounded-xl bg-[#151515] border border-white/5';
-                div.innerHTML = `<div class="w-6 h-6 rounded-full bg-white/5 text-xs flex items-center justify-center text-gray-400">${i+1}</div><div class="text-xs text-gray-400 flex-1">Generating...</div>`;
+                div.className = 'flex-shrink-0 w-32 h-20 rounded-lg bg-[#151515] border border-white/10 flex flex-col items-center justify-center text-gray-500 text-[10px] gap-1 animate-pulse';
+                div.innerHTML = `<div class="spinner border-purple-500 w-4 h-4"></div><span>Gen Scene ${i+1}</span>`;
                 container.appendChild(div);
 
-                // API Call (Reusing Imagen logic or fallback)
-                let url = await generateWithImagen4(prompt + ", highly detailed, cinematic 8k");
-                if (!url) {
-                    const seed = Math.floor(Math.random() * 999999);
-                    url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt + ", cinematic, 8k")}?width=${width}&height=${height}&model=flux&seed=${seed}&nologo=true`;
-                }
+                const seed = Math.floor(Math.random() * 999999);
+                const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt + ", cinematic, 8k, highly detailed")}?width=${width}&height=${height}&model=flux&seed=${seed}&nologo=true`;
 
-                // Preload
-                await new Promise(r => {
+                await new Promise(resolve => {
                     const img = new Image();
                     img.crossOrigin = "Anonymous";
                     img.src = url;
                     img.onload = () => {
                         videoScenes.push({ image: img, text: prompt, movement: cameraMove });
-                        div.innerHTML = `<div class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-xs flex items-center justify-center border border-purple-500/50">${i+1}</div>
-                                         <div class="flex-1 min-w-0"><p class="text-xs text-gray-200 truncate">${prompt}</p></div>
-                                         <img src="${url}" class="w-8 h-8 rounded object-cover">`;
-                        r();
+                        div.className = 'flex-shrink-0 w-32 h-20 rounded-lg border border-white/20 overflow-hidden relative cursor-pointer group hover:border-purple-500 transition-all';
+                        div.onclick = () => { currentSceneIdx = i; progress = 0; isVideoPlaying = false; drawFrame(); };
+                        div.innerHTML = `
+                            <img src="${url}" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity">
+                            <div class="absolute bottom-0 left-0 right-0 bg-black/70 text-[9px] px-1 text-white truncate py-0.5">${i+1}. ${prompt}</div>
+                        `;
+                        resolve();
+                    };
+                    img.onerror = () => {
+                         div.innerHTML = '<span class="text-red-500">Failed</span>';
+                         resolve();
                     };
                 });
             }
 
-            btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Generate Scenes';
+            btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-bolt"></i> GENERATE SCENES';
             document.getElementById('btn-render').disabled = false;
             currentSceneIdx = 0;
             drawFrame();
@@ -460,33 +618,24 @@
             ctx.fillStyle = '#000';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Animation Logic
             const p = progress / 100;
             let scale = 1, tx = 0, ty = 0;
 
             if(scene.movement === 'zoomIn') scale = 1 + (p * 0.2);
             else if(scene.movement === 'panLeft') { scale = 1.1; tx = -p * 50; }
             else if(scene.movement === 'shake') { scale = 1.05; tx = Math.sin(p*20)*5; ty = Math.cos(p*20)*5; }
-            else { scale = 1 + (p * 0.1); } // Cinematic default
+            else { scale = 1 + (p * 0.1); } 
 
             ctx.save();
             ctx.translate(canvas.width/2, canvas.height/2);
             ctx.scale(scale, scale);
             ctx.translate(-canvas.width/2 + tx, -canvas.height/2 + ty);
             
-            // Draw Image Cover
             const r = Math.max(canvas.width/img.width, canvas.height/img.height);
             const dw = img.width * r;
             const dh = img.height * r;
             ctx.drawImage(img, (canvas.width-dw)/2, (canvas.height-dh)/2, dw, dh);
             ctx.restore();
-
-            // Caption
-            /* ctx.font = "bold 40px sans-serif";
-            ctx.fillStyle = "white";
-            ctx.textAlign = "center";
-            ctx.shadowColor="black"; ctx.shadowBlur=10;
-            ctx.fillText(scene.text, canvas.width/2, canvas.height - 50); */
         }
 
         function toggleVideoPlay() {
@@ -503,8 +652,7 @@
 
         function animateLoop() {
             if(!isVideoPlaying) return;
-            
-            progress += 0.5; // Speed
+            progress += 0.5; 
             if(progress >= 100) {
                 progress = 0;
                 currentSceneIdx++;
@@ -514,192 +662,49 @@
                     return;
                 }
             }
-            
             drawFrame();
             animationId = requestAnimationFrame(animateLoop);
         }
 
         function renderVideo() {
             if(!videoScenes.length) return;
-            
             const btn = document.getElementById('btn-render');
             const overlay = document.getElementById('render-overlay');
             const progBar = document.getElementById('render-progress');
             
-            isRendering = true;
-            isVideoPlaying = false;
-            currentSceneIdx = 0;
-            progress = 0;
-            recordedChunks = [];
-            
-            overlay.classList.remove('hidden');
-            btn.disabled = true;
+            isRendering = true; isVideoPlaying = false;
+            currentSceneIdx = 0; progress = 0; recordedChunks = [];
+            overlay.classList.remove('hidden'); btn.disabled = true;
 
-            // Stream Setup
             const stream = canvas.captureStream(30);
-            try {
-                mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9', videoBitsPerSecond: 5000000 });
-            } catch(e) {
-                mediaRecorder = new MediaRecorder(stream);
-            }
+            try { mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9', videoBitsPerSecond: 5000000 }); } 
+            catch(e) { mediaRecorder = new MediaRecorder(stream); }
 
             mediaRecorder.ondataavailable = (e) => { if(e.data.size > 0) recordedChunks.push(e.data); };
             mediaRecorder.onstop = () => {
                 const blob = new Blob(recordedChunks, { type: 'video/webm' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
-                a.href = url;
-                a.download = `CineVerse_Render_${Date.now()}.webm`;
+                a.href = url; a.download = `CineVerse_Render_${Date.now()}.webm`;
                 a.click();
-                
-                overlay.classList.add('hidden');
-                btn.disabled = false;
-                isRendering = false;
+                overlay.classList.add('hidden'); btn.disabled = false; isRendering = false;
             };
 
             mediaRecorder.start();
 
-            // Rendering Loop
             function renderStep() {
                 if(!isRendering) return;
-                
-                progress += 1; // Faster render speed
-                drawFrame();
-                
-                // Progress bar
-                const totalProgress = ((currentSceneIdx * 100) + progress) / (videoScenes.length * 100) * 100;
-                progBar.style.width = `${totalProgress}%`;
+                progress += 1; drawFrame();
+                progBar.style.width = `${((currentSceneIdx * 100) + progress) / (videoScenes.length * 100) * 100}%`;
 
                 if(progress >= 100) {
-                    progress = 0;
-                    currentSceneIdx++;
-                    if(currentSceneIdx >= videoScenes.length) {
-                        mediaRecorder.stop();
-                        return;
-                    }
+                    progress = 0; currentSceneIdx++;
+                    if(currentSceneIdx >= videoScenes.length) { mediaRecorder.stop(); return; }
                 }
                 requestAnimationFrame(renderStep);
             }
             renderStep();
         }
-
-        // --- SHARED FUNCTIONS (Bulk & TTS) ---
-        // ... (Previous Bulk Gen & TTS functions remain same as last robust version) ...
-        
-        // Re-pasting essential Bulk/TTS code for completeness within the file structure
-        const bulkInput = document.getElementById('bulk-prompt');
-        if(bulkInput) {
-            bulkInput.addEventListener('input', () => {
-                const lines = bulkInput.value.split('\n').filter(l => l.trim()).length;
-                document.getElementById('prompt-count').textContent = `${lines} Prompts`;
-            });
-        }
-
-        async function generateWithImagen4(prompt, aspectRatio) {
-            try {
-                const response = await fetch(
-                    `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`,
-                    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ instances: [{ prompt }], parameters: { sampleCount: 1, aspectRatio } }) }
-                );
-                if (!response.ok) throw new Error('Fail');
-                const result = await response.json();
-                return `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
-            } catch (e) { return null; }
-        }
-
-        async function generateBulk() {
-            const prompts = document.getElementById('bulk-prompt').value.split('\n').filter(p=>p.trim());
-            if(!prompts.length) return alert("Enter prompts");
-            
-            const btn = document.getElementById('btn-bulk');
-            const grid = document.getElementById('bulk-grid');
-            const ratio = document.getElementById('bulk-ratio').value;
-            const [w, h] = ratio.split('x');
-            
-            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing...';
-            grid.innerHTML = ''; generatedImages = [];
-
-            // ... Bulk Logic (Same as previous) ...
-            for(let i=0; i<prompts.length; i++) {
-                const p = prompts[i];
-                const card = document.createElement('div');
-                card.className = 'bg-slate-800 rounded-xl p-3 h-64 flex items-center justify-center';
-                card.innerHTML = '<div class="spinner border-indigo-500"></div>';
-                grid.appendChild(card);
-                card.scrollIntoView({behavior:'smooth', block:'center'});
-
-                let url = await generateWithImagen4(p);
-                if(!url) url = `https://image.pollinations.ai/prompt/${encodeURIComponent(p)}?width=${w}&height=${h}&model=flux&seed=${Math.random()}`;
-
-                await new Promise(resolve => {
-                    const img = new Image();
-                    img.crossOrigin = "Anonymous";
-                    img.onload = () => {
-                        generatedImages.push({url, name: `img_${i}.jpg`});
-                        card.className = 'bg-slate-800 rounded-xl p-3 h-auto';
-                        card.innerHTML = `<img src="${url}" class="rounded-lg w-full" onclick="window.open('${url}')">
-                                          <button onclick="forceDownload('${url}','img.jpg')" class="w-full mt-2 bg-indigo-600 py-1 rounded text-xs">Download</button>`;
-                        resolve();
-                    };
-                    img.src = url;
-                });
-            }
-            btn.disabled = false; btn.innerHTML = 'Start Batch';
-            document.getElementById('btn-download-all').classList.remove('hidden');
-        }
-
-        // TTS Logic (Same as previous robust version)
-        async function generateAudio() {
-            const text = document.getElementById('tts-text').value;
-            const voice = document.getElementById('tts-voice').value;
-            if(!text) return alert("Enter text");
-            
-            // ... Chunking & Fetch Logic ...
-            // (Simplified here for brevity, assumes standard fetch logic)
-            const chunks = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [text];
-            const blobs = [];
-            
-            document.getElementById('play-btn').disabled = true;
-            document.getElementById('audio-status').innerHTML = 'Generating...';
-
-            for(let chunk of chunks) {
-                const res = await fetch(`https://api.streamelements.com/kappa/v2/speech?voice=${voice}&text=${encodeURIComponent(chunk)}`);
-                const blob = await res.blob();
-                blobs.push(blob);
-            }
-            
-            const url = URL.createObjectURL(new Blob(blobs, {type:'audio/mp3'}));
-            const player = document.getElementById('main-audio-player');
-            player.src = url;
-            player.parentElement.classList.remove('hidden');
-            player.play();
-            
-            document.getElementById('play-btn').disabled = false;
-            document.getElementById('audio-status').innerHTML = 'Ready';
-            const dl = document.getElementById('audio-dl-btn');
-            dl.href = url; dl.download = 'audio.mp3'; dl.classList.remove('hidden');
-        }
-
-        async function forceDownload(url, name) {
-            const res = await fetch(url);
-            const blob = await res.blob();
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = name;
-            link.click();
-        }
-        
-        async function downloadAllImages() {
-             const zip = new JSZip();
-             const folder = zip.folder("Images");
-             for(let img of generatedImages) {
-                 const b = await (await fetch(img.url)).blob();
-                 folder.file(img.name, b);
-             }
-             const content = await zip.generateAsync({type:"blob"});
-             saveAs(content, "images.zip");
-        }
-
     </script>
 </body>
 </html>
