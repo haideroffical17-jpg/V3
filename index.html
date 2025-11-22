@@ -14,6 +14,9 @@
     
     <!-- Babel for JSX -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -21,6 +24,8 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #555; }
         body { background-color: #050505; color: white; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .animate-fade-in { animation: fadeIn 0.5s ease-out; }
     </style>
 </head>
 <body>
@@ -29,23 +34,28 @@
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        // --- INLINE ICONS (No External Dependency = No Crashes) ---
+        // --- INLINE ICONS (To prevent crashes if external libs fail) ---
         const Icons = {
-            Play: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>,
-            Pause: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>,
-            Video: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>,
-            Film: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="2.18" ry="2.18"/><line x1="7" x2="7" y1="2" y2="22"/><line x1="17" x2="17" y1="2" y2="22"/><line x1="2" x2="22" y1="12" y2="12"/><line x1="2" x2="7" y1="7" y2="7"/><line x1="2" x2="7" y1="17" y2="17"/><line x1="17" x2="22" y1="17" y2="17"/><line x1="17" x2="22" y1="7" y2="7"/></svg>,
-            Layers: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>,
-            Type: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" x2="15" y1="20" y2="20"/><line x1="12" x2="12" y1="4" y2="20"/></svg>,
-            Download: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>,
-            Trash2: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>,
-            SkipForward: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" x2="19" y1="5" y2="19"/></svg>,
-            Zap: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>,
-            AlertCircle: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>,
-            Loader2: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+            Play: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>,
+            Pause: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>,
+            Video: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>,
+            Film: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="2.18" ry="2.18"/><line x1="7" x2="7" y1="2" y2="22"/><line x1="17" x2="17" y1="2" y2="22"/><line x1="2" x2="22" y1="12" y2="12"/><line x1="2" x2="7" y1="7" y2="7"/><line x1="2" x2="7" y1="17" y2="17"/><line x1="17" x2="22" y1="17" y2="17"/><line x1="17" x2="22" y1="7" y2="7"/></svg>,
+            Layers: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>,
+            Type: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" x2="15" y1="20" y2="20"/><line x1="12" x2="12" y1="4" y2="20"/></svg>,
+            Download: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>,
+            Trash2: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>,
+            SkipForward: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" x2="19" y1="5" y2="19"/></svg>,
+            Zap: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>,
+            AlertCircle: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>,
+            Loader2: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>,
+            Key: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21 2-2 2m-7.6 7.6a6.5 6.5 0 1 1 5.3 5.3L3 21v-3.5L6 14l2-2"/></svg>
         };
 
         function AIVideoGenerator() {
+            // --- STATE MANAGEMENT ---
+            const [apiKey, setApiKey] = useState(() => localStorage.getItem('gemini_api_key') || '');
+            const [showKeyInput, setShowKeyInput] = useState(false);
+            
             const [prompts, setPrompts] = useState('');
             const [isLoading, setIsLoading] = useState(false);
             const [scenes, setScenes] = useState([]); 
@@ -56,7 +66,6 @@
             const [selectedModel, setSelectedModel] = useState('veo3'); 
             const [cameraMove, setCameraMove] = useState('cinematic'); 
             const [showCaptions, setShowCaptions] = useState(false);
-            
             const [clipDuration, setClipDuration] = useState(5); 
             const [progress, setProgress] = useState(0); 
             
@@ -66,9 +75,14 @@
             const recordedChunks = useRef([]);
             const imageCache = useRef({});
 
-            // --- API KEY (Paste here) ---
-            const apiKey = ""; 
+            // --- API KEY HANDLER ---
+            const saveApiKey = (key) => {
+                setApiKey(key);
+                localStorage.setItem('gemini_api_key', key);
+                setShowKeyInput(false);
+            };
 
+            // --- PRELOAD IMAGES ---
             useEffect(() => {
                 scenes.forEach(scene => {
                     if (!scene.image) return;
@@ -79,6 +93,7 @@
                 });
             }, [scenes]);
 
+            // --- ANIMATION LOOP ---
             const animateCanvas = () => {
                 const canvas = canvasRef.current;
                 if (!canvas) return;
@@ -145,6 +160,7 @@
                 return () => cancelAnimationFrame(requestRef.current);
             }, [currentSceneIndex, progress, scenes, showCaptions, aspectRatio]);
 
+            // --- SEQUENCER ---
             useEffect(() => {
                 let interval;
                 if ((isPlaying || isRendering) && scenes.length > 0) {
@@ -171,7 +187,10 @@
 
             const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
+            // --- GENERATION LOGIC ---
             const generateSingleImage = async (promptText, ratio, modelType) => {
+                if (!apiKey) throw new Error("API Key Missing");
+
                 let modelKeywords = "";
                 if (modelType === 'veo3') modelKeywords = ", Veo 3 style, masterpiece, 8k resolution, highly detailed, cinematic lighting, trending on artstation, unreal engine 5, sharp focus";
                 else if (modelType === 'veo') modelKeywords = ", dynamic action shot, motion blur, speed, 8k, movie scene, intense";
@@ -189,7 +208,10 @@
                             }),
                         }
                     );
-                    if (!response.ok) throw new Error(`API Error`);
+                    if (!response.ok) {
+                        const errText = await response.text();
+                        throw new Error(`API Error: ${errText}`);
+                    }
                     const data = await response.json();
                     if (data.predictions && data.predictions[0]) {
                         return `data:image/png;base64,${data.predictions[0].bytesBase64Encoded}`;
@@ -199,18 +221,21 @@
             };
 
             const handleGenerate = async () => {
+                if (!apiKey) { setShowKeyInput(true); return; }
+                
                 setIsLoading(true); setIsPlaying(false);
                 try {
                     const lines = prompts.split('\n').filter(line => line.trim() !== '');
                     if (lines.length === 0) return;
                     const promises = lines.map(async (line, index) => {
-                        await delay(index * 300); 
+                        await delay(index * 500); // Stagger requests
                         try {
                             const imageUrl = await generateSingleImage(line, aspectRatio, selectedModel);
                             const sceneObj = { image: imageUrl, text: line, id: Date.now() + index + Math.random(), movement: cameraMove, isError: false };
                             setScenes(prev => [...prev, sceneObj]);
                             return sceneObj;
                         } catch (e) {
+                            console.error(e);
                             const errorSceneObj = { image: null, text: `Generation Failed: ${line.substring(0, 30)}...`, id: Date.now() + index + Math.random(), movement: 'none', isError: true };
                             setScenes(prev => [...prev, errorSceneObj]);
                             return errorSceneObj;
@@ -229,6 +254,7 @@
                 setIsPlaying(!isPlaying);
             };
 
+            // --- EXPORT ---
             const startRendering = () => {
                 if (scenes.length === 0) return;
                 setCurrentSceneIndex(0); setProgress(0); setIsRendering(true); setIsPlaying(false); 
@@ -253,8 +279,35 @@
 
             const stopRendering = () => { if (mediaRecorderRef.current) mediaRecorderRef.current.stop(); };
 
+            // --- RENDER UI ---
             return (
                 <div className="min-h-screen bg-[#050505] text-white font-sans pb-20">
+                    
+                    {/* API Key Modal */}
+                    {(!apiKey || showKeyInput) && (
+                        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
+                            <div className="bg-[#1a1a1a] border border-white/20 p-6 rounded-xl max-w-md w-full shadow-2xl animate-fade-in">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="p-2 bg-purple-600 rounded-lg"><Icons.Key className="w-6 h-6 text-white"/></div>
+                                    <h2 className="text-xl font-bold">Setup Gemini API</h2>
+                                </div>
+                                <p className="text-gray-400 text-sm mb-4">To use CineVerse on the web, you need your own free Gemini API Key from Google AI Studio.</p>
+                                <input 
+                                    type="password" 
+                                    placeholder="Paste API Key here (AIza...)" 
+                                    className="w-full bg-black border border-white/20 rounded-lg p-3 text-white mb-4 focus:border-purple-500 outline-none"
+                                    onKeyDown={(e) => { if(e.key === 'Enter') saveApiKey(e.target.value); }}
+                                />
+                                <button onClick={(e) => saveApiKey(e.target.previousSibling.value)} className="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-lg transition-all">
+                                    Save & Start Creating
+                                </button>
+                                <div className="mt-4 text-center">
+                                    <a href="https://aistudio.google.com/app/apikey" target="_blank" className="text-xs text-purple-400 hover:text-purple-300 underline">Get a free API Key here</a>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     <header className="border-b border-white/5 bg-[#090909]/95 backdrop-blur-xl sticky top-0 z-30">
                         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
                             <div className="flex items-center gap-3">
@@ -263,9 +316,12 @@
                                 </div>
                                 <div><h1 className="text-lg font-black text-white tracking-wider">CINEVERSE <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-400">ULTRA</span></h1></div>
                             </div>
-                            <button onClick={startRendering} disabled={scenes.length === 0 || isRendering} className={`flex items-center gap-2 px-6 py-2 rounded-full text-xs font-bold tracking-wide transition-all shadow-lg ${isRendering ? 'bg-gray-800 text-gray-400 cursor-not-allowed' : 'bg-white text-black hover:bg-indigo-500 hover:text-white hover:scale-105'}`}>
-                                {isRendering ? <><Icons.Loader2 className="w-3 h-3 animate-spin" /> Rendering...</> : <><Icons.Download className="w-4 h-4" /> Render & Download 4K</>}
-                            </button>
+                            <div className="flex gap-3">
+                                <button onClick={() => setShowKeyInput(true)} className="p-2 rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors" title="API Settings"><Icons.Key className="w-4 h-4"/></button>
+                                <button onClick={startRendering} disabled={scenes.length === 0 || isRendering} className={`flex items-center gap-2 px-6 py-2 rounded-full text-xs font-bold tracking-wide transition-all shadow-lg ${isRendering ? 'bg-gray-800 text-gray-400 cursor-not-allowed' : 'bg-white text-black hover:bg-indigo-500 hover:text-white hover:scale-105'}`}>
+                                    {isRendering ? <><Icons.Loader2 className="w-3 h-3 animate-spin" /> Rendering...</> : <><Icons.Download className="w-4 h-4" /> Render 4K</>}
+                                </button>
+                            </div>
                         </div>
                     </header>
 
