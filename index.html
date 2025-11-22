@@ -8,9 +8,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -101,6 +98,10 @@
         .glow-effect {
             box-shadow: 0 0 30px rgba(99, 102, 241, 0.3);
         }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #000; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
     </style>
 </head>
 <body class="min-h-screen">
@@ -205,7 +206,6 @@
 
     <!-- ================= TOOL 1: TEXT TO SPEECH PRO ================= -->
     <div id="tts-tool" class="tool-view">
-        <!-- Header -->
         <div class="h-16 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-6 shrink-0">
             <div class="flex items-center gap-4">
                 <button onclick="closeTool('tts-tool')" class="w-10 h-10 rounded-full hover:bg-slate-800 flex items-center justify-center text-slate-400 transition-colors">
@@ -218,8 +218,15 @@
             </div>
         </div>
         
-        <!-- TTS Tool Content -->
-        <iframe src="data:text/html;charset=utf-8,%3C%21DOCTYPE%20html%3E%0A%3Chtml%20lang%3D%22en%22%3E%0A%3Chead%3E%0A%20%20%20%20%3Cmeta%20charset%3D%22UTF-8%22%3E%0A%20%20%20%20%3Cmeta%20name%3D%22viewport%22%20content%3D%22width%3Ddevice-width%2C%20initial-scale%3D1.0%22%3E%0A%20%20%20%20%3Ctitle%3ETTS%3C%2Ftitle%3E%0A%20%20%20%20%3Cscript%20src%3D%22https%3A%2F%2Fcdn.tailwindcss.com%22%3E%3C%2Fscript%3E%0A%20%20%20%20%3Cscript%20src%3D%22https%3A%2F%2Funpkg.com%2Flucide%40latest%22%3E%3C%2Fscript%3E%0A%3C%2Fhead%3E%0A%3Cbody%20class%3D%22bg-slate-900%20text-white%22%3E%0A%20%20%20%20%3Cdiv%20class%3D%22p-8%22%3E%0A%20%20%20%20%20%20%20%20%3Ch1%20class%3D%22text-3xl%20font-bold%20mb-4%22%3EText%20to%20Speech%20Tool%3C%2Fh1%3E%0A%20%20%20%20%20%20%20%20%3Cp%20class%3D%22text-slate-400%22%3ETool%20loading...%3C%2Fp%3E%0A%20%20%20%20%3C%2Fdiv%3E%0A%3C%2Fbody%3E%0A%3C%2Fhtml%3E" class="w-full flex-1 border-0"></iframe>
+        <div class="flex-1 bg-slate-950 text-white p-8 overflow-y-auto">
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-8 text-center">
+                    <i class="fas fa-microphone text-6xl text-indigo-500 mb-4"></i>
+                    <h3 class="text-2xl font-bold mb-4">Text to Speech Tool</h3>
+                    <p class="text-slate-400 mb-6">Full TTS functionality will be loaded here</p>
+                </div>
+            </div>
+        </div>
     </div>
 
 
@@ -236,7 +243,79 @@
                 </div>
             </div>
         </div>
-        <div id="video-root" class="flex-1 overflow-hidden"></div>
+        
+        <div class="flex-1 flex flex-col md:flex-row overflow-hidden bg-slate-950">
+            <!-- Left Sidebar -->
+            <div class="w-full md:w-96 bg-slate-900 border-r border-slate-800 flex flex-col shrink-0 p-6 shadow-2xl overflow-y-auto">
+                
+                <!-- API Key Section -->
+                <div class="mb-6 bg-indigo-500/10 border border-indigo-500/30 rounded-xl p-4">
+                    <label class="text-xs font-bold text-slate-400 uppercase mb-2 block">Gemini API Key</label>
+                    <input type="password" id="video-api-key" placeholder="Enter API Key..." class="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-white text-sm outline-none focus:border-indigo-500 mb-3">
+                    <button onclick="saveVideoApiKey()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-2 rounded-lg text-sm font-bold transition-all">
+                        <i class="fas fa-save mr-2"></i>Save Key
+                    </button>
+                </div>
+
+                <div class="mb-6">
+                    <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Aspect Ratio</label>
+                    <select id="video-ratio" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white outline-none focus:border-indigo-500">
+                        <option value="16:9">16:9 Landscape</option>
+                        <option value="9:16">9:16 Portrait</option>
+                        <option value="1:1">1:1 Square</option>
+                    </select>
+                </div>
+
+                <div class="mb-6">
+                    <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Camera Movement</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="setVideoCamera('cinematic')" id="cam-cinematic" class="cam-btn py-2 rounded-lg border border-white/10 text-xs uppercase font-bold text-gray-500 hover:bg-white/5 transition-all">Cinematic</button>
+                        <button onclick="setVideoCamera('zoomIn')" id="cam-zoomIn" class="cam-btn py-2 rounded-lg border border-white/10 text-xs uppercase font-bold text-gray-500 hover:bg-white/5 transition-all">Zoom In</button>
+                        <button onclick="setVideoCamera('panLeft')" id="cam-panLeft" class="cam-btn py-2 rounded-lg border border-white/10 text-xs uppercase font-bold text-gray-500 hover:bg-white/5 transition-all">Pan Left</button>
+                        <button onclick="setVideoCamera('shake')" id="cam-shake" class="cam-btn py-2 rounded-lg border border-white/10 text-xs uppercase font-bold text-gray-500 hover:bg-white/5 transition-all">Shake</button>
+                    </div>
+                </div>
+
+                <div class="flex-1 flex flex-col mb-6 min-h-[200px]">
+                    <div class="flex justify-between items-end mb-2">
+                        <label class="text-xs font-bold text-slate-500 uppercase">Video Scenes</label>
+                        <span class="text-xs text-indigo-400 font-mono bg-indigo-500/10 px-2 py-1 rounded" id="video-count">0 Scenes</span>
+                    </div>
+                    <textarea id="video-prompts" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl p-4 text-sm text-white outline-none focus:border-indigo-500 resize-none font-mono" placeholder="Enter scene descriptions (one per line)...&#10;&#10;Example:&#10;A futuristic samurai walking in neon rain&#10;Close up of his cybernetic eye"></textarea>
+                </div>
+
+                <div id="video-status" class="hidden mb-4 bg-indigo-900/30 border border-indigo-500/30 rounded-xl p-3 text-center">
+                    <span class="text-sm font-bold text-indigo-400" id="video-status-text">Processing...</span>
+                </div>
+
+                <div class="space-y-3">
+                    <button onclick="generateVideoScenes()" id="btn-video-gen" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-4 rounded-xl font-bold text-lg shadow-lg transition-all flex items-center justify-center gap-2">
+                        <i class="fas fa-wand-magic-sparkles"></i> Generate Scenes
+                    </button>
+                    <button onclick="renderVideo()" id="btn-video-render" class="hidden w-full bg-emerald-600 hover:bg-emerald-500 text-white py-4 rounded-xl font-bold text-lg shadow-lg transition-all flex items-center justify-center gap-2">
+                        <i class="fas fa-video"></i> Render Video
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Area: Canvas -->
+            <div class="flex-1 flex flex-col p-6 overflow-y-auto bg-black">
+                <div class="flex-1 flex items-center justify-center bg-slate-950 rounded-2xl border border-slate-800 relative">
+                    <canvas id="video-canvas" class="max-w-full max-h-full shadow-2xl"></canvas>
+                    
+                    <div id="video-empty" class="absolute text-center">
+                        <i class="fas fa-film text-6xl text-slate-700 mb-4"></i>
+                        <h3 class="text-xl font-bold text-slate-500">Ready to Create</h3>
+                        <p class="text-sm text-slate-600 mt-2">Enter scenes to start generating</p>
+                    </div>
+                </div>
+
+                <!-- Timeline -->
+                <div id="video-timeline" class="hidden mt-6 h-32 bg-slate-900 rounded-xl border border-slate-800 overflow-x-auto p-4 flex gap-2">
+                    <!-- Timeline items will be added here -->
+                </div>
+            </div>
+        </div>
     </div>
 
 
@@ -315,30 +394,59 @@
 
     <!-- ================= JAVASCRIPT ================= -->
     <script>
+        // --- GLOBAL VARIABLES ---
+        let generatedImages = [];
+        let videoScenes = [];
+        let currentVideoScene = 0;
+        let selectedCamera = 'cinematic';
+
         // --- Navigation Functions ---
         function openTool(id) {
             document.getElementById(id).classList.add('active');
-            if(id === 'video-tool') initVideoTool();
+            if(id === 'video-tool') {
+                const savedKey = localStorage.getItem('gemini_api_key');
+                if(savedKey) document.getElementById('video-api-key').value = savedKey;
+                setVideoCamera('cinematic');
+            }
         }
         
         function closeTool(id) {
             document.getElementById(id).classList.remove('active');
         }
 
-        // --- Image Generator Logic ---
-        let generatedImages = [];
-        const imgInput = document.getElementById('img-prompts');
-        
-        if(imgInput) {
-            imgInput.addEventListener('input', () => {
-                const lines = imgInput.value.split('\n').filter(l => l.trim()).length;
-                document.getElementById('img-count').textContent = `${lines} Prompts`;
+        // --- VIDEO GENERATOR FUNCTIONS ---
+        function saveVideoApiKey() {
+            const key = document.getElementById('video-api-key').value.trim();
+            if(!key) return alert('Please enter API Key');
+            localStorage.setItem('gemini_api_key', key);
+            alert('API Key saved successfully!');
+        }
+
+        function setVideoCamera(type) {
+            selectedCamera = type;
+            document.querySelectorAll('.cam-btn').forEach(btn => {
+                btn.classList.remove('bg-purple-600', 'border-purple-500', 'text-white');
+                btn.classList.add('border-white/10', 'text-gray-500');
+            });
+            const activeBtn = document.getElementById(`cam-${type}`);
+            activeBtn.classList.remove('border-white/10', 'text-gray-500');
+            activeBtn.classList.add('bg-purple-600', 'border-purple-500', 'text-white');
+        }
+
+        const videoInput = document.getElementById('video-prompts');
+        if(videoInput) {
+            videoInput.addEventListener('input', () => {
+                const lines = videoInput.value.split('\n').filter(l => l.trim()).length;
+                document.getElementById('video-count').textContent = `${lines} Scenes`;
             });
         }
 
-        async function generateWithImagen4(prompt, aspectRatio) {
-            const apiKey = localStorage.getItem('gemini_api_key') || '';
-            if(!apiKey) return null;
+        async function generateWithGeminiImagen(prompt, aspectRatio) {
+            const apiKey = localStorage.getItem('gemini_api_key');
+            if(!apiKey) {
+                alert('Please enter Gemini API Key first!');
+                return null;
+            }
             
             try {
                 const response = await fetch(
@@ -352,10 +460,113 @@
                         })
                     }
                 );
-                if (!response.ok) return null;
+                if (!response.ok) throw new Error('API Error');
                 const result = await response.json();
                 return `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
-            } catch (e) { return null; }
+            } catch (e) {
+                console.error('Imagen API failed:', e);
+                return null;
+            }
+        }
+
+        async function generateVideoScenes() {
+            const prompts = document.getElementById('video-prompts').value.split('\n').filter(p=>p.trim());
+            if(!prompts.length) return alert("Enter scene descriptions");
+            
+            const apiKey = localStorage.getItem('gemini_api_key');
+            if(!apiKey) return alert("Please save API Key first!");
+            
+            const btn = document.getElementById('btn-video-gen');
+            const ratio = document.getElementById('video-ratio').value;
+            const statusText = document.getElementById('video-status-text');
+            const statusBar = document.getElementById('video-status');
+            const timeline = document.getElementById('video-timeline');
+            const emptyState = document.getElementById('video-empty');
+
+            btn.disabled = true;
+            btn.innerHTML = '<div class="spinner"></div> Generating...';
+            statusBar.classList.remove('hidden');
+            videoScenes = [];
+            timeline.innerHTML = '';
+
+            emptyState.classList.add('hidden');
+
+            for(let i=0; i<prompts.length; i++) {
+                const p = prompts[i];
+                statusText.textContent = `Generating scene ${i+1} of ${prompts.length}...`;
+
+                const enhancedPrompt = `${p}, cinematic lighting, hyper-realistic, 8k, masterpiece, sharp focus, detailed`;
+
+                let imageUrl = await generateWithGeminiImagen(enhancedPrompt, ratio);
+                
+                if(!imageUrl) {
+                    const [w, h] = ratio === '16:9' ? [1920, 1080] : ratio === '9:16' ? [1080, 1920] : [1080, 1080];
+                    const seed = Math.floor(Math.random() * 999999);
+                    imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}?width=${w}&height=${h}&model=flux&seed=${seed}&nologo=true`;
+                }
+
+                videoScenes.push({
+                    id: i,
+                    text: p,
+                    image: imageUrl,
+                    movement: selectedCamera
+                });
+
+                // Add to timeline
+                const timelineItem = document.createElement('div');
+                timelineItem.className = 'min-w-[120px] h-20 rounded-lg overflow-hidden border-2 border-slate-700 cursor-pointer hover:border-indigo-500 transition-all';
+                timelineItem.innerHTML = `<img src="${imageUrl}" class="w-full h-full object-cover">`;
+                timelineItem.onclick = () => displayVideoScene(i);
+                timeline.appendChild(timelineItem);
+            }
+
+            timeline.classList.remove('hidden');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Generate Scenes';
+            statusText.textContent = "All scenes ready!";
+            document.getElementById('btn-video-render').classList.remove('hidden');
+            
+            displayVideoScene(0);
+            
+            setTimeout(() => statusBar.classList.add('hidden'), 3000);
+        }
+
+        function displayVideoScene(index) {
+            if(!videoScenes[index]) return;
+            
+            currentVideoScene = index;
+            const canvas = document.getElementById('video-canvas');
+            const ctx = canvas.getContext('2d');
+            const scene = videoScenes[index];
+            
+            const ratio = document.getElementById('video-ratio').value;
+            let width = 1920, height = 1080;
+            if(ratio === '9:16') { width = 1080; height = 1920; }
+            if(ratio === '1:1') { width = 1080; height = 1080; }
+            
+            canvas.width = width;
+            canvas.height = height;
+            
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            img.onload = () => {
+                ctx.drawImage(img, 0, 0, width, height);
+            };
+            img.src = scene.image;
+        }
+
+        function renderVideo() {
+            alert('Video rendering will download all scenes as images. Full video export coming soon!');
+            // Here you can add canvas recording logic for actual video export
+        }
+
+        // --- IMAGE GENERATOR FUNCTIONS ---
+        const imgInput = document.getElementById('img-prompts');
+        if(imgInput) {
+            imgInput.addEventListener('input', () => {
+                const lines = imgInput.value.split('\n').filter(l => l.trim()).length;
+                document.getElementById('img-count').textContent = `${lines} Prompts`;
+            });
         }
 
         async function forceDownload(url, filename) {
@@ -426,7 +637,7 @@
                     finalPrompt = `${p}, cinematic lighting, hyper-realistic, 8k, masterpiece, sharp focus, detailed texture`;
                 }
 
-                let url = await generateWithImagen4(finalPrompt, ratioStr);
+                let url = await generateWithGeminiImagen(finalPrompt, ratioStr);
                 let source = "Imagen 4";
 
                 if (!url) {
@@ -447,7 +658,7 @@
                                 <img src="${url}" class="w-full h-auto object-contain cursor-pointer" onclick="window.open('${url}', '_blank')">
                                 <div class="absolute top-3 right-3 bg-black/80 text-white text-xs font-bold px-2 py-1 rounded-lg">${source}</div>
                             </div>
-                            <button onclick="forceDownload('${url}', 'img_${i+1}.jpg')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl text-sm font-bold">
+                            <button onclick="forceDownload('${url}', 'img_${i+1}.jpg')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl text-sm font-bold transition-all">
                                 <i class="fas fa-download"></i> Download
                             </button>
                         `;
@@ -495,72 +706,6 @@
             btn.innerHTML = '<i class="fas fa-file-zipper"></i> Download All (.zip)';
             btn.disabled = false;
         }
-
-        // --- Video Tool React Component (Placeholder - Will be initialized on open) ---
-        function initVideoTool() {
-            // Video tool will be loaded here when opened
-            console.log('Video tool initialized');
-        }
-    </script>
-
-    <!-- Video Generator React Component -->
-    <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
-
-        const Icons = {
-            Play: (props) => <svg {...props} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>,
-            Pause: (props) => <svg {...props} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>,
-            // Add more icons as needed
-        };
-
-        function VideoGenerator() {
-            const [apiKey, setApiKey] = useState(() => localStorage.getItem('gemini_api_key') || '');
-            const [showKeyInput, setShowKeyInput] = useState(false);
-            const [prompts, setPrompts] = useState('');
-            const [isLoading, setIsLoading] = useState(false);
-
-            return (
-                <div className="h-full bg-slate-950 text-white p-8">
-                    <div className="max-w-4xl mx-auto">
-                        <h2 className="text-3xl font-bold mb-6">Bulk Video Generator</h2>
-                        <p className="text-slate-400 mb-8">Video generation tool - Coming soon with full features</p>
-                        
-                        {!apiKey && (
-                            <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
-                                <h3 className="text-xl font-bold mb-4">Setup API Key</h3>
-                                <input 
-                                    type="password"
-                                    placeholder="Enter Gemini API Key"
-                                    className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white mb-4"
-                                    onKeyDown={(e) => {
-                                        if(e.key === 'Enter') {
-                                            setApiKey(e.target.value);
-                                            localStorage.setItem('gemini_api_key', e.target.value);
-                                        }
-                                    }}
-                                />
-                                <button 
-                                    onClick={(e) => {
-                                        const input = e.target.previousSibling;
-                                        setApiKey(input.value);
-                                        localStorage.setItem('gemini_api_key', input.value);
-                                    }}
-                                    className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-lg font-bold"
-                                >
-                                    Save API Key
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            );
-        }
-
-        // Initialize video tool when needed
-        window.initVideoTool = function() {
-            const root = ReactDOM.createRoot(document.getElementById('video-root'));
-            root.render(<VideoGenerator />);
-        };
     </script>
 
 </body>
