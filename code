@@ -1,10 +1,7 @@
-<html>
-    <head>
-        <script>
-        import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Play, Pause, Loader2, Video, Layers, Film, Type,
-  SkipForward, Plus, Zap, AlertCircle, Download, Trash2
+  SkipForward, Plus, Zap, AlertCircle, Download, Trash2, Settings, Image as ImageIcon
 } from 'lucide-react';
 
 export default function AIVideoGenerator() {
@@ -615,6 +612,3 @@ export default function AIVideoGenerator() {
     </div>
   );
 }
-                <script>
-    </head>
-</html>
