@@ -151,6 +151,7 @@
 
                 const img = imageCache.current[scene.id];
                 
+                // Broken/Loading Check
                 if (!img || !img.complete || img.naturalWidth === 0) {
                     ctx.fillStyle = '#ffffff'; 
                     ctx.font = '30px Inter';
@@ -234,11 +235,15 @@
             const generateImage = async (prompt, seed) => {
                 // Requested Higher Resolutions
                 let width, height;
-                if (aspectRatio === '9:16') { width = 1080; height = 1920; } 
-                else if (aspectRatio === '1:1') { width = 1080; height = 1080; } 
-                else { width = 1920; height = 1080; }
+                if (aspectRatio === '9:16') { 
+                    width = 1080; height = 1920; // Full HD Vertical
+                } else if (aspectRatio === '1:1') { 
+                    width = 1280; height = 1280; // High Res Square
+                } else { 
+                    width = 1920; height = 1080; // Full HD Landscape
+                }
                 
-                // Removed enhance=true to avoid distortion, added strong prompts
+                // Flux "Realism" Endpoint - NO ENHANCE (Raw is sharper)
                 const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${width}&height=${height}&model=flux&seed=${seed}&nologo=true`;
                 
                 const response = await fetch(url);
@@ -262,8 +267,8 @@
                     const batchPromises = batch.map(async (line, batchIdx) => {
                         try {
                             const seed = Math.floor(Math.random() * 1000000);
-                            // Stronger Realism Prompt
-                            const enhancedPrompt = line + ", hyper-realistic photography, 8k resolution, sharp focus, cinematic lighting, highly detailed, raw photo style, photorealistic, unreal engine 5 render, clear image";
+                            // Magic Prompts for Realism
+                            const enhancedPrompt = `Raw photo of ${line}, 8k uhd, dslr, soft lighting, high quality, film grain, Fujifilm XT3`;
                             const imageUrl = await generateImage(enhancedPrompt, seed);
                             
                             return {
